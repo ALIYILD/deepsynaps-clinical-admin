@@ -19,3 +19,13 @@ test('extension request is saved locally without activation or notification',()=
 test('30 work packages and notes never approve a gate',()=>{const {run,el}=setup();assert.equal(run('deliveryPhases.flatMap(p=>p.items).length'),30);run("workPackage('OH25')");el('package-note').value='Arrange discussion';run("savePlanNote('OH25');addPlanTask('OH25');addPlanTask('OH25')");assert.equal(run("state.product.planNotes.OH25"),'Arrange discussion');assert.equal(run("state.tasks.filter(t=>t.text.startsWith('OH25:')).length"),1);assert.equal(run("deliveryPhases.flatMap(p=>p.items).find(i=>i[0]==='OH25')[2]"),'Human sign-off');});
 test('theme and reset migrate safely; connection never reports live success',()=>{const {run,el}=setup();run('toggleTheme()');assert.equal(run('document.documentElement.dataset.theme'),'dark');run('state=initial();nav("home")');assert.equal(run('state.product.theme'),'light');run('connectionReadiness()');assert(el('dialog').innerHTML.includes('No Clinical OS session integration'));run("nav('connections')");assert(el('main').innerHTML.includes('Not connected'));});
 test('HTML loads scripts in dependency order and plan/logo exist',()=>{const root=new URL('../dist/',import.meta.url);const html=fs.readFileSync(new URL('index.html',root),'utf8');const order=['data.js','registry-evidence.js','product-data.js','app.js','product.js','workflow.js','loop-report.js','loops.js'];let before=-1;for(const file of order){const at=html.indexOf(`src="${file}"`);assert(at>before);before=at;}assert(fs.existsSync(new URL('assets/deepsynaps-logo.svg',root)));const plan=fs.readFileSync(new URL('Oxford_Health_Clinical_Admin_Implementation_Plan.md',root),'utf8');assert(plan.includes('not mounted or deployed'));assert(plan.includes('OH30'));assert(plan.length>15000);});
+test('failed evidence is prominent even when individual tests passed',()=>{
+ const {run}=setup();
+ run("implementationLoopReport.result='failed';implementationLoopReport.sourceChanged=true;implementationLoopReport.unassignedTests=['tests/<unsafe>.test.mjs'];implementationLoopReport.syntaxChecks=[{file:'dist/app.js',result:'failed'}]");
+ const html=run('loopsPage()');
+ assert.match(html,/Verification failed/);
+ assert.match(html,/Source files changed/);
+ assert.match(html,/failed syntax checks/);
+ assert.match(html,/tests\/&lt;unsafe&gt;.test.mjs/);
+ assert(!html.includes('tests/<unsafe>'));
+});

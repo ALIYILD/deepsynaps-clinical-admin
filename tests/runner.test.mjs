@@ -5,14 +5,17 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 
-function fixture(t,{syntaxFailure=false,testFailure=false}={}){
+function fixture(t,{syntaxFailure=false,testFailure=false,sourceMutation=false,unassigned=false}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'clinical-admin-runner-'));
  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
  for(const dir of ['scripts','dist','integration','tests','loops/evidence'])fs.mkdirSync(path.join(root,dir),{recursive:true});
  fs.copyFileSync(new URL('../scripts/run-loops.mjs',import.meta.url),path.join(root,'scripts/run-loops.mjs'));
+ fs.copyFileSync(new URL('../scripts/source-evidence.mjs',import.meta.url),path.join(root,'scripts/source-evidence.mjs'));
  fs.writeFileSync(path.join(root,'dist/app.js'),syntaxFailure?'const = ;':'const valid = true;');
  fs.writeFileSync(path.join(root,'tests/first.mjs'),`import test from 'node:test';test('first',()=>{${testFailure?"throw Error('intentional fixture failure');":''}});`);
  fs.writeFileSync(path.join(root,'tests/second.mjs'),"import test from 'node:test';test('second',()=>{});");
+ if(sourceMutation)fs.writeFileSync(path.join(root,'tests/first.mjs'),"import fs from 'node:fs';import test from 'node:test';test('mutation',()=>fs.writeFileSync('dist/style.css','changed during test'));");
+ if(unassigned)fs.writeFileSync(path.join(root,'tests/forgotten.test.mjs'),"import test from 'node:test';test('forgotten',()=>{});");
  fs.writeFileSync(path.join(root,'loops/implementation.json'),JSON.stringify({loops:[
   {id:'L01',mode:'local',tests:['tests/first.mjs']},
   {id:'L02',mode:'local',tests:['tests/second.mjs']},
@@ -46,4 +49,18 @@ test('successful local verification does not report blocked connected loops as p
  assert.deepEqual(report.loops.map(l=>l.result),['passed','passed','blocked']);
  assert.match(report.sourceFingerprint,/^[a-f0-9]{64}$/);
  assert.equal(fs.readFileSync(path.join(root,'dist/loop-report.js'),'utf8'),'const implementationLoopReport='+JSON.stringify(report)+';\n');
+});
+test('source changes during verification invalidate the pass and stop later loops',t=>{
+ const {root,result,report}=fixture(t,{sourceMutation:true});
+ assert.equal(result.status,1);assert.equal(report.result,'failed');
+ assert.equal(report.sourceChanged,true);
+ assert.deepEqual(report.loops.map(l=>l.result),['failed','not_run','blocked']);
+ assert.equal(report.loops[0].verificationError,'source_changed_during_verification');
+ assert.equal(fs.existsSync(path.join(root,'loops/evidence/L02.tap')),false);
+});
+test('unassigned Node suites fail verification instead of silently being skipped',t=>{
+ const {result,report}=fixture(t,{unassigned:true});
+ assert.equal(result.status,1);
+ assert.deepEqual(report.unassignedTests,['tests/forgotten.test.mjs']);
+ assert.deepEqual(report.loops.map(l=>l.result),['not_run','not_run','blocked']);
 });
