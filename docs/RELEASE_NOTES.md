@@ -61,3 +61,11 @@ Integrated the independently merged Oxford Health workspace UI, retaining its pa
 Team task creation/editing, patient-linked tasks and handover drafts now report whether browser persistence succeeded. Failed writes retain the in-memory change and show explicit unsaved feedback; handovers continue to state that nothing was sent. Agenda notes show their unsaved status across route changes and refresh immediately after successful retry.
 
 Updated the task and patient Node fixtures to retain storage writes, so they exercise the actual stale-tab checks instead of simulating storage that always returns its original value. Validation passes 115 Node tests and 24 Chromium desktop/mobile checks. New tests cover task edits, patient tasks, duplicate-safe handover retry and agenda persistence after reload. No connected services were activated.
+
+## Complete verification input tracking
+
+Loop evidence now uses a versioned per-file SHA-256 manifest covering shipped HTML/CSS/assets, JavaScript, documentation, nested browser tests, integration modules, scripts, dependency files, Playwright configuration and CI workflows. Generated reports and TAP outputs are excluded to keep the fingerprint stable across unchanged runs. The report exposes syntax outcomes, unassigned Node suites, source drift and overall verification status. Browser code is fingerprinted without implying browser execution in the Node loop.
+
+The runner rejects Node suites omitted from the ledger and invalidates a pass if source inputs change during verification, stopping subsequent local loops. CI removes old generated evidence before starting so a startup failure cannot upload an old report as current. The website highlights failed verification even when some tests passed.
+
+Validation: 119 Node tests, including source mutation, missing-suite, manifest coverage and failed-report display checks. Browser workflows remain separately verified in CI. L04–L06 remain dependency-blocked; this traceability record is not a signed clinical audit.

@@ -11,8 +11,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm run check
-      - run: npm run loops
+      - name: Verify local loops with fresh evidence
+        run: |
+          rm -f loops/latest-report.json loops/evidence/*.tap
+          npm run loops
       - uses: actions/upload-artifact@v4
         if: always()
         with:
