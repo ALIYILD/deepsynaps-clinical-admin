@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T13:36:49.839Z",
-  "sourceFingerprint": "b9611e9e572610f56299ad12ffea14a1a3e5100e763d46a2968b7658e7d676a9",
+  "generatedAt": "2026-10-13T13:44:40.384Z",
+  "sourceFingerprint": "a6eb79a96c0b5c0d8b21c74266e72467807ee8316e4368f979d7dae042b3794b",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -18,7 +18,7 @@
     },
     {
       "path": "dist/app.js",
-      "sha256": "81b48773d489d7531d03c7fa67acaf1fb7ff09b3d7f4aff8a64b59253aa7cda8"
+      "sha256": "409f7c775d2c60976444972d171ef831b6a2c5a42e9072b20dcba66cec3501bd"
     },
     {
       "path": "dist/assets/deepsynaps-logo.svg",
@@ -62,7 +62,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha256": "586eff253a61ad0ffdccfa85b93ed95a2c6c76381f06251e64a575ce5775e07e"
+      "sha256": "9766261c2d0850d6e6c25194b39c38ac604059db798c204164cf6db935d96307"
     },
     {
       "path": "dist/loops.js",
@@ -82,11 +82,11 @@
     },
     {
       "path": "dist/product-ui.css",
-      "sha256": "df280b37414be2dbd7e615aedddd4147d3526ecc1f5cb2050cd13ed31d87f82a"
+      "sha256": "f6876c7a5662d7c94fdef6afe5057352051ec7e5c7473a5710607fa88084a8ba"
     },
     {
       "path": "dist/product-ui.js",
-      "sha256": "e1282cfd932396da804ed2beb5c6b9cccf28d3a5cc9553235473fc2885da6cbb"
+      "sha256": "860e9ee8d277d496006c34e220aaf76c2b6eee7f2cbf723751f19dbfe376b74f"
     },
     {
       "path": "dist/product.js",
@@ -134,7 +134,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "5c9a1150879268281ce2e242409e531f76a7e39bdc423ff2827754791ccd357f"
+      "sha256": "2a438caca2fc59f0360ee35de56d8a5c47e1dffb3c110fe781729dae4a1f127b"
     },
     {
       "path": "integration/README.md",
@@ -178,7 +178,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "32872c74c9fa165d3f24823ca70f6db4256462a9c2d5fa1871fd137d064276b2"
+      "sha256": "8d44124570bd5af9f2d6369bd8b1c1d445c1e993d5448d78b6dabaf77c34d76d"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -210,7 +210,7 @@
     },
     {
       "path": "tests/product-ui.test.mjs",
-      "sha256": "210b5a0599cf142fe7b535040831ff51ebbd68ea08ba7db49676addf5d31ae50"
+      "sha256": "5e9461a44819e313e561081ca4475d06a82ad2c376657da7f4ddad377db3f0ac"
     },
     {
       "path": "tests/product.test.mjs",
@@ -375,7 +375,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 159,
+  "totalPassed": 162,
   "loops": [
     {
       "id": "L01",
@@ -396,7 +396,7 @@
       "acceptance": "All 158 source-backed IDs remain consistent; routes, extension requests and local proposal controls work.",
       "limit": "Source inspection is not independent execution of upstream Clinical OS tests.",
       "result": "passed",
-      "testsPassed": 27
+      "testsPassed": 30
     },
     {
       "id": "L02",

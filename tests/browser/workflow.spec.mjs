@@ -166,3 +166,56 @@ test('EPR drafts retain reviewed source and stay unsent after an amendment',asyn
  await expect(page.getByRole('button',{name:'Prepare draft',exact:true})).toBeDisabled();
  await expect(page.locator('.epr-receipt-panel')).toContainText('None received');
 });
+
+
+test('mobile navigation contains keyboard focus, dismisses and returns focus',async({page,isMobile})=>{
+ test.skip(!isMobile,'Mobile drawer behaviour');
+ await page.goto('/#home');
+ const toggle=page.locator('#navigation-toggle');
+ await expect(page.locator('#sidebar')).toHaveJSProperty('inert',true);
+ await toggle.click();
+ const close=page.locator('.navigation-close');
+ await expect(close).toBeFocused();
+ await expect(toggle).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('.shell')).toHaveJSProperty('inert',true);
+ await page.keyboard.press('Shift+Tab');
+ await expect(page.locator('.workspace-profile')).toBeFocused();
+ await page.keyboard.press('Tab');await expect(close).toBeFocused();
+ await page.keyboard.press('Escape');await expect(toggle).toBeFocused();
+ await expect(page.locator('.shell')).toHaveJSProperty('inert',false);
+ await toggle.click();
+ await page.locator('#sidebar').getByRole('button',{name:'Patients',exact:true}).click();
+ await expect(page).toHaveURL(/#patients$/);await expect(page.locator('#main')).toBeFocused();
+ await expect(page.locator('#sidebar')).toHaveJSProperty('inert',true);
+ await toggle.click();await page.locator('#navigation-backdrop').click({position:{x:350,y:300}});
+ await expect(toggle).toBeFocused();
+});
+
+test('workspace navigation supports Back and Forward without losing patient edits',async({page})=>{
+ await page.goto('/#N');
+ await page.locator('#note-text').fill('Fictional draft retained across navigation');
+ await page.getByRole('button',{name:'Overview',exact:true}).click();
+ await expect(page).toHaveURL(/#record$/);
+ await page.getByRole('button',{name:'Forms',exact:true}).click();
+ await expect(page).toHaveURL(/#F$/);
+ await page.goBack();await expect(page).toHaveURL(/#record$/);
+ await expect(page).toHaveTitle('Patient record | DeepSynaps Clinical Admin');
+ await page.goBack();await expect(page.locator('#note-text')).toHaveValue('Fictional draft retained across navigation');
+ await page.goForward();await expect(page).toHaveTitle('Patient record | DeepSynaps Clinical Admin');
+});
+
+test('all workspace routes fit both colour themes and label the patient search',async({page})=>{
+ const routes=['home','patients','record','C','N','documents','review','F','T','E','I','NHS','extensions','connections','organisation','settings','catalogue','delivery','loops'];
+ for(const theme of ['light','dark']){
+  await page.goto('/#home');
+  if(await page.locator('html').getAttribute('data-theme')!==theme)await page.getByRole('button',{name:`Switch to ${theme} theme`,exact:true}).click();
+  for(const route of routes){
+   await page.goto('/#'+route);
+   await expect(page.locator('#main')).not.toBeEmpty();
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),theme+' '+route+' overflow').toBe(true);
+  }
+ }
+ await page.goto('/#patients');
+ await page.getByRole('searchbox',{name:'Search patients by name or record ID',exact:true}).fill('Alex');
+ await expect(page.locator('.patient-card')).toHaveCount(1);
+});
