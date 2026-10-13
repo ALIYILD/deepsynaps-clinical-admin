@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T14:48:22.491Z",
-  "sourceFingerprint": "2e828d257922aa39a47eb045896fe9d225e499330eba6241f867489b154f2d1d",
+  "generatedAt": "2026-10-13T15:02:49.131Z",
+  "sourceFingerprint": "248fc06720c7832ec6f406f615add7bbd2c855353d1cae238016893d787bbace",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -18,7 +18,7 @@
     },
     {
       "path": "dist/app.js",
-      "sha256": "81b48773d489d7531d03c7fa67acaf1fb7ff09b3d7f4aff8a64b59253aa7cda8"
+      "sha256": "409f7c775d2c60976444972d171ef831b6a2c5a42e9072b20dcba66cec3501bd"
     },
     {
       "path": "dist/assets/deepsynaps-logo.svg",
@@ -58,11 +58,11 @@
     },
     {
       "path": "dist/handoff-ui.js",
-      "sha256": "379036eadb22e727c383f55b0281f52368aa0d0bf9b0a8ac694635c8c512a201"
+      "sha256": "bba735421dc7086948e0116a4b26ced8b569d4fc8680f748004f2aaec929d800"
     },
     {
       "path": "dist/index.html",
-      "sha256": "586eff253a61ad0ffdccfa85b93ed95a2c6c76381f06251e64a575ce5775e07e"
+      "sha256": "9766261c2d0850d6e6c25194b39c38ac604059db798c204164cf6db935d96307"
     },
     {
       "path": "dist/loops.js",
@@ -74,7 +74,7 @@
     },
     {
       "path": "dist/patient-ui.js",
-      "sha256": "fada4c079b46643da335ad95b6a232362bbbcf44edb4e3500c6f4cfebc6865fa"
+      "sha256": "2c420b4b184655da040c7dda46088ca8602c500ad472146b8964879966e43248"
     },
     {
       "path": "dist/product-data.js",
@@ -82,11 +82,11 @@
     },
     {
       "path": "dist/product-ui.css",
-      "sha256": "df280b37414be2dbd7e615aedddd4147d3526ecc1f5cb2050cd13ed31d87f82a"
+      "sha256": "72e60e9c2150a917311bd1def86996c0e18c62a189a9c0f8c8979f38fc48f2f6"
     },
     {
       "path": "dist/product-ui.js",
-      "sha256": "e1282cfd932396da804ed2beb5c6b9cccf28d3a5cc9553235473fc2885da6cbb"
+      "sha256": "860e9ee8d277d496006c34e220aaf76c2b6eee7f2cbf723751f19dbfe376b74f"
     },
     {
       "path": "dist/product.js",
@@ -102,11 +102,11 @@
     },
     {
       "path": "dist/tasks-ui.css",
-      "sha256": "daa41b5d57b4a65798195a858f3a1c79ff50a3369861278d924881ff065c00e5"
+      "sha256": "babc7358e1c82ad676f4d15d043c21a3052a163c663c74b22af81b05954e3800"
     },
     {
       "path": "dist/tasks-ui.js",
-      "sha256": "879def121bc88d16bdc7e44fdb85ddf1ee3bcf52ce46c8fa446a12992e2c816c"
+      "sha256": "8c1530a0dd2a9538d36cd94eb61d4e8ff103918c8999392684f2691f0ff934e9"
     },
     {
       "path": "dist/workflow.js",
@@ -138,7 +138,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "5c9a1150879268281ce2e242409e531f76a7e39bdc423ff2827754791ccd357f"
+      "sha256": "05154f87236d30d2abb6d07f58db67f1e93590993f9cfc68c9220cfb7b86a6ce"
     },
     {
       "path": "integration/README.md",
@@ -190,7 +190,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "32872c74c9fa165d3f24823ca70f6db4256462a9c2d5fa1871fd137d064276b2"
+      "sha256": "2e5d7a2960c93fd4ef71395ce5528613ddf1063614e940d9443520107f49a4e6"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -210,7 +210,7 @@
     },
     {
       "path": "tests/handoff-ui.test.mjs",
-      "sha256": "120d7f09611531cea3fd5d0995588f59d2fbaff7ecd8d9948c386684e6f07d39"
+      "sha256": "a2ea5e730dfa52220768afb3fb3b76368000556da62efc4799cf8de62a5362fc"
     },
     {
       "path": "tests/integration.test.mjs",
@@ -222,7 +222,7 @@
     },
     {
       "path": "tests/product-ui.test.mjs",
-      "sha256": "210b5a0599cf142fe7b535040831ff51ebbd68ea08ba7db49676addf5d31ae50"
+      "sha256": "5e9461a44819e313e561081ca4475d06a82ad2c376657da7f4ddad377db3f0ac"
     },
     {
       "path": "tests/product.test.mjs",
@@ -242,7 +242,7 @@
     },
     {
       "path": "tests/tasks-ui.test.mjs",
-      "sha256": "c62413134239df43788b79e05724aa920eec808edca26714df7e5656d677e528"
+      "sha256": "6cc7f1d394148e8b08e36826dbb1a201aea1f9722f825fc7a1ef357882caaf5f"
     },
     {
       "path": "tests/workflow.test.mjs",
@@ -403,7 +403,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 165,
+  "totalPassed": 175,
   "loops": [
     {
       "id": "L01",
@@ -424,7 +424,7 @@
       "acceptance": "All 158 source-backed IDs remain consistent; routes, extension requests and local proposal controls work.",
       "limit": "Source inspection is not independent execution of upstream Clinical OS tests.",
       "result": "passed",
-      "testsPassed": 27
+      "testsPassed": 30
     },
     {
       "id": "L02",
@@ -466,7 +466,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 90
+      "testsPassed": 97
     },
     {
       "id": "L04",

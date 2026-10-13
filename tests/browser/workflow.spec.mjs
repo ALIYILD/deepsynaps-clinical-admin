@@ -166,3 +166,124 @@ test('EPR drafts retain reviewed source and stay unsent after an amendment',asyn
  await expect(page.getByRole('button',{name:'Prepare draft',exact:true})).toBeDisabled();
  await expect(page.locator('.epr-receipt-panel')).toContainText('None received');
 });
+
+
+test('mobile navigation contains keyboard focus, dismisses and returns focus',async({page,isMobile})=>{
+ test.skip(!isMobile,'Mobile drawer behaviour');
+ await page.goto('/#home');
+ const toggle=page.locator('#navigation-toggle');
+ await expect(page.locator('#sidebar')).toHaveJSProperty('inert',true);
+ await toggle.click();
+ const close=page.locator('.navigation-close');
+ await expect(close).toBeFocused();
+ await expect(toggle).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('.shell')).toHaveJSProperty('inert',true);
+ await page.keyboard.press('Shift+Tab');
+ await expect(page.locator('.workspace-profile')).toBeFocused();
+ await page.keyboard.press('Tab');await expect(close).toBeFocused();
+ await page.keyboard.press('Escape');await expect(toggle).toBeFocused();
+ await expect(page.locator('.shell')).toHaveJSProperty('inert',false);
+ await toggle.click();
+ await page.locator('#sidebar').getByRole('button',{name:'Patients',exact:true}).click();
+ await expect(page).toHaveURL(/#patients$/);await expect(page.locator('#main')).toBeFocused();
+ await expect(page.locator('#sidebar')).toHaveJSProperty('inert',true);
+ await toggle.click();await page.locator('#navigation-backdrop').click({position:{x:350,y:300}});
+ await expect(toggle).toBeFocused();
+});
+
+test('workspace navigation supports Back and Forward without losing patient edits',async({page})=>{
+ await page.goto('/#N');
+ await page.locator('#note-text').fill('Fictional draft retained across navigation');
+ await page.getByRole('button',{name:'Overview',exact:true}).click();
+ await expect(page).toHaveURL(/#record$/);
+ await page.getByRole('button',{name:'Forms',exact:true}).click();
+ await expect(page).toHaveURL(/#F$/);
+ await page.goBack();await expect(page).toHaveURL(/#record$/);
+ await expect(page).toHaveTitle('Patient record | DeepSynaps Clinical Admin');
+ await page.goBack();await expect(page.locator('#note-text')).toHaveValue('Fictional draft retained across navigation');
+ await page.goForward();await expect(page).toHaveTitle('Patient record | DeepSynaps Clinical Admin');
+});
+
+test('all workspace routes fit both colour themes and label the patient search',async({page})=>{
+ const routes=['home','patients','record','C','N','documents','review','F','T','E','I','NHS','extensions','connections','organisation','settings','catalogue','delivery','loops'];
+ for(const theme of ['light','dark']){
+  await page.goto('/#home');
+  if(await page.locator('html').getAttribute('data-theme')!==theme)await page.getByRole('button',{name:`Switch to ${theme} theme`,exact:true}).click();
+  for(const route of routes){
+   await page.goto('/#'+route);
+   await expect(page.locator('#main')).not.toBeEmpty();
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),theme+' '+route+' overflow').toBe(true);
+  }
+ }
+ await page.goto('/#patients');
+ await page.getByRole('searchbox',{name:'Search patients by name or record ID',exact:true}).fill('Alex');
+ await expect(page.locator('.patient-card')).toHaveCount(1);
+});
+
+test('team handover can go back to edit, reconfirm, and retry without duplicates',async({page})=>{
+ await page.goto('/#N');await page.getByRole('button',{name:'Load example',exact:true}).click();await sign(page);
+ await page.goto('/#T');
+ async function prepare(){
+  await page.getByRole('button',{name:'Prepare handover',exact:true}).click();
+  await page.getByLabel('Intended recipient',{exact:true}).selectOption('Admin team');
+  await page.getByLabel('Handover message',{exact:true}).fill('Fictional follow-up for the admin team');
+  await page.getByRole('dialog').getByRole('button',{name:'Review draft',exact:true}).click();
+ }
+ await prepare();await page.locator('#handover-confirm').check();
+ await page.getByRole('button',{name:'Back to edit',exact:true}).click();
+ await expect(page.getByLabel('Intended recipient',{exact:true})).toHaveValue('Admin team');
+ await expect(page.getByLabel('Handover message',{exact:true})).toHaveValue('Fictional follow-up for the admin team');
+ await expect(page.getByLabel('Handover message',{exact:true})).toBeFocused();
+ await page.getByRole('dialog').getByRole('button',{name:'Review draft',exact:true}).click();
+ await expect(page.locator('#handover-confirm')).not.toBeChecked();
+ await page.getByRole('button',{name:'Save draft',exact:true}).click();
+ await expect(page.getByRole('dialog')).toBeVisible();
+ await page.locator('#handover-confirm').check();await page.getByRole('button',{name:'Save draft',exact:true}).click();
+ await expect(page.locator('.handover-card')).toHaveCount(1);
+ await prepare();await page.locator('#handover-confirm').check();await page.getByRole('button',{name:'Save draft',exact:true}).click();
+ await expect(page.locator('.handover-card')).toHaveCount(1);
+ await prepare();await page.keyboard.press('Escape');
+ expect(await page.evaluate(()=>pendingHandover)).toBeNull();
+});
+
+test('EPR handoff can return to edit without losing details or reusing confirmation',async({page})=>{
+ await page.goto('/#N');await page.getByRole('button',{name:'Load example',exact:true}).click();await sign(page);
+ await page.goto('/#I');await page.getByRole('button',{name:'Prepare draft',exact:true}).click();
+ await page.getByLabel('Intended EPR',{exact:true}).selectOption('emis');
+ await page.getByLabel('Administrative handoff note (optional)',{exact:true}).fill('Fictional handoff context to retain');
+ await page.getByRole('button',{name:'Review handoff draft',exact:true}).click();
+ await page.locator('#epr-draft-confirm').check();
+ await page.getByRole('button',{name:'Back to edit',exact:true}).click();
+ await expect(page.getByLabel('Intended EPR',{exact:true})).toHaveValue('emis');
+ await expect(page.getByLabel('Administrative handoff note (optional)',{exact:true})).toHaveValue('Fictional handoff context to retain');
+ await page.getByRole('button',{name:'Review handoff draft',exact:true}).click();
+ await expect(page.locator('#epr-draft-confirm')).not.toBeChecked();
+ expect(await page.locator('#dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+ await page.locator('#epr-draft-confirm').check();await page.getByRole('button',{name:'Save local draft',exact:true}).click();
+ await expect(page.locator('.epr-draft-row')).toHaveCount(1);
+ await expect(page.locator('.epr-draft-row')).toContainText('Draft · Not sent');
+});
+
+test('patient task board preserves explicit patient links and separates team tasks',async({page})=>{
+ await page.goto('/#record');
+ await page.getByRole('button',{name:'Change active patient',exact:true}).click();
+ await page.getByRole('dialog').getByRole('button',{name:/Alex Taylor/}).click();
+ await page.locator('#patient-follow-up').getByRole('button',{name:'Add task',exact:true}).click();
+ await page.getByLabel('Task description',{exact:true}).fill('Fictional Alex follow-up');
+ await page.getByRole('button',{name:'Save task',exact:true}).click();
+ await page.getByRole('button',{name:'View this patient’s tasks',exact:true}).click();
+ await expect(page.getByLabel('Patient or team',{exact:true})).toHaveValue('DEMO-002');
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await page.getByRole('button',{name:'Edit task: Fictional Alex follow-up',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('DEMO-002 · Linked patient cannot be changed here');
+ await page.getByRole('button',{name:'Cancel',exact:true}).click();
+ await page.getByLabel('Search tasks',{exact:true}).fill('DEMO-002');
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await page.getByLabel('Patient or team',{exact:true}).selectOption('team');
+ await expect(page.locator('.coordination-task')).toHaveCount(0);
+ await page.getByLabel('Search tasks',{exact:true}).fill('');
+ await expect(page.locator('.coordination-task')).toHaveCount(3);
+ await page.getByLabel('Patient or team',{exact:true}).selectOption('DEMO-002');
+ await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
+});
