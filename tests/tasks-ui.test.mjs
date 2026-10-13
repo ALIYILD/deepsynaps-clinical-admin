@@ -71,3 +71,18 @@ test('same-text revision change flags retained handover source and blocks pendin
  assert.match(el('handover-review-error').textContent,/message remains here/);
  assert.equal(run('pendingHandover.message'),'Please arrange the agreed follow-up.');
 });
+
+test('patient and team filters combine with status and search by record ID',()=>{
+ const {run}=setup();run("state.tasks.push({text:'Patient follow-up',owner:'Care team',done:false,patientId:'DEMO-002'});taskPatientFilter='DEMO-002'");
+ assert.equal(run('filteredTasks().length'),1);assert.equal(run('filteredTasks()[0].index'),3);
+ run("taskQuery='demo-002'");assert.equal(run('filteredTasks().length'),1);
+ run("taskPatientFilter='team'");assert.equal(run('filteredTasks().length'),0);
+ run("taskQuery=''");assert.equal(run('filteredTasks().length'),3);
+ run('resetTaskFilters()');assert.equal(run('filteredTasks().length'),4);
+});
+test('patient task shortcut clears stale filters and opening its record selects the correct patient',()=>{
+ const {run}=setup();run("state.tasks.push({text:'Patient follow-up',owner:'Care team',done:false,patientId:'DEMO-002'});taskQuery='missing';taskOwner='Dr Morgan';taskDueFilter='overdue';showPatientTasks('DEMO-002')");
+ assert.equal(run('filteredTasks().length'),1);assert.equal(run('taskPatientFilter'),'DEMO-002');
+ run('openTaskPatient(3)');assert.equal(run('state.selectedPatientId'),'DEMO-002');assert.equal(run('route'),'record');
+ run('openTaskPatient(0)');assert.equal(run('state.selectedPatientId'),'DEMO-002');
+});

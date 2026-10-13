@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T14:51:22.883Z",
-  "sourceFingerprint": "a5936c8422a328e9ab43d4c91de11f174eab92afadbf03bae8c24ce85099f8f5",
+  "generatedAt": "2026-10-13T15:02:49.131Z",
+  "sourceFingerprint": "248fc06720c7832ec6f406f615add7bbd2c855353d1cae238016893d787bbace",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -74,7 +74,7 @@
     },
     {
       "path": "dist/patient-ui.js",
-      "sha256": "fada4c079b46643da335ad95b6a232362bbbcf44edb4e3500c6f4cfebc6865fa"
+      "sha256": "2c420b4b184655da040c7dda46088ca8602c500ad472146b8964879966e43248"
     },
     {
       "path": "dist/product-data.js",
@@ -102,11 +102,11 @@
     },
     {
       "path": "dist/tasks-ui.css",
-      "sha256": "daa41b5d57b4a65798195a858f3a1c79ff50a3369861278d924881ff065c00e5"
+      "sha256": "babc7358e1c82ad676f4d15d043c21a3052a163c663c74b22af81b05954e3800"
     },
     {
       "path": "dist/tasks-ui.js",
-      "sha256": "90b9258f9b38161274458945facac67548efe3b74d802df518aa95e267f35905"
+      "sha256": "8c1530a0dd2a9538d36cd94eb61d4e8ff103918c8999392684f2691f0ff934e9"
     },
     {
       "path": "dist/workflow.js",
@@ -138,7 +138,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "7e76948e11d43d81b8837cc3626e1d4541cd832ce0403346df4f4f59b89e9c70"
+      "sha256": "05154f87236d30d2abb6d07f58db67f1e93590993f9cfc68c9220cfb7b86a6ce"
     },
     {
       "path": "integration/README.md",
@@ -190,7 +190,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "4d6d575998721ef4d0d101864afb249884678cef95160b1adc7ce6739944a668"
+      "sha256": "2e5d7a2960c93fd4ef71395ce5528613ddf1063614e940d9443520107f49a4e6"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -242,7 +242,7 @@
     },
     {
       "path": "tests/tasks-ui.test.mjs",
-      "sha256": "7104aa940e88bd68db35c819a79460be250b2cc47705534581ebec0e2a54b575"
+      "sha256": "6cc7f1d394148e8b08e36826dbb1a201aea1f9722f825fc7a1ef357882caaf5f"
     },
     {
       "path": "tests/workflow.test.mjs",
@@ -403,7 +403,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 173,
+  "totalPassed": 175,
   "loops": [
     {
       "id": "L01",
@@ -466,7 +466,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 95
+      "testsPassed": 97
     },
     {
       "id": "L04",
