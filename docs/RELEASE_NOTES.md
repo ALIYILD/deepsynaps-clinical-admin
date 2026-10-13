@@ -91,3 +91,9 @@ Restoration now validates consultation progress, preparation notes/checklists, f
 Validation adds malformed nested-data and cross-patient snapshot regressions to the Node suite (159 tests total), plus a browser recovery scenario on desktop and mobile (30 browser checks total). L04–L06 still require the documented staging contracts and human owners.
 
 Merged the concurrently published document-review and EPR-handoff workspaces. The restore guard also covers EPR draft source metadata and requires the local not-sent, no-acknowledgement and no-retention state.
+
+## Runnable HTTP host and recovered Hetzner test setup
+
+Added `npm start` to serve the synthetic application and mount the read gateway. The optional trusted adapter module supplies identity, tenant and patient-access services; absent configuration stays unavailable. The host forwards session headers, cancels work on disconnect, sanitises failures, rejects non-read methods and confines static files to the product directory. Health output distinguishes process/configuration state from connectivity. Playwright now uses this host; six socket-level regressions join the local loops (165 Node tests total).
+
+Located the dedicated upstream Clinical Admin Hetzner test setup and existing owner acceptance for synthetic testing. Current upstream readiness still says ready to build; the example hostname does not resolve. Recorded that evidence and the next host-identification step without equating the older production-backed test frontend with isolated staging. No external deployment, server writes, processor activation or real-patient approval occurred.
