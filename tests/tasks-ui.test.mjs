@@ -86,3 +86,27 @@ test('patient task shortcut clears stale filters and opening its record selects 
  run('openTaskPatient(3)');assert.equal(run('state.selectedPatientId'),'DEMO-002');assert.equal(run('route'),'record');
  run('openTaskPatient(0)');assert.equal(run('state.selectedPatientId'),'DEMO-002');
 });
+
+test('task sorting preserves source records and original indices across dates, priorities and completion',()=>{
+ const {run}=setup();
+ run(`state.tasks=[
+  {text:'Undated routine',owner:'Care team',done:false},
+  {text:'Later urgent',owner:'Care team',done:false,dueDate:'2026-10-20',priority:'time-sensitive',patientId:'DEMO-002',sourceNote:'Exact reviewed source'},
+  {text:'Earlier routine',owner:'Care team',done:false,dueDate:'2026-10-14'},
+  {text:'Completed earlier',owner:'Care team',done:true,dueDate:'2026-10-01',priority:'time-sensitive'},
+  {text:'Same date routine',owner:'Care team',done:false,dueDate:'2026-10-14'},
+  {text:'Invalid legacy date',owner:'Care team',done:false,dueDate:'2026-02-30'}
+ ];taskFilter='all';const originalTasks=JSON.stringify(state.tasks);updateTaskSort('due');`);
+ assert.equal(run('filteredTasks().map(t=>t.index).join()'),'2,4,1,0,5,3');
+ assert.equal(run('JSON.stringify(state.tasks)===originalTasks'),true);
+ run("updateTaskSort('priority')");
+ assert.equal(run('filteredTasks().map(t=>t.index).join()'),'1,2,4,0,5,3');
+ run('openTaskDetails(filteredTasks()[0].index)');
+ callWithForm(run,'saveTaskDetails',editor({description:'Updated urgent follow-up'}));
+ assert.equal(run('state.tasks[1].text'),'Updated urgent follow-up');
+ assert.equal(run('state.tasks[1].patientId'),'DEMO-002');
+ assert.equal(run('state.tasks[1].sourceNote'),'Exact reviewed source');
+ assert.equal(run('state.tasks[0].text'),'Undated routine');
+ run("updateTaskSort('added');updateTaskSort('unsupported')");
+ assert.equal(run('filteredTasks().map(t=>t.index).join()'),'0,1,2,3,4,5');
+});

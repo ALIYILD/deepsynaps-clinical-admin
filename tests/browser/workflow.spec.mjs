@@ -299,3 +299,27 @@ test('patient task board preserves explicit patient links and separates team tas
  await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
  await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
 });
+
+test('sorted task completion updates the intended task and keeps the sort control focused',async({page})=>{
+ await page.goto('/#T');
+ await page.evaluate(()=>{
+  state.tasks=[
+   {text:'Later fictional task',owner:'Care team',done:false,dueDate:'2026-10-20',priority:'routine'},
+   {text:'Earlier fictional task',owner:'Care team',done:false,dueDate:'2026-10-14',priority:'routine'},
+   {text:'Urgent fictional task',owner:'Care team',done:false,dueDate:'2026-10-21',priority:'time-sensitive',patientId:'DEMO-002'}
+  ];save();render();
+ });
+ const sort=page.getByLabel('Sort tasks',{exact:true});
+ await sort.focus();await sort.selectOption('due');
+ await expect(sort).toBeFocused();
+ await expect(page.locator('.task-title')).toHaveText(['Earlier fictional task','Later fictional task','Urgent fictional task']);
+ await sort.selectOption('priority');
+ await expect(page.locator('.task-title').first()).toHaveText('Urgent fictional task');
+ await page.getByRole('checkbox',{name:'Mark Urgent fictional task complete',exact:true}).click();
+ expect(await page.evaluate(()=>state.tasks.map(t=>t.done))).toEqual([false,false,true]);
+ await page.reload();
+ await page.getByRole('button',{name:'Completed',exact:true}).click();
+ await expect(page.locator('.task-title')).toHaveText(['Urgent fictional task']);
+ await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
+});
