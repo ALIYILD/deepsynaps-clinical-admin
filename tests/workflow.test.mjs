@@ -32,3 +32,23 @@ test('refilling cannot overwrite an approved form before explicit reopening',()=
 });
 test('edited note and form content is escaped when rendered',()=>{const {run}=setup();run("updateNote('<img src=x onerror=alert(1)>');fillForm();editFormField(0,'<script>bad()</script>')");assert(!run('notes()').includes('<img src=x'));assert(run('notes()').includes('&lt;img'));assert(!run('forms()').includes('<script>'));assert(run('forms()').includes('&lt;script&gt;'));});
 test('reset clears all patient records and leaves API connection disabled',()=>{const {run}=setup();run("draftNote();selectPatient('DEMO-003');fillForm();state=initial();nav('home')");assert.equal(run('state.selectedPatientId'),'DEMO-001');assert.equal(run('Object.values(state.patientRecords).some(r=>r.note||r.formData)'),false);assert.equal(run('productConfig.apiConnected'),false);});
+test('failed persistence warns without losing the current draft and retry saves all records',()=>{
+ const {run,el,storage}=setup();
+ run("const originalSetItem=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')};draftNote();saveNote()");
+ assert.equal(el('storage-status').hidden,false);
+ assert.match(el('toast').textContent,/Saving failed/);
+ assert.match(run('state.note'),/Maya Collins/);
+ run("selectPatient('DEMO-002');draftNote();localStorage.setItem=originalSetItem;retrySave()");
+ assert.equal(el('storage-status').hidden,true);
+ const saved=JSON.parse(storage['clinical-admin-demo-v1']);
+ assert.match(saved.patientRecords['DEMO-001'].note,/Maya Collins/);
+ assert.match(saved.patientRecords['DEMO-002'].note,/Alex Taylor/);
+});
+test('failed reset does not claim stored records were removed',()=>{
+ const {run,el,storage}=setup();
+ run("draftNote();const persistedBeforeReset=localStorage.getItem('clinical-admin-demo-v1');localStorage.setItem=()=>{throw Error('denied')};resetDemo()");
+ assert.equal(storage['clinical-admin-demo-v1'],run('persistedBeforeReset'));
+ assert.match(el('toast').textContent,/previous saved records may return/);
+ assert.equal(el('storage-status').hidden,false);
+ assert.equal(run('state.note'),'');
+});

@@ -31,3 +31,11 @@ Added a locked Playwright development dependency and ten Chromium tests across d
 Browser testing exposed stale screen content after URL fragment changes. Hash navigation now resolves through the same route handler as application buttons, stops simulated capture, dismisses dialogs and moves keyboard focus to the main content. Closing or cancelling a review clears the pending signature snapshot.
 
 Validation: 10 Chromium checks pass at 1440 × 1000 and 390 × 844. The 51 Node checks and syntax validation also pass. This is automated interaction coverage, not a manual visual or screen-reader audit. L04–L06 still require the staging contracts and named human decisions recorded in the handoff.
+
+## Browser storage failure recovery
+
+Browser storage quota and permission failures now leave a persistent, accessible warning with a Retry saving control. In-memory edits remain available, and a successful retry saves the full current workspace and clears the warning. The app requests the browser's standard unload warning while changes are unsaved; browser support and user interaction determine whether that prompt appears.
+
+Draft, organisation, extension-request, planning-note and reset notifications now distinguish successful persistence from changes retained only in the current tab. A failed reset warns that previously stored records may return after reload. This remains browser-local demo storage, not server persistence or an immutable audit record.
+
+Validation: 53 Node tests and 14 Chromium desktop/mobile tests pass. New tests inject quota and permission failures, verify the warning persists through signing and unsuccessful retries, then restore storage and confirm the signed note survives reload. Node regression checks also verify multi-patient recovery and failed-reset messaging. Connected staging, real writes and pilot approval remain blocked.
