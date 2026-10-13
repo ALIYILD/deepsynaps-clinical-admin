@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T14:17:28.248Z",
-  "sourceFingerprint": "8568c01dd6774d4cba6ddb2fc92e47afde1cfea00efa5ae327d0e9b3e0a6015f",
+  "generatedAt": "2026-10-13T14:19:50.021Z",
+  "sourceFingerprint": "ff3c1bf6b33b97a46866881c1631b792cf23173721af682f1dfcca5168370079",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -178,7 +178,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "8381b156cf558760a5121d6e00361f5b60f8c37de4bafa3644bbd7909291a44d"
+      "sha256": "4d6d575998721ef4d0d101864afb249884678cef95160b1adc7ce6739944a668"
     },
     {
       "path": "tests/consultation-ui.test.mjs",

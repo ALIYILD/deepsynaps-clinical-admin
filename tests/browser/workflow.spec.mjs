@@ -227,14 +227,14 @@ test('team handover can go back to edit, reconfirm, and retry without duplicates
   await page.getByRole('button',{name:'Prepare handover',exact:true}).click();
   await page.getByLabel('Intended recipient',{exact:true}).selectOption('Admin team');
   await page.getByLabel('Handover message',{exact:true}).fill('Fictional follow-up for the admin team');
-  await page.getByRole('button',{name:'Review draft',exact:true}).click();
+  await page.getByRole('dialog').getByRole('button',{name:'Review draft',exact:true}).click();
  }
  await prepare();await page.locator('#handover-confirm').check();
  await page.getByRole('button',{name:'Back to edit',exact:true}).click();
  await expect(page.getByLabel('Intended recipient',{exact:true})).toHaveValue('Admin team');
  await expect(page.getByLabel('Handover message',{exact:true})).toHaveValue('Fictional follow-up for the admin team');
  await expect(page.getByLabel('Handover message',{exact:true})).toBeFocused();
- await page.getByRole('button',{name:'Review draft',exact:true}).click();
+ await page.getByRole('dialog').getByRole('button',{name:'Review draft',exact:true}).click();
  await expect(page.locator('#handover-confirm')).not.toBeChecked();
  await page.getByRole('button',{name:'Save draft',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();
