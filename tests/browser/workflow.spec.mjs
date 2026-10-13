@@ -5,9 +5,9 @@ test.beforeEach(async({page})=>{
 });
 
 async function sign(page){
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
  await page.locator('#review-confirm').check();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(page.locator('#note-text')).toHaveAttribute('readonly','');
 }
 
@@ -42,17 +42,17 @@ test('patient selection survives reload and keeps signed amendments isolated',as
 test('review requires confirmation and cancelling allows a fresh exact-text review',async({page})=>{
  await page.goto('/#N');
  await page.getByRole('button',{name:'Load example',exact:true}).click();
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();
  await page.keyboard.press('Escape');
  await expect(page.getByRole('dialog')).not.toBeVisible();
  await page.locator('#note-text').fill('Exact reviewed fictional text');
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
  await expect(page.locator('.review-copy')).toHaveText('Exact reviewed fictional text');
  await expect(page.locator('#review-confirm')).not.toBeChecked();
  await page.locator('#review-confirm').check();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(page.locator('#note-text')).toHaveAttribute('readonly','');
 });
 
@@ -108,7 +108,7 @@ test('switching patients stops capture and reset removes all records',async({pag
 });
 
 test('core pages fit the viewport and the keyboard can open and dismiss a dialog',async({page})=>{
- const routes=[['home','home'],['patients','patients'],['record','patients'],['review','review'],['T','T'],['C','C'],['N','documents'],['documents','documents'],['F','F'],['E','E'],['settings','settings'],['loops',null]];
+ const routes=[['home','home'],['patients','patients'],['record','patients'],['review','review'],['T','T'],['C','C'],['N','documents'],['documents','documents'],['F','F'],['E','E'],['I',null],['settings','settings'],['loops',null]];
  for(const [route,active] of routes){
   await page.goto('/#'+route);
   if(active)await expect(page.locator('#sidebar button[aria-current=page]')).toHaveAttribute('onclick',`nav('${active}')`);
@@ -118,10 +118,51 @@ test('core pages fit the viewport and the keyboard can open and dismiss a dialog
  await page.goto('/#N');
  const button=page.getByRole('button',{name:'Load example',exact:true});
  await button.focus();await page.keyboard.press('Enter');
- await page.getByRole('button',{name:'Review & sign',exact:true}).focus();
+ await page.getByRole('button',{name:'Review document',exact:true}).focus();
  await page.keyboard.press('Enter');
  await expect(page.getByRole('dialog')).toBeVisible();
- await expect(page.getByRole('dialog')).toHaveAccessibleName(/Review Maya Collins/);
+ await expect(page.getByRole('dialog')).toHaveAccessibleName(/Review document · Version 1/);
  await page.keyboard.press('Escape');
  await expect(page.getByRole('dialog')).not.toBeVisible();
+});
+
+test('template replacement keeps edited draft until confirmation and retains its history copy',async({page})=>{
+ await page.goto('/#N');
+ await page.locator('#note-text').fill('Manually edited fictional note to preserve');
+ await page.locator('#note-template').selectOption('summary');
+ await expect(page.getByRole('dialog')).toHaveAccessibleName('Keep a copy before replacing this draft?');
+ await page.getByRole('button',{name:'Keep current draft',exact:true}).click();
+ await expect(page.locator('#note-text')).toHaveValue('Manually edited fictional note to preserve');
+ await expect(page.locator('#note-template')).toHaveValue('soap');
+ await page.locator('#note-template').selectOption('summary');
+ await page.getByRole('button',{name:'Save copy & load example',exact:true}).click();
+ await expect(page.locator('#note-text')).toHaveValue(/YOUR APPOINTMENT SUMMARY/);
+ await expect(page.locator('#note-template')).toHaveValue('summary');
+ await page.getByRole('button',{name:'Version history',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('Manually edited fictional note to preserve');
+});
+
+test('EPR drafts retain reviewed source and stay unsent after an amendment',async({page})=>{
+ await page.goto('/#N');
+ await page.getByRole('button',{name:'Load example',exact:true}).click();
+ await sign(page);
+ await page.goto('/#I');
+ await page.getByRole('button',{name:'Prepare draft',exact:true}).click();
+ await page.getByLabel('Intended EPR',{exact:true}).selectOption('rio');
+ await page.getByLabel('Administrative handoff note (optional)',{exact:true}).fill('Fictional handoff for review');
+ await page.getByRole('button',{name:'Review handoff draft',exact:true}).click();
+ await page.locator('#epr-draft-confirm').check();
+ await page.getByRole('button',{name:'Save local draft',exact:true}).click();
+ await expect(page.locator('.epr-draft-row')).toHaveCount(1);
+ await expect(page.locator('.epr-draft-row')).toContainText('Draft · Not sent');
+ await page.getByRole('button',{name:'Inspect draft',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Send to EPR',exact:true})).toBeDisabled();
+ await page.getByRole('button',{name:'Close',exact:true}).click();
+ await page.goto('/#N');
+ await page.getByRole('button',{name:'Create amendment',exact:true}).click();
+ await page.locator('#note-text').fill('Amended fictional handoff source');
+ await page.goto('/#I');
+ await expect(page.locator('.epr-draft-row')).toContainText('Source changed · Review needed');
+ await expect(page.getByRole('button',{name:'Prepare draft',exact:true})).toBeDisabled();
+ await expect(page.locator('.epr-receipt-panel')).toContainText('None received');
 });
