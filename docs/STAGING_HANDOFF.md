@@ -55,3 +55,9 @@ Record case ID, timestamp, candidate commit, deployment ID, fixture alias, expec
 For each increment, record the inspected upstream revision and endpoint, actor permissions, organisation and patient scope, request/response schema, source provenance, consent preconditions, retention/audit policy, conflict response and version token, idempotency key scope and lifetime, and acknowledgement semantics. Begin with one consent-to-reviewed-document journey after L04 passes.
 
 Required outcomes include successful consent/save/sign/amend; denied or withdrawn consent; stale-version rejection; duplicate submission; lost acknowledgement followed by a safe retry; interrupted recording; and provider failure. Signed documents must persist on the server. EPR completion requires an authorised destination acknowledgement. Transcription, AI, OCR, messaging and EPR activation each need their own verified contract and approval. Until supplied, keep them blocked.
+
+## Located upstream test setup
+
+The dedicated Hetzner synthetic environment and existing owner test acceptance have now been located; see `HETZNER_TEST_ENVIRONMENT.md`. Current upstream records call the deployment ready to build, and the example DNS name does not resolve. An actual hostname/IP or SSH alias is still needed to verify an independently provisioned host. Existing synthetic-test acceptance is retained; it is not a real-patient pilot release decision.
+
+`npm start` now mounts the gateway in the optional Node HTTP host, returning 503 without a trusted server adapter. This removes the missing local host implementation; it does not supply identity, tenancy, live connectivity or writes. Socket-level tests and browser verification run against that host.
