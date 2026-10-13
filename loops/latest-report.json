@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T14:51:27.832Z",
-  "sourceFingerprint": "22ab1db4dedaf9e39e67183a4178f6b4d82f76f1a80cdb3d0bbcacb3777ee4c5",
+  "generatedAt": "2026-10-13T14:54:38.342Z",
+  "sourceFingerprint": "248fc06720c7832ec6f406f615add7bbd2c855353d1cae238016893d787bbace",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -106,7 +106,7 @@
     },
     {
       "path": "dist/tasks-ui.js",
-      "sha256": "363298e2af662c24cc3cdcc6a53efb9932d235b4d6e9b4b3cbf8f3ff966761a7"
+      "sha256": "8c1530a0dd2a9538d36cd94eb61d4e8ff103918c8999392684f2691f0ff934e9"
     },
     {
       "path": "dist/workflow.js",
@@ -190,7 +190,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "e8dad561867493ed52ea2ba83ae2954538b172476d47b8366fc210bc74904952"
+      "sha256": "2e5d7a2960c93fd4ef71395ce5528613ddf1063614e940d9443520107f49a4e6"
     },
     {
       "path": "tests/consultation-ui.test.mjs",

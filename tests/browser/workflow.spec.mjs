@@ -274,7 +274,6 @@ test('patient task board preserves explicit patient links and separates team tas
  await page.getByRole('button',{name:'View this patient’s tasks',exact:true}).click();
  await expect(page.getByLabel('Patient or team',{exact:true})).toHaveValue('DEMO-002');
  await expect(page.locator('.coordination-task')).toHaveCount(1);
- await page.getByRole('button',{name:'Details',exact:false}).count();
  await page.getByRole('button',{name:'Edit task: Fictional Alex follow-up',exact:true}).click();
  await expect(page.getByRole('dialog')).toContainText('DEMO-002 · Linked patient cannot be changed here');
  await page.getByRole('button',{name:'Cancel',exact:true}).click();
