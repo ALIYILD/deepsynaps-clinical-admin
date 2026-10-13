@@ -37,7 +37,7 @@ Run these against the exact deployed gateway with actual synthetic sessions and 
 | S04 | Assigned patient; GET workspace briefing and partner documents | 200 for both, correct synthetic patient and organisation |
 | S05 | Patient belonging to second organisation | 404 and zero upstream reads |
 | S06 | Unassigned patient in the user's own organisation | 404 and zero upstream reads |
-| S07 | Expired or revoked session | 401 and zero upstream calls |
+| S07 | Expired or revoked session | 401 and zero upstream calls when expired at entry or before the read; expiry during an upstream read discards its result. Authoritative revocation requires identity-service evidence. |
 | S08 | Missing operation permission | 403 and zero upstream calls |
 | S09 | Missing or mismatched tenant binding | 503, no fallback records |
 | S10 | Controlled upstream timeout or outage | 504 for timeout; explicit sanitised failure for outage; no demo fallback |

@@ -14,3 +14,60 @@ test('clinic-wide handovers require explicit permission',async()=>{const {handle
 test('writes, unknown routes and scope-injecting query parameters denied',async()=>{const {handle,calls}=configured();for(const [path,init,status] of [['workspace/profile',{method:'POST'},405],['partner/unknown',{},404],['partner/meta?organisationId=other',{},400],['partner/documents?patientId=a&patientId=b',{},400],['partner/tasks?status=deleted',{},400]])assert.equal((await handle(request(path,init))).status,status);assert.equal(calls.length,0)});
 test('approved patient read succeeds through bound reader',async()=>{const {handle,calls}=configured();const r=await handle(request('partner/documents?patientId=DEMO-001'));assert.equal(r.status,200);assert.equal(calls[0].p.patientId,'DEMO-001');assert.equal(calls[0].p.accessToken,undefined)});
 test('upstream denials preserved; unexpected errors never expose secrets',async()=>{for(const e of [new IntegrationError('upstream_access_denied',403),Error('secret-stack')]){const {handle}=configured({resolveTenantReader:async()=>{throw e}});const r=await handle(request('partner/meta'));assert.equal(r.status,e.status||503);assert(!(await r.text()).includes('secret'))}});
+test('expiry during patient authorisation stops before tenant resolution',async()=>{
+ let time=1000,resolutions=0;
+ const {handle,calls}=configured({now:()=>time,canReadPatient:async()=>{time=2000;return true;},resolveTenantReader:async()=>{resolutions++;}});
+ const r=await handle(request('partner/documents?patientId=DEMO-001'));
+ assert.equal(r.status,401);assert.equal(resolutions,0);assert.equal(calls.length,0);
+});
+test('expiry during tenant lookup prevents an upstream request',async()=>{
+ let time=1000,reads=0;
+ const {handle}=configured({now:()=>time,resolveTenantReader:async organisationId=>{
+  time=2000;return {organisationId,reader:{partner:async()=>{reads++;return {};}}};
+ }});
+ assert.equal((await handle(request('partner/meta'))).status,401);assert.equal(reads,0);
+});
+test('a session that expires during an upstream read cannot receive its patient data',async()=>{
+ let time=1000;
+ const {handle}=configured({now:()=>time,resolveTenantReader:async organisationId=>({organisationId,reader:{partner:async()=>{time=2000;return {patient:'must-not-be-returned'};}}})});
+ const r=await handle(request('partner/documents?patientId=DEMO-001'));
+ assert.equal(r.status,401);assert.deepEqual(await r.json(),{error:'valid_session_required'});
+ assert.equal(r.headers.get('cache-control'),'no-store');
+});
+test('invalid clocks and whitespace identities fail closed',async()=>{
+ for(const now of [()=>NaN,()=>Infinity])assert.equal((await configured({now}).handle(request('partner/meta'))).status,401);
+ for(const patch of [{subject:' '},{organisationId:'\t'},{upstreamAccessToken:' '},{upstreamAccessToken:'token\r\nsecret'}]){
+  const {handle,calls}=configured({verifySession:async()=>({...session(),...patch})});
+  assert.equal((await handle(request('workspace/profile'))).status,401);assert.equal(calls.length,0);
+ }
+});
+test('shared verified objects cannot mutate the identity used for the pending read',async()=>{
+ const verified=session();let resolved,token;
+ const {handle}=configured({verifySession:async()=>verified,canReadPatient:async s=>{
+  assert(Object.isFrozen(s));assert(Object.isFrozen(s.permissions));
+  verified.organisationId='other';verified.upstreamAccessToken='other-token';return true;
+ },resolveTenantReader:async organisationId=>{resolved=organisationId;return {organisationId,reader:{workspace:async(op,p)=>{token=p.accessToken;return {};}}};}});
+ assert.equal((await handle(request('workspace/briefing?patientId=DEMO-001'))).status,200);
+ assert.equal(resolved,'synthetic-oxford');assert.equal(token,'test-user-token');
+});
+test('unknown typed errors and invalid HTTP error statuses never escape',async()=>{
+ for(const error of [new IntegrationError('private-token-diagnostic',403),new IntegrationError('upstream_unavailable',200),new IntegrationError('upstream_unavailable',302),new IntegrationError('upstream_unavailable',999)]){
+  const {handle}=configured({resolveTenantReader:async()=>{throw error;}});
+  const r=await handle(request('partner/meta'));
+  assert.equal(r.status,503);assert.deepEqual(await r.json(),{error:'integration_unavailable'});
+ }
+});
+test('malformed reader values cannot become successful connected responses',async()=>{
+ for(const data of [undefined,null,[],true,'private-upstream-text',42]){
+  const {handle}=configured({resolveTenantReader:async organisationId=>({organisationId,reader:{partner:async()=>data}})});
+  const r=await handle(request('partner/meta'));assert.equal(r.status,502);
+  assert.deepEqual(await r.json(),{error:'invalid_upstream_shape'});
+ }
+});
+test('method errors advertise GET and retain non-cacheable security headers',async()=>{
+ const r=await configured().handle(request('partner/meta',{method:'POST'}));
+ assert.equal(r.status,405);assert.equal(r.headers.get('allow'),'GET');
+ assert.equal(r.headers.get('cache-control'),'no-store');
+ assert.equal(r.headers.get('x-content-type-options'),'nosniff');
+ assert.equal(r.headers.get('referrer-policy'),'no-referrer');
+});

@@ -69,3 +69,11 @@ Loop evidence now uses a versioned per-file SHA-256 manifest covering shipped HT
 The runner rejects Node suites omitted from the ledger and invalidates a pass if source inputs change during verification, stopping subsequent local loops. CI removes old generated evidence before starting so a startup failure cannot upload an old report as current. The website highlights failed verification even when some tests passed.
 
 Validation: 119 Node tests, including source mutation, missing-suite, manifest coverage and failed-report display checks. Browser workflows remain separately verified in CI. L04–L06 remain dependency-blocked; this traceability record is not a signed clinical audit.
+
+## Gateway expiry and error boundaries
+
+The source-only gateway now rechecks session expiry after patient authorisation, after tenant resolution and before releasing an upstream result. Expiry before the read prevents it; expiry during the read discards returned data. Verified core identity and permission values are snapshotted to avoid mutation through a shared session object. Whitespace identities, malformed tokens and invalid clocks fail closed.
+
+Known integration errors retain their HTTP error statuses; arbitrary typed error messages and success/redirect statuses are sanitised. Missing or non-object reader results return 502, and method rejections include Allow: GET. These controls do not implement session revocation or endpoint-specific schema validation.
+
+Validation targets 127 Node checks, including eight added gateway regressions for delayed expiry, shared-session mutation, malformed dependency results and redacted errors. All dependencies in these checks are injected fixtures. No staging service, identity integration or clinical deployment was created.

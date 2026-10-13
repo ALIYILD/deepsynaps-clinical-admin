@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T12:29:23.024Z",
-  "sourceFingerprint": "39c0c95f1ab1a7864ef6c83accc7d85c76beedbafb29340cbf00b21602338410",
+  "generatedAt": "2026-10-13T12:33:39.304Z",
+  "sourceFingerprint": "84bc75566bf8277ab39d59099b3f00f41714502a78601b066da52f83a3f2540c",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -110,11 +110,11 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "e66441478db52cf1f2e1b3865028fb925232ad80d23ec0b7b8c23c5cc8ed6348"
+      "sha256": "63b393a02c1276ef34e53913d698df13563a0a8a18da4842504d71e0f928a365"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
-      "sha256": "01a95117248243e70d4e0fd91f8d12075f38b111b54e67c2d042974b7bc5d3bf"
+      "sha256": "4be1739a7eb912142034e69144d0d616a0ef7d29335e3f87329fa33240ff7122"
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
@@ -122,11 +122,11 @@
     },
     {
       "path": "integration/README.md",
-      "sha256": "995419a1548ef3e26c7acf4190de562cfd8f23a0513b5a3a65c9c405409c4782"
+      "sha256": "52b75bdc0e8566c3d9938581dae5d6cdf436948d1a6bfffbd699ef6aba3a067c"
     },
     {
       "path": "integration/clinical-admin-gateway.mjs",
-      "sha256": "aebdf2d25b33e9f534ec614897d31e1a6d4a1c8c62ae91aa5128d123b2f7fc6f"
+      "sha256": "0ec88a4ccdd89ffe0226a8c0c445e40dc64f9c3ab9d752c51d283c71886636e0"
     },
     {
       "path": "integration/clinical-os-reader.mjs",
@@ -174,7 +174,7 @@
     },
     {
       "path": "tests/gateway.test.mjs",
-      "sha256": "e59ab6ca4b87737ce317ccd5537a34efdcc4fe33f45dabf50071f48399d0ea6e"
+      "sha256": "549a1578af2c0229946c64496e05320534e1d94d846525f915a1351b8a3de8dc"
     },
     {
       "path": "tests/integration.test.mjs",
@@ -335,7 +335,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 119,
+  "totalPassed": 127,
   "loops": [
     {
       "id": "L01",
@@ -374,7 +374,7 @@
       "acceptance": "Read allowlist, tenant binding, verified-session inputs, patient access checks and upstream denials pass isolated tests.",
       "limit": "Source-only foundation. OH06 and OH07 are not complete identity or tenancy integrations; trusted session and tenant services must be supplied.",
       "result": "passed",
-      "testsPassed": 25
+      "testsPassed": 33
     },
     {
       "id": "L03",
