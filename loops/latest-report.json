@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T13:35:19.473Z",
-  "sourceFingerprint": "fdce84cb126d84dd95adddd3232ced34d86a20d559bdeda3905fd2977f4c675d",
+  "generatedAt": "2026-10-13T13:36:49.839Z",
+  "sourceFingerprint": "b9611e9e572610f56299ad12ffea14a1a3e5100e763d46a2968b7658e7d676a9",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -18,7 +18,7 @@
     },
     {
       "path": "dist/app.js",
-      "sha256": "5f7a1498ca8e28ad7d0d08a0e843f01e7d05c7a5d89f5584b189fe09a99fd067"
+      "sha256": "81b48773d489d7531d03c7fa67acaf1fb7ff09b3d7f4aff8a64b59253aa7cda8"
     },
     {
       "path": "dist/assets/deepsynaps-logo.svg",
@@ -37,6 +37,14 @@
       "sha256": "6c63658b1316fef02e0e91c6b0be1bcb2df6e017e9c320653b0132e4c9fcd8e1"
     },
     {
+      "path": "dist/documents-ui.css",
+      "sha256": "9103b0ab3d83866f2cb50c00eda7c18eabad6251224a98e6631777a0a26dde07"
+    },
+    {
+      "path": "dist/documents-ui.js",
+      "sha256": "970dc03bbca3d8e1bb3d2afee9f3b8dbd0c4586e9c972aeb6a65caa94365af93"
+    },
+    {
       "path": "dist/forms-ui.css",
       "sha256": "b34427fe9cdb680a73aef4f139e8a0d98912925ea88e4becf5b36c1e27ee02fe"
     },
@@ -45,8 +53,16 @@
       "sha256": "0460750316100ba14dd35575f838b97d987619edc2755ef3bc1f69ae6d5379ec"
     },
     {
+      "path": "dist/handoff-ui.css",
+      "sha256": "cef821497b69abeddde2fb762cd122d50d38ed4b3d8948846b694600e7b9199f"
+    },
+    {
+      "path": "dist/handoff-ui.js",
+      "sha256": "379036eadb22e727c383f55b0281f52368aa0d0bf9b0a8ac694635c8c512a201"
+    },
+    {
       "path": "dist/index.html",
-      "sha256": "12e0a88b36cb7e69caf5da4ba844c5cc65a7322ecfd1eeead42cd9be193f098d"
+      "sha256": "586eff253a61ad0ffdccfa85b93ed95a2c6c76381f06251e64a575ce5775e07e"
     },
     {
       "path": "dist/loops.js",
@@ -110,7 +126,7 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "70f6198cb61019af5e1a4ae3749bf8f857bfb11a0d93554c8e934744d30d820d"
+      "sha256": "a525decceb256db13bd763e02bfe164bc0887c39074c1935c2babc3426b8dc77"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
@@ -118,7 +134,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "bfaaf6b38c1d3ffcc454eb3734e666aa21de019b0bc3f0ad1d15bcb55a632220"
+      "sha256": "5c9a1150879268281ce2e242409e531f76a7e39bdc423ff2827754791ccd357f"
     },
     {
       "path": "integration/README.md",
@@ -134,7 +150,7 @@
     },
     {
       "path": "loops/implementation.json",
-      "sha256": "187b7787085644d659ee95531d326afdbf0ea8d521f182570990ab5befd73d88"
+      "sha256": "a5f3fb6b74c12e8c55ca94e59716700ab10bf25277e5fb7faf590a86057a5649"
     },
     {
       "path": "package-lock.json",
@@ -158,15 +174,19 @@
     },
     {
       "path": "tests/browser/storage.spec.mjs",
-      "sha256": "af24495265f4a45e382b365333e482832c9026426c4bb71667ea3e5d6d898556"
+      "sha256": "deeaeeb6a6836d5837249add7367b2c16bc8d337af3047cb524e6073745a2779"
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "682cad5a07212e0b6f259e296c69f7587aae7f9aa2a1d903395209328ed8237b"
+      "sha256": "32872c74c9fa165d3f24823ca70f6db4256462a9c2d5fa1871fd137d064276b2"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
       "sha256": "707c91b80a604324a19e4ecd3967d22a350ef9add8de083acec91ccb8a921c1e"
+    },
+    {
+      "path": "tests/documents-ui.test.mjs",
+      "sha256": "7a095a4d56537cea16804daada8b3baf9f337adef9de69b1d7f34ffefd6416b6"
     },
     {
       "path": "tests/forms-ui.test.mjs",
@@ -175,6 +195,10 @@
     {
       "path": "tests/gateway.test.mjs",
       "sha256": "e46e58989da0573956f9b5741c211c33b07ac17960e0a69a4febed32fc9c46cb"
+    },
+    {
+      "path": "tests/handoff-ui.test.mjs",
+      "sha256": "120d7f09611531cea3fd5d0995588f59d2fbaff7ecd8d9948c386684e6f07d39"
     },
     {
       "path": "tests/integration.test.mjs",
@@ -206,7 +230,7 @@
     },
     {
       "path": "tests/workflow.test.mjs",
-      "sha256": "077aa0e3644cbe40249ec2f6fbf873811ff8dfc6056d600d6f14a0cfd31295b4"
+      "sha256": "8741438e9070c4e1869a93ccdb6c4ad26ebd11b386c3cfba5e969aa911744df5"
     }
   ],
   "sourceChanged": false,
@@ -225,7 +249,15 @@
       "result": "passed"
     },
     {
+      "file": "dist/documents-ui.js",
+      "result": "passed"
+    },
+    {
       "file": "dist/forms-ui.js",
+      "result": "passed"
+    },
+    {
+      "file": "dist/handoff-ui.js",
       "result": "passed"
     },
     {
@@ -293,11 +325,19 @@
       "result": "passed"
     },
     {
+      "file": "tests/documents-ui.test.mjs",
+      "result": "passed"
+    },
+    {
       "file": "tests/forms-ui.test.mjs",
       "result": "passed"
     },
     {
       "file": "tests/gateway.test.mjs",
+      "result": "passed"
+    },
+    {
+      "file": "tests/handoff-ui.test.mjs",
       "result": "passed"
     },
     {
@@ -335,7 +375,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 137,
+  "totalPassed": 159,
   "loops": [
     {
       "id": "L01",
@@ -390,12 +430,14 @@
         "tests/consultation-ui.test.mjs",
         "tests/forms-ui.test.mjs",
         "tests/tasks-ui.test.mjs",
-        "tests/patient-ui.test.mjs"
+        "tests/patient-ui.test.mjs",
+        "tests/documents-ui.test.mjs",
+        "tests/handoff-ui.test.mjs"
       ],
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 68
+      "testsPassed": 90
     },
     {
       "id": "L04",

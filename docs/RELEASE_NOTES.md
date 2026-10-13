@@ -88,4 +88,6 @@ Nine new local tests cover bounded configuration, stalled dependencies, late com
 
 Restoration now validates consultation progress, preparation notes/checklists, form version histories and local handover drafts before the UI reads them. Patient-keyed records accept only the three fictional patients. Approved forms and historical form snapshots must match their containing patient; note history rejects a conflicting explicit patient ID while retaining legacy entries without one. Historical source versions remain valid after amendments. Invalid data uses the existing fresh-preview recovery flow, preserving the original saved value and blocking writes until an explicit reset. These structural checks do not authenticate browser data.
 
-Validation adds malformed nested-data and cross-patient snapshot regressions to the Node suite (137 tests total), plus a browser recovery scenario on desktop and mobile (26 browser checks total). L04–L06 still require the documented staging contracts and human owners.
+Validation adds malformed nested-data and cross-patient snapshot regressions to the Node suite (159 tests total), plus a browser recovery scenario on desktop and mobile (30 browser checks total). L04–L06 still require the documented staging contracts and human owners.
+
+Merged the concurrently published document-review and EPR-handoff workspaces. The restore guard also covers EPR draft source metadata and requires the local not-sent, no-acknowledgement and no-retention state.

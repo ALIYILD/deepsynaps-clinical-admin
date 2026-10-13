@@ -152,14 +152,15 @@ test('invalid nested UI storage opens a recoverable preview without renderer err
   {consultationUi:{'DEMO-001':null}},
   {patientPreparation:{'DEMO-001':{checks:null,note:'Agenda',fingerprint:null}}},
   {formUi:{'DEMO-001':{version:1,history:[{version:1,status:'Approved locally',snapshot:{patientId:'DEMO-002',fields:[]}}]}}},
-  {handoverDrafts:[null]}
+  {handoverDrafts:[null]},
+  {eprHandoffDrafts:[null]}
  ]){
   const raw=JSON.stringify({...original,...extra});
   await page.evaluate(value=>localStorage.setItem('clinical-admin-demo-v1',value),raw);
   await page.reload();
   await expect(page.locator('#storage-message')).toContainText('could not be loaded');
   await expect(page.locator('#storage-original')).toBeVisible();
-  for(const route of ['C','F','T','record'])await page.goto('/#'+route);
+  for(const route of ['C','F','T','I','record'])await page.goto('/#'+route);
   await page.locator('#preparation-note').fill('Temporary preview edit');
   expect(await page.evaluate(()=>localStorage.getItem('clinical-admin-demo-v1'))).toBe(raw);
  }

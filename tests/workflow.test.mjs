@@ -114,11 +114,16 @@ test('restored UI snapshots remain patient-bound and preserve historical source 
  base.patientPreparation={[id]:{checks:{sources:true},note:'Fictional agenda',fingerprint:null}};
  base.formUi={[id]:{version:2,history:[{version:1,status:'Approved locally',snapshot}]}};
  base.handoverDrafts=[{patientId:id,patientName:'Alex Taylor',sourceVersion:1,sourceRevision:0,sourceNote:'Historical note',recipient:'Care team',message:'Fictional handover',createdAt:'2026-10-13T09:00:00Z',deliveryStatus:'not-sent'}];
+ base.eprHandoffDrafts=[{patientId:id,patientName:'Alex Taylor',sourceText:'Historical note',sourceVersion:1,sourceRevision:0,sourceTemplate:'soap',destination:'rio',context:'Fictional context',createdAt:'2026-10-13T09:00:00Z',submissionStatus:'NOT_SENT',acknowledgement:null,retentionAction:'NONE'}];
  const restored=setup(base);
  assert.equal(restored.run('storageLoadFailed'),false);
  assert.equal(restored.run('state.handoverDrafts[0].sourceVersion'),1);
  assert.equal(restored.run("state.formUi['DEMO-002'].history[0].snapshot.patientId"),id);
+ assert.equal(restored.run('state.eprHandoffDrafts[0].sourceText'),'Historical note');
  const mutations=[
+  v=>v.eprHandoffDrafts[0]=null,
+  v=>v.eprHandoffDrafts[0].submissionStatus='SENT',
+  v=>v.eprHandoffDrafts[0].destination='UNKNOWN',
   v=>v.consultationUi[id]=null,
   v=>v.consultationUi[id].elapsed=-1,
   v=>v.patientPreparation[id].checks=null,
