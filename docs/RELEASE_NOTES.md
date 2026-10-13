@@ -55,3 +55,9 @@ Users can export the exact original value in a recovery JSON wrapper before expl
 Validation: 57 Node tests and 20 Chromium desktop/mobile checks pass. New cases cover malformed JSON, invalid structures, unknown versions, original-value export, blocked ordinary writes, cancellation, confirmed reset and failed-reset recovery. Staging integration and human approval dependencies are unchanged.
 
 Integrated the independently merged Oxford Health workspace UI, retaining its patient, consultation, forms, tasks and handover changes. Recovery browser tests now use the new interface. Added all five UI Node suites to the finite loop ledger: the combined release passes 111 Node tests (23 product/runner/UI, 25 integration, 63 workflow/UI) and 20 Chromium tests.
+
+## Save feedback across the merged workspace
+
+Team task creation/editing, patient-linked tasks and handover drafts now report whether browser persistence succeeded. Failed writes retain the in-memory change and show explicit unsaved feedback; handovers continue to state that nothing was sent. Agenda notes show their unsaved status across route changes and refresh immediately after successful retry.
+
+Updated the task and patient Node fixtures to retain storage writes, so they exercise the actual stale-tab checks instead of simulating storage that always returns its original value. Validation passes 115 Node tests and 24 Chromium desktop/mobile checks. New tests cover task edits, patient tasks, duplicate-safe handover retry and agenda persistence after reload. No connected services were activated.

@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-13T12:15:30.080Z",
-  "sourceFingerprint": "63c9c921bb48712882c5b4a1de29d3844ea9157e94618f2c4ad02e952e4afce1",
+  "generatedAt": "2026-10-13T12:22:18.507Z",
+  "sourceFingerprint": "e5877dfb2e7834e4522124e9d5a4315b00f57be408e6441207b29dcc48a9b58b",
   "verification": "Local Node tests and static syntax checks; no browser visual audit or live staging tests",
-  "totalPassed": 111,
+  "totalPassed": 115,
   "loops": [
     {
       "id": "L01",
@@ -61,7 +61,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 63
+      "testsPassed": 67
     },
     {
       "id": "L04",
