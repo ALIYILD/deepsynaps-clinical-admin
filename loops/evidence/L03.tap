@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: consent, notes and signatures stay with their fictional patient
+ok 1 - consent, notes and signatures stay with their fictional patient
+  ---
+  duration_ms: 23.696885
+  type: 'test'
+  ...
+# Subtest: saved multi-patient state rehydrates without losing selected record
+ok 2 - saved multi-patient state rehydrates without losing selected record
+  ---
+  duration_ms: 8.315496
+  type: 'test'
+  ...
+# Subtest: legacy browser notes migrate to Maya only
+ok 3 - legacy browser notes migrate to Maya only
+  ---
+  duration_ms: 7.195147
+  type: 'test'
+  ...
+# Subtest: editing after review invalidates the exact snapshot
+ok 4 - editing after review invalidates the exact snapshot
+  ---
+  duration_ms: 4.560852
+  type: 'test'
+  ...
+# Subtest: switching patients cancels pending signature and stops simulated capture
+ok 5 - switching patients cancels pending signature and stops simulated capture
+  ---
+  duration_ms: 4.189251
+  type: 'test'
+  ...
+# Subtest: signed history remains unchanged during an amendment
+ok 6 - signed history remains unchanged during an amendment
+  ---
+  duration_ms: 3.591179
+  type: 'test'
+  ...
+# Subtest: forms require all field reviews; edits invalidate approval eligibility
+ok 7 - forms require all field reviews; edits invalidate approval eligibility
+  ---
+  duration_ms: 3.946595
+  type: 'test'
+  ...
+# Subtest: approved form snapshot is protected, isolated and explicitly reopened
+ok 8 - approved form snapshot is protected, isolated and explicitly reopened
+  ---
+  duration_ms: 5.198003
+  type: 'test'
+  ...
+# Subtest: follow-up tasks deduplicate by patient and signed version and retain source
+ok 9 - follow-up tasks deduplicate by patient and signed version and retain source
+  ---
+  duration_ms: 5.49466
+  type: 'test'
+  ...
+# Subtest: handoff and exports use the selected patient with honest submission status
+ok 10 - handoff and exports use the selected patient with honest submission status
+  ---
+  duration_ms: 3.683077
+  type: 'test'
+  ...
+# Subtest: edited note and form content is escaped when rendered
+ok 11 - edited note and form content is escaped when rendered
+  ---
+  duration_ms: 3.394131
+  type: 'test'
+  ...
+# Subtest: reset clears all patient records and leaves API connection disabled
+ok 12 - reset clears all patient records and leaves API connection disabled
+  ---
+  duration_ms: 3.649787
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 163.966546
