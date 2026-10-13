@@ -43,3 +43,46 @@ test('changing a signed source during handover review invalidates confirmation',
 test('patient changes cancel pending task and handover edits',()=>{const {run,el}=setup();sign(run);callWithForm(run,'reviewHandoverDraft',handover());el('handover-confirm').checked=true;run("selectPatient('DEMO-002');saveHandoverDraft()");assert.equal(run('handoverDrafts().length'),0);run("openTaskDetails(0);selectPatient('DEMO-001')");callWithForm(run,'saveTaskDetails',editor());assert.notEqual(run('state.tasks[0].text'),'Arrange follow-up');});
 test('retained handover snapshots flag amendments and exports never imply delivery',()=>{const {run,el}=setup();sign(run);callWithForm(run,'reviewHandoverDraft',handover({message:'<script>example</script>'}));el('handover-confirm').checked=true;run('saveHandoverDraft();amendNote()');assert.equal(run('handoverSourceChanged(handoverDrafts()[0])'),true);run("updateNote('New draft');showHandoverDraft(0)");assert(el('dialog').innerHTML.includes('source has changed'));assert(!el('dialog').innerHTML.includes('<script>example'));run('let exported;download=(...a)=>exported=a;exportHandoverDraft(0)');assert.equal(run('exported[0]'),'DEMO-001-handover-draft.txt');assert(run("exported[1].includes('NOT SENT')"));assert(run("exported[1].includes('SOURCE CHANGED')"));assert(run("exported[1].includes('Reviewed example for DEMO-001')"));assert(!run("exported[1].includes('New draft')"));});
 test('task and handover dialogs render valid handlers and escape editable values',()=>{const {run,el}=setup();const inspect=id=>{for(const m of el(id).innerHTML.matchAll(/\son(?:click|input|change|submit)="([^"]*)"/g))assert.doesNotThrow(()=>new Function('event',decode(m[1])),m[1]);};inspect('main');callWithForm(run,'saveComposedTask',editor({description:'<img src=x>',context:'</textarea><script>x</script>'}));run('openTaskDetails(3)');inspect('dialog');assert(!el('dialog').innerHTML.includes('<img src=x>'));assert(!el('dialog').innerHTML.includes('<script>x'));run('openTaskComposer()');inspect('dialog');sign(run);run('openHandoverComposer()');inspect('dialog');callWithForm(run,'reviewHandoverDraft',handover());inspect('dialog');});
+
+test('back to edit preserves handover details without retaining a previous confirmation',()=>{
+ const {run,el}=setup();sign(run,'DEMO-002');
+ callWithForm(run,'reviewHandoverDraft',handover({patientId:'DEMO-002',recipient:'Admin team',message:'Keep <this> fictional message'}));
+ run('editPendingHandover()');
+ assert.equal(run('pendingHandover'),null);
+ assert.match(el('dialog').innerHTML,/value="DEMO-002" selected/);
+ assert.match(el('dialog').innerHTML,/value="Admin team" selected/);
+ assert.match(el('dialog').innerHTML,/Keep &lt;this&gt; fictional message/);
+ assert.equal(el('handover-message').focused,true);
+ run('saveHandoverDraft()');assert.equal(run('handoverDrafts().length'),0);
+});
+test('handover retry deduplicates exact drafts but preserves changed messages',()=>{
+ const {run,el}=setup();sign(run);
+ for(let i=0;i<2;i++){callWithForm(run,'reviewHandoverDraft',handover());el('handover-confirm').checked=true;run('saveHandoverDraft()');}
+ assert.equal(run('handoverDrafts().length'),1);assert.match(el('toast').textContent,/identical/);
+ callWithForm(run,'reviewHandoverDraft',handover({message:'A different next step'}));el('handover-confirm').checked=true;run('saveHandoverDraft()');
+ assert.equal(run('handoverDrafts().length'),2);
+});
+test('same-text revision change flags retained handover source and blocks pending approval',()=>{
+ const {run,el}=setup();sign(run);callWithForm(run,'reviewHandoverDraft',handover());el('handover-confirm').checked=true;run('saveHandoverDraft()');
+ callWithForm(run,'reviewHandoverDraft',handover());run('state.revision++;saveHandoverDraft()');
+ assert.equal(run('handoverDrafts().length'),1);
+ assert.equal(run('handoverSourceChanged(handoverDrafts()[0])'),true);
+ run('state.signed=false;editPendingHandover()');
+ assert.match(el('handover-review-error').textContent,/message remains here/);
+ assert.equal(run('pendingHandover.message'),'Please arrange the agreed follow-up.');
+});
+
+test('patient and team filters combine with status and search by record ID',()=>{
+ const {run}=setup();run("state.tasks.push({text:'Patient follow-up',owner:'Care team',done:false,patientId:'DEMO-002'});taskPatientFilter='DEMO-002'");
+ assert.equal(run('filteredTasks().length'),1);assert.equal(run('filteredTasks()[0].index'),3);
+ run("taskQuery='demo-002'");assert.equal(run('filteredTasks().length'),1);
+ run("taskPatientFilter='team'");assert.equal(run('filteredTasks().length'),0);
+ run("taskQuery=''");assert.equal(run('filteredTasks().length'),3);
+ run('resetTaskFilters()');assert.equal(run('filteredTasks().length'),4);
+});
+test('patient task shortcut clears stale filters and opening its record selects the correct patient',()=>{
+ const {run}=setup();run("state.tasks.push({text:'Patient follow-up',owner:'Care team',done:false,patientId:'DEMO-002'});taskQuery='missing';taskOwner='Dr Morgan';taskDueFilter='overdue';showPatientTasks('DEMO-002')");
+ assert.equal(run('filteredTasks().length'),1);assert.equal(run('taskPatientFilter'),'DEMO-002');
+ run('openTaskPatient(3)');assert.equal(run('state.selectedPatientId'),'DEMO-002');assert.equal(run('route'),'record');
+ run('openTaskPatient(0)');assert.equal(run('state.selectedPatientId'),'DEMO-002');
+});

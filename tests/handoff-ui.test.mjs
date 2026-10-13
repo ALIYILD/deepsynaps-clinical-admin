@@ -21,3 +21,21 @@ test('retained handoff reloads without becoming a receipt or activating any dest
 test('storage failure retains one recoverable draft and reports tab-only persistence',()=>{const {run,el}=setup();reviewed(run);draft(run);run("const workingStorageSetter=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')}");confirm(run,el);assert.equal(run('eprDrafts().length'),1);assert(el('toast').textContent.includes('Saving failed. Not sent.'));run('localStorage.setItem=workingStorageSetter;retrySave()');assert.equal(run('storageSaveFailed'),false);run('openEprDraftComposer()');draft(run);confirm(run,el);assert.equal(run('eprDrafts().length'),1);});
 test('text exports include exact retained version and explicit source-change, non-delivery and retention status',()=>{const {run,el}=setup();reviewed(run);draft(run);confirm(run,el);run("amendNote();updateNote('Current amendment');let exported;download=(...a)=>exported=a;exportEprDraft(0)");assert.equal(run('exported[0]'),'DEMO-001-epr-handoff-v1-draft.txt');for(const term of ['NOT SENT','NOT VERIFIED','SOURCE CHANGED','Acknowledgement: NONE','Retention action: NONE','Reviewed synthetic document for DEMO-001'])assert(run(`exported[1].includes(${JSON.stringify(term)})`));assert(!run("exported[1].includes('Current amendment')"));});
 test('draft inspection escapes editable values, exposes unavailable sending and emits valid handlers',()=>{const {run,el}=setup();const inspect=id=>{for(const m of el(id).innerHTML.matchAll(/\son(?:click|input|change|submit)="([^"]*)"/g))assert.doesNotThrow(()=>new Function('event',decode(m[1])),m[1]);};inspect('main');reviewed(run);inspect('dialog');run("state.note='<script>source</script>'");draft(run,'rio','<img src=x>');inspect('dialog');confirm(run,el);run('inspectEprDraft(0)');inspect('dialog');assert(!el('dialog').innerHTML.includes('<script>source'));assert(!el('dialog').innerHTML.includes('<img src=x>'));assert(el('dialog').innerHTML.includes('disabled aria-describedby="epr-send-reason"'));assert(el('dialog').innerHTML.includes('not a validated FHIR'));});
+
+test('back to edit retains EPR destination and escaped context and clears pending approval',()=>{
+ const {run,el}=setup();reviewed(run);draft(run,'emis','Retain <fictional> handoff note');
+ run('editPendingEprDraft()');
+ assert.equal(run('pendingEprDraft'),null);
+ assert.match(el('dialog').innerHTML,/value="emis" selected/);
+ assert.match(el('dialog').innerHTML,/Retain &lt;fictional&gt; handoff note/);
+ assert.equal(el('epr-context').focused,true);
+ run('confirmEprDraft()');assert.equal(run('eprDrafts().length'),0);
+});
+test('back to edit cannot transfer EPR text to a changed patient or unreviewed source',()=>{
+ const {run,el}=setup();reviewed(run);draft(run,'rio','Keep my handoff note');
+ run('state.signed=false;editPendingEprDraft()');
+ assert.equal(run('pendingEprDraft.context'),'Keep my handoff note');
+ assert.match(el('epr-review-error').textContent,/remains here/);
+ run("selectPatient('DEMO-002');editPendingEprDraft()");
+ assert.equal(run('pendingEprDraft'),null);assert.equal(run('eprDrafts().length'),0);
+});

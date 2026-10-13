@@ -134,3 +134,26 @@ Inspection and text export remain patient-scoped, identify non-delivery and unve
 Integration must replace indices with stable server IDs, provide verified patient/receiving-record mapping, authorisation, server document revisions, idempotent submission and acknowledgement contracts. Do not derive delivery success or trigger retention from a local draft, an export, a selected system or a generic HTTP success. This increment performs no network call or automated clinical decision.
 
 Reconciled the CLI main through `7cbcae09cd36f25da78d8366218dfae4b08da787`, preserving its complete-evidence fingerprinting and gateway/session-error fixes, bounded dependency waits and cancellation propagation. Added the handoff regression suite to L03 without regenerating CLI evidence snapshots. Combined Node suite: 158 passed, including 10 handoff tests covering gates, validation, confirmation, deduplication, source amendments, patient isolation, reload, storage recovery, export truthfulness, escaping and handlers. Existing browser suite now includes the handoff route and a prepare/amend/no-send scenario; this increment has not been browser-verified locally. Manual visual, keyboard and screen-reader assessment remains outstanding. Previous PR head `bed4836` had successful automated GitHub workflow runs before this increment.
+
+
+## UI readiness loop: navigation and keyboard access
+
+Reconciled CLI main through `abf4242a09533a919dba94e326702816baa5b972`. Its GitHub run `38406591510` passed both local loops and desktop/mobile browser workflows. Existing clinical state validation, storage recovery and source review protections are preserved.
+
+Fixed the mobile navigation drawer: closed navigation is inert and hidden, open navigation contains keyboard focus and makes background content inert, Escape/close/backdrop dismiss it with focus restoration, and choosing a route moves focus to the main content. Resizing to desktop releases the background. Menu state is exposed to assistive technology. Added a persistent accessible name to patient search and meaningful page titles. Navigation now creates browser history entries without duplicates, so Back/Forward can return to a patient workspace without discarding local edits.
+
+Added three local regression tests and three browser scenarios: mobile focus containment/dismissal, history with retained edits, and all 19 workspace routes in light/dark themes at existing desktop/mobile sizes. Browser checks run in GitHub CI; this managed environment has no supported browser controller. These checks do not replace manual visual, screen-reader, clinical usability or Trust acceptance work. Live integrations and assurance remain blocked under L04–L06. Use the fresh loop report and GitHub checks for the exact revision's test results.
+
+## UI readiness loop: handover correction and retry
+
+Team and EPR handover reviews now provide Back to edit. Patient/source selection, recipient/destination and entered message/context are retained as escaped values; returning clears the pending review and requires a new exact-source review with a fresh checkbox. An unreviewed source blocks the return without deleting the visible pending message. Switching patient clears the pending workflow. No draft is saved by returning to edit.
+
+Team handover drafts now deduplicate the exact patient, source text/version/revision, recipient and message combination. A different message remains a separate draft. Source revision changes flag retained handovers even if text is unchanged. Closing or cancelling task/handovers clears pending edit/review state. Review footers wrap at narrow sizes so correction and save controls remain reachable.
+
+Added five Node regressions and two desktop/mobile browser scenarios for correction, confirmation reset, retry, cancellation and footer width. Local loops are regenerated for this revision; browser verification runs in GitHub CI. Drafts remain local and unsent. This is UI verification, not clinical acceptance or live integration evidence.
+
+## UI readiness loop: patient-linked task navigation
+
+Added a Patient or team task filter, including a separate team-administration option, and search by explicit patient ID. The patient overview now opens that patient's tasks with stale task filters cleared. Task rows link to their patient record; task details display patient name/ID and make the fixed association explicit. A new team task resets the patient filter so it remains visible after saving. Existing records are never linked by matching names in their text.
+
+Reconciled CLI main `262957faef349c6a88e3b0341add60a2b3ef85da`, retaining the optional Node host, socket tests and browser configuration. The published Sites app remains static and does not mount that host or activate the gateway. Added local and desktop/mobile browser regression coverage for patient/task navigation and filter combinations.
