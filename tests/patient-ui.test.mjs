@@ -3,13 +3,27 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 function setup(saved=null){const nodes={};const el=id=>nodes[id]||(nodes[id]={innerHTML:'',textContent:'',value:'',checked:false,disabled:false,open:false,style:{},dataset:{},classList:{remove(){},toggle(){}},setAttribute(k,v){this[k]=v},focus(){this.focused=true},scrollIntoView(){},insertAdjacentHTML(_,s){this.innerHTML+=s},addEventListener(){},showModal(){this.open=true;el('form-final-confirm').checked=false},close(){this.open=false}});
- const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null,addEventListener(){}},localStorage:{getItem(){return saved},setItem(){}},window:{scrollTo(){},addEventListener(){}},location:{hash:'#record'},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
+ const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null,addEventListener(){}},localStorage:{getItem(){return saved},setItem(key,value){saved=value}},window:{scrollTo(){},addEventListener(){}},location:{hash:'#record'},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
  for(const file of ['data.js','registry-evidence.js','product-data.js','app.js','product.js','workflow.js','loop-report.js','loops.js','product-ui.js','consultation-ui.js','forms-ui.js','tasks-ui.js','patient-ui.js'])vm.runInContext(fs.readFileSync(new URL('../dist/'+file,import.meta.url),'utf8'),ctx);
  const run=s=>vm.runInContext(s,ctx);return {run,el,prepare(){run('loadWorkspaceForm();reviewWorkspaceFormField(0,true);reviewWorkspaceFormField(1,true);reviewWorkspaceFormField(2,true)')},approve(){run('reviewWorkspaceForm()');el('form-final-confirm').checked=true;run('confirmWorkspaceFormApproval()')}};
 }
 const decode=s=>s.replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const taskForm=description=>({description:{value:description},owner:{value:'Care team'},dueDate:{value:'2026-10-14'},priority:{value:'routine'},context:{value:'Clarify the appointment preference.'}});
 function checkAll(run){run("setPreparationCheck('sources',true);setPreparationCheck('gaps',true);setPreparationCheck('agenda',true)");}
+test('agenda status stays unsaved across renders and clears after successful retry',()=>{
+ const {run,el}=setup();run("const originalWrite=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')};updatePreparationNote('Fictional agenda')");
+ assert.match(el('prep-note-status').textContent,/Not saved/);
+ run('render()');assert.match(el('main').innerHTML,/Not saved · This tab only/);
+ run('localStorage.setItem=originalWrite;retrySave()');
+ assert.match(el('prep-note-status').textContent,/Kept in this browser/);
+ assert.equal(run("JSON.parse(localStorage.getItem('clinical-admin-demo-v1')).patientPreparation['DEMO-001'].note"),'Fictional agenda');
+});
+test('patient task save failure does not announce persistence',()=>{
+ const {run,el}=setup();run("localStorage.setItem=()=>{throw Error('denied')};openPatientTaskComposer()");
+ run(`savePatientTask(${JSON.stringify(taskForm('Confirm fictional appointment'))})`);
+ assert.match(el('toast').textContent,/Patient task remains in this tab only. Saving failed/);
+ assert.equal(run('state.tasks.at(-1).patientId'),'DEMO-001');
+});
 test('patient overview shows missing information, example appointment and linked-work status',()=>{const {run,el}=setup();const html=el('main').innerHTML;assert(html.includes('13 October 2026'));assert(html.includes('Medication and allergies not recorded'));assert(html.includes('0 open tasks'));assert(html.includes('No patient-linked tasks yet'));assert.equal((html.match(/aria-label="Active patient"/g)||[]).length,1);assert.equal(run('patientNextStep().target'),'C');});
 test('preparation checks and agenda persist independently for each patient without setting consent',()=>{const {run}=setup();checkAll(run);run("updatePreparationNote('Ask about appointment preferences.')");assert.equal(run('preparationStatus().complete'),true);assert.equal(run('state.consent'),false);run("selectPatient('DEMO-002')");assert.equal(run('preparationStatus().count'),0);assert.equal(run('patientPreparation().note'),'');checkAll(run);run("updatePreparationNote('Discuss the question list.');selectPatient('DEMO-001')");assert.equal(run('patientPreparation().note'),'Ask about appointment preferences.');const restored=setup(run('JSON.stringify(state)'));assert.equal(restored.run('preparationStatus().count'),3);assert.equal(restored.run('patientPreparation().note'),'Ask about appointment preferences.');});
 test('document and form changes invalidate preparation; rechecking starts a fresh checklist',()=>{const {run}=setup();checkAll(run);run("updateNote('A changed draft')");assert.equal(run('preparationStatus().stale'),true);assert.equal(run('preparationStatus().count'),0);run("setPreparationCheck('sources',true)");assert.equal(run('preparationStatus().count'),1);assert.equal(run('preparationStatus().stale'),false);checkAll(run);run('loadWorkspaceForm()');assert.equal(run('preparationStatus().stale'),true);});

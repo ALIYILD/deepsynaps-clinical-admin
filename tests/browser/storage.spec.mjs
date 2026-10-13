@@ -1,5 +1,56 @@
 import {test,expect} from '@playwright/test';
 
+async function blockStorage(page){
+ await page.evaluate(()=>{
+  const original=Storage.prototype.setItem;
+  window.restoreDemoStorage=()=>{Storage.prototype.setItem=original;};
+  Storage.prototype.setItem=function(key,value){
+   if(key==='clinical-admin-demo-v1')throw new DOMException('Simulated quota failure','QuotaExceededError');
+   return original.call(this,key,value);
+  };
+ });
+}
+
+test('team task and handover failures recover without duplicate drafts',async({page})=>{
+ await page.goto('/#N');
+ await page.getByRole('button',{name:'Load example',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
+ await page.locator('#review-confirm').check();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
+ await page.goto('/#T');await blockStorage(page);
+ await page.getByRole('button',{name:'Add task',exact:true}).click();
+ await page.getByLabel('Task description', {exact:true}).fill('Fictional task held during outage');
+ await page.getByRole('button',{name:'Save task',exact:true}).click();
+ await expect(page.locator('#toast')).toContainText('Saving failed');
+ await page.getByRole('button',{name:'Prepare handover',exact:true}).click();
+ await page.getByLabel('Handover message', {exact:true}).fill('Fictional handover held during outage');
+ await page.getByRole('button',{name:'Review draft',exact:true}).click();
+ await page.locator('#handover-confirm').check();
+ await page.getByRole('button',{name:'Save draft',exact:true}).click();
+ await expect(page.locator('#toast')).toContainText('Saving failed. Not sent');
+ await page.evaluate(()=>window.restoreDemoStorage());
+ await page.getByRole('button',{name:'Retry saving',exact:true}).click();
+ await page.reload();
+ const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('clinical-admin-demo-v1')));
+ expect(stored.tasks.filter(t=>t.text==='Fictional task held during outage')).toHaveLength(1);
+ expect(stored.handoverDrafts).toHaveLength(1);
+ expect(stored.handoverDrafts[0]).toMatchObject({message:'Fictional handover held during outage',deliveryStatus:'not-sent'});
+ await expect(page.locator('#storage-status')).toBeHidden();
+});
+
+test('patient agenda reports failed writes and refreshes after recovery',async({page})=>{
+ await page.goto('/#record');await blockStorage(page);
+ await page.locator('#preparation-note').fill('Fictional appointment agenda');
+ await expect(page.locator('#prep-note-status')).toContainText('Not saved');
+ await page.goto('/#N');await page.goto('/#record');
+ await expect(page.locator('#prep-note-status')).toContainText('Not saved');
+ await page.evaluate(()=>window.restoreDemoStorage());
+ await page.getByRole('button',{name:'Retry saving',exact:true}).click();
+ await expect(page.locator('#prep-note-status')).toContainText('Kept in this browser');
+ await page.reload();
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional appointment agenda');
+});
+
 for(const original of ['{broken-json','{"tasks":{},"settings":{}}']){
  test(`unreadable saved workspace is preserved until confirmed reset: ${original}`,async({page})=>{
   await page.goto('/');

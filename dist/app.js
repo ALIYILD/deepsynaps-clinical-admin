@@ -37,6 +37,7 @@ try{
 let route='home',filterStatus='all',filterCat='all',search='',categoryTab='workflow',recording=false,seconds=0,recordTimer,toastTimer,tourIndex=0;
 let storageSaveFailed=storageLoadFailed,storageConflict=false;
 function showStorageStatus(){
+ if(typeof refreshPreparationSaveStatus==='function')refreshPreparationSaveStatus();
  const banner=document.getElementById('storage-status');if(!banner)return;
  banner.hidden=!storageSaveFailed;
  document.getElementById('storage-message').textContent=storageConflict

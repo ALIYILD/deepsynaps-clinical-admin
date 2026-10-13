@@ -2,151 +2,151 @@ TAP version 13
 # Subtest: unconfigured sessions cannot be bypassed by request headers
 ok 1 - unconfigured sessions cannot be bypassed by request headers
   ---
-  duration_ms: 65.334832
+  duration_ms: 68.482614
   type: 'test'
   ...
 # Subtest: missing, expired and malformed sessions denied
 ok 2 - missing, expired and malformed sessions denied
   ---
-  duration_ms: 1.507866
+  duration_ms: 1.519264
   type: 'test'
   ...
 # Subtest: upstream identity is taken from verified session
 ok 3 - upstream identity is taken from verified session
   ---
-  duration_ms: 1.031722
+  duration_ms: 0.962598
   type: 'test'
   ...
 # Subtest: missing permission and absent upstream session denied
 ok 4 - missing permission and absent upstream session denied
   ---
-  duration_ms: 0.795462
+  duration_ms: 0.666789
   type: 'test'
   ...
 # Subtest: patient access cannot be inherited from a broad partner key
 ok 5 - patient access cannot be inherited from a broad partner key
   ---
-  duration_ms: 1.623223
+  duration_ms: 1.727158
   type: 'test'
   ...
 # Subtest: missing patient authoriser and mismatched tenant binding fail closed
 ok 6 - missing patient authoriser and mismatched tenant binding fail closed
   ---
-  duration_ms: 0.503966
+  duration_ms: 0.876801
   type: 'test'
   ...
 # Subtest: clinic-wide handovers require explicit permission
 ok 7 - clinic-wide handovers require explicit permission
   ---
-  duration_ms: 0.337802
+  duration_ms: 0.601291
   type: 'test'
   ...
 # Subtest: writes, unknown routes and scope-injecting query parameters denied
 ok 8 - writes, unknown routes and scope-injecting query parameters denied
   ---
-  duration_ms: 0.948048
+  duration_ms: 0.976814
   type: 'test'
   ...
 # Subtest: approved patient read succeeds through bound reader
 ok 9 - approved patient read succeeds through bound reader
   ---
-  duration_ms: 0.449032
+  duration_ms: 0.436923
   type: 'test'
   ...
 # Subtest: upstream denials preserved; unexpected errors never expose secrets
 ok 10 - upstream denials preserved; unexpected errors never expose secrets
   ---
-  duration_ms: 2.103807
+  duration_ms: 2.122383
   type: 'test'
   ...
 # Subtest: missing configuration performs no network call
 ok 11 - missing configuration performs no network call
   ---
-  duration_ms: 3.9522
+  duration_ms: 3.776551
   type: 'test'
   ...
 # Subtest: unapproved origins, credentials and non-HTTPS origins rejected
 ok 12 - unapproved origins, credentials and non-HTTPS origins rejected
   ---
-  duration_ms: 0.447992
+  duration_ms: 0.431884
   type: 'test'
   ...
 # Subtest: live keys rejected by synthetic-only adapter
 ok 13 - live keys rejected by synthetic-only adapter
   ---
-  duration_ms: 0.236307
+  duration_ms: 0.2384
   type: 'test'
   ...
 # Subtest: metadata uses exact read endpoint and server key
 ok 14 - metadata uses exact read endpoint and server key
   ---
-  duration_ms: 66.453427
+  duration_ms: 70.625917
   type: 'test'
   ...
 # Subtest: workspace requires per-user session, not partner key
 ok 15 - workspace requires per-user session, not partner key
   ---
-  duration_ms: 0.798075
+  duration_ms: 0.773132
   type: 'test'
   ...
 # Subtest: traversal and unexpected operations rejected before network
 ok 16 - traversal and unexpected operations rejected before network
   ---
-  duration_ms: 0.756804
+  duration_ms: 0.719897
   type: 'test'
   ...
 # Subtest: patient document route matches inspected contract
 ok 17 - patient document route matches inspected contract
   ---
-  duration_ms: 0.555349
+  duration_ms: 0.541336
   type: 'test'
   ...
 # Subtest: upstream denials preserved without PHI body or fallback
 ok 18 - upstream denials preserved without PHI body or fallback
   ---
-  duration_ms: 1.352444
+  duration_ms: 1.621748
   type: 'test'
   ...
 # Subtest: HTML login and invalid JSON responses rejected
 ok 19 - HTML login and invalid JSON responses rejected
   ---
-  duration_ms: 1.387046
+  duration_ms: 1.464968
   type: 'test'
   ...
 # Subtest: network errors are sanitised and timeout aborts
 ok 20 - network errors are sanitised and timeout aborts
   ---
-  duration_ms: 7.503101
+  duration_ms: 8.721519
   type: 'test'
   ...
 # Subtest: timeout configuration is finite and bounded
 ok 21 - timeout configuration is finite and bounded
   ---
-  duration_ms: 0.534082
+  duration_ms: 0.778539
   type: 'test'
   ...
 # Subtest: JSON media types must match exactly
 ok 22 - JSON media types must match exactly
   ---
-  duration_ms: 1.490326
+  duration_ms: 1.64225
   type: 'test'
   ...
 # Subtest: oversized chunked responses are cancelled before the entire body is buffered
 ok 23 - oversized chunked responses are cancelled before the entire body is buffered
   ---
-  duration_ms: 1.795006
+  duration_ms: 2.222938
   type: 'test'
   ...
 # Subtest: streamed JSON preserves multibyte characters split across chunks
 ok 24 - streamed JSON preserves multibyte characters split across chunks
   ---
-  duration_ms: 0.789577
+  duration_ms: 1.019438
   type: 'test'
   ...
 # Subtest: timeout also covers a stalled response body
 ok 25 - timeout also covers a stalled response body
   ---
-  duration_ms: 5.906374
+  duration_ms: 6.237566
   type: 'test'
   ...
 1..25
@@ -157,4 +157,4 @@ ok 25 - timeout also covers a stalled response body
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 307.382768
+# duration_ms 318.037945

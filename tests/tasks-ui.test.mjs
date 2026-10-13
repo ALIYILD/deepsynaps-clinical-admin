@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-function setup(){const nodes={};const el=id=>nodes[id]||(nodes[id]={innerHTML:'',textContent:'',value:'',checked:false,disabled:false,open:false,style:{},dataset:{},classList:{remove(){},toggle(){}},setAttribute(k,v){this[k]=v},focus(){this.focused=true},scrollIntoView(){},insertAdjacentHTML(_,s){this.innerHTML+=s},addEventListener(){},showModal(){this.open=true;el('form-final-confirm').checked=false},close(){this.open=false}});
- const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null,addEventListener(){}},localStorage:{getItem(){return null},setItem(){}},window:{scrollTo(){},addEventListener(){}},location:{hash:'#T'},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
+function setup(){const nodes={};let stored=null;const el=id=>nodes[id]||(nodes[id]={innerHTML:'',textContent:'',value:'',checked:false,disabled:false,open:false,style:{},dataset:{},classList:{remove(){},toggle(){}},setAttribute(k,v){this[k]=v},focus(){this.focused=true},scrollIntoView(){},insertAdjacentHTML(_,s){this.innerHTML+=s},addEventListener(){},showModal(){this.open=true;el('form-final-confirm').checked=false},close(){this.open=false}});
+ const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null,addEventListener(){}},localStorage:{getItem(){return stored},setItem(key,value){stored=value}},window:{scrollTo(){},addEventListener(){}},location:{hash:'#T'},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
  for(const file of ['data.js','registry-evidence.js','product-data.js','app.js','product.js','workflow.js','loop-report.js','loops.js','product-ui.js','consultation-ui.js','forms-ui.js','tasks-ui.js'])vm.runInContext(fs.readFileSync(new URL('../dist/'+file,import.meta.url),'utf8'),ctx);
  const run=s=>vm.runInContext(s,ctx);return {run,el,prepare(){run('loadWorkspaceForm();reviewWorkspaceFormField(0,true);reviewWorkspaceFormField(1,true);reviewWorkspaceFormField(2,true)')},approve(){run('reviewWorkspaceForm()');el('form-final-confirm').checked=true;run('confirmWorkspaceFormApproval()')}};
 }
@@ -12,6 +12,26 @@ const editor=(overrides={})=>Object.fromEntries(Object.entries({description:'Arr
 const handover=(overrides={})=>Object.fromEntries(Object.entries({patientId:'DEMO-001',recipient:'Care team',message:'Please arrange the agreed follow-up.',...overrides}).map(([k,v])=>[k,{value:v}]));
 function callWithForm(run,fn,form){run(`${fn}(${JSON.stringify(form)})`);}
 function sign(run,id='DEMO-001'){run(`selectPatient('${id}');state.note='Reviewed example for ${id}';state.signed=true;state.revision=1`);}
+test('task creation and editing distinguish unsaved changes from persisted ones',()=>{
+ const {run,el}=setup();run("const originalWrite=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')}");
+ callWithForm(run,'saveComposedTask',editor());
+ assert.match(el('toast').textContent,/Saving failed/);
+ run('openTaskDetails(3)');callWithForm(run,'saveTaskDetails',editor({description:'Revised task'}));
+ assert.match(el('toast').textContent,/Saving failed/);
+ run('localStorage.setItem=originalWrite;retrySave()');
+ assert.equal(run("JSON.parse(localStorage.getItem('clinical-admin-demo-v1')).tasks[3].text"),'Revised task');
+ run('openTaskDetails(3)');callWithForm(run,'saveTaskDetails',editor());
+ assert.equal(el('toast').textContent,'Task details saved.');
+});
+test('handover failure keeps a recoverable unsent draft and retry does not duplicate it',()=>{
+ const {run,el}=setup();sign(run);run("const originalWrite=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')}");
+ callWithForm(run,'reviewHandoverDraft',handover());el('handover-confirm').checked=true;run('saveHandoverDraft();saveHandoverDraft()');
+ assert.match(el('toast').textContent,/Saving failed. Not sent/);
+ assert.equal(run('handoverDrafts().length'),1);
+ run('localStorage.setItem=originalWrite;retrySave()');
+ assert.equal(run("JSON.parse(localStorage.getItem('clinical-admin-demo-v1')).handoverDrafts.length"),1);
+ assert.equal(run('handoverDrafts()[0].deliveryStatus'),'not-sent');
+});
 test('tasks page exposes dates, ownership, priority and truthful delivery state',()=>{const {el,run}=setup();assert(el('main').innerHTML.includes('Administrative priority'));assert(el('main').innerHTML.includes('No due date'));assert(el('main').innerHTML.includes('No external delivery'));run("taskView='handovers';render()");assert(el('main').innerHTML.includes('Delivery not connected'));assert(el('main').innerHTML.includes('No handover drafts yet'));});
 test('due dates validate real calendar days and overdue uses UK calendar boundaries',()=>{const {run}=setup();run("taskToday=()=> '2026-10-13'");for(const date of ['2026-02-29','2026-04-31','invalid','1999-12-31','2101-01-01'])assert.equal(run(`validTaskDate('${date}')`),false,date);for(const date of ['','2028-02-29','2026-10-13'])assert.equal(run(`validTaskDate('${date}')`),true,date);assert.equal(run("taskIsOverdue({dueDate:'2026-10-12',done:false})"),true);assert.equal(run("taskIsOverdue({dueDate:'2026-10-12',done:true})"),false);assert.equal(run("taskIsOverdue({dueDate:'2026-10-13',done:false})"),false);});
 test('combined task filters retain original task indices and search safely',()=>{const {run,el}=setup();run("taskToday=()=> '2026-10-13';state.tasks[1].dueDate='2026-10-12';state.tasks[1].priority='time-sensitive';taskDueFilter='overdue';taskPriorityFilter='time-sensitive';taskOwner='Care team'");assert.equal(run('filteredTasks().length'),1);assert.equal(run('filteredTasks()[0].index'),1);run("updateTaskSearch('<script>')");assert(el('task-results').innerHTML.includes('No tasks match'));assert(!el('task-results').innerHTML.includes('<script>'));run('resetTaskFilters()');assert.equal(run('filteredTasks().length'),3);});
