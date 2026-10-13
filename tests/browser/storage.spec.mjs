@@ -14,9 +14,9 @@ async function blockStorage(page){
 test('team task and handover failures recover without duplicate drafts',async({page})=>{
  await page.goto('/#N');
  await page.getByRole('button',{name:'Load example',exact:true}).click();
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
  await page.locator('#review-confirm').check();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await page.goto('/#T');await blockStorage(page);
  await page.getByRole('button',{name:'Add task',exact:true}).click();
  await page.getByLabel('Task description', {exact:true}).fill('Fictional task held during outage');
@@ -93,13 +93,13 @@ for(const failure of ['QuotaExceededError','SecurityError']){
   },failure);
   await page.getByRole('button',{name:'Load example',exact:true}).click();
   await page.locator('#note-text').fill('Fictional reviewed note retained during a storage failure');
-  await page.getByRole('button',{name:'Save draft version',exact:true}).click();
+  await page.getByRole('button',{name:'Save draft copy',exact:true}).click();
   await expect(page.locator('#toast')).toContainText('Saving failed');
   await expect(page.locator('#storage-status')).toBeVisible();
   await expect(page.locator('#storage-status')).toContainText('Changes are not saved');
-  await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+  await page.getByRole('button',{name:'Review document',exact:true}).click();
   await page.locator('#review-confirm').check();
-  await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+  await page.getByRole('button',{name:'Record local review',exact:true}).click();
   await expect(page.locator('#storage-status')).toBeVisible();
   await page.getByRole('button',{name:'Retry saving',exact:true}).click();
   await expect(page.locator('#storage-status')).toBeVisible();
@@ -117,12 +117,12 @@ test('stale tabs preserve the newer signed note and can export then reload',asyn
  await page.getByRole('button',{name:'Load example',exact:true}).click();
  const stale=await context.newPage();await stale.goto('/#N');
  await page.locator('#note-text').fill('Newer signed fictional note from the first tab');
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
  await page.locator('#review-confirm').check();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(stale.locator('#storage-status')).toContainText('Another tab');
  await stale.locator('#note-text').fill('Unsaved stale-tab edit for recovery');
- await stale.getByRole('button',{name:'Save draft version',exact:true}).click();
+ await stale.getByRole('button',{name:'Save draft copy',exact:true}).click();
  await expect(stale.getByRole('button',{name:'Retry saving',exact:true})).toBeHidden();
  const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('clinical-admin-demo-v1')));
  expect(stored.patientRecords['DEMO-001']).toMatchObject({note:'Newer signed fictional note from the first tab',signed:true});
