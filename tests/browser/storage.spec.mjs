@@ -142,3 +142,26 @@ test('stale tabs preserve the newer signed note and can export then reload',asyn
  await expect(stale.locator('#note-text')).toHaveAttribute('readonly','');
  await expect(stale.locator('#storage-status')).toBeHidden();
 });
+
+test('invalid nested UI storage opens a recoverable preview without renderer errors',async({page})=>{
+ const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto('/#record');
+ await page.locator('#preparation-note').fill('Preserved fictional agenda');
+ const original=await page.evaluate(()=>JSON.parse(localStorage.getItem('clinical-admin-demo-v1')));
+ for(const extra of [
+  {consultationUi:{'DEMO-001':null}},
+  {patientPreparation:{'DEMO-001':{checks:null,note:'Agenda',fingerprint:null}}},
+  {formUi:{'DEMO-001':{version:1,history:[{version:1,status:'Approved locally',snapshot:{patientId:'DEMO-002',fields:[]}}]}}},
+  {handoverDrafts:[null]}
+ ]){
+  const raw=JSON.stringify({...original,...extra});
+  await page.evaluate(value=>localStorage.setItem('clinical-admin-demo-v1',value),raw);
+  await page.reload();
+  await expect(page.locator('#storage-message')).toContainText('could not be loaded');
+  await expect(page.locator('#storage-original')).toBeVisible();
+  for(const route of ['C','F','T','record'])await page.goto('/#'+route);
+  await page.locator('#preparation-note').fill('Temporary preview edit');
+  expect(await page.evaluate(()=>localStorage.getItem('clinical-admin-demo-v1'))).toBe(raw);
+ }
+ expect(errors).toEqual([]);
+});

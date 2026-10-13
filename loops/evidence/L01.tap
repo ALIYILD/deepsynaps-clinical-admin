@@ -2,163 +2,163 @@ TAP version 13
 # Subtest: product routes and dialogs render with valid interaction handlers
 ok 1 - product routes and dialogs render with valid interaction handlers
   ---
-  duration_ms: 77.120701
+  duration_ms: 300.180398
   type: 'test'
   ...
 # Subtest: review queue and home counts aggregate separate patient notes and forms
 ok 2 - review queue and home counts aggregate separate patient notes and forms
   ---
-  duration_ms: 12.92027
+  duration_ms: 28.98948
   type: 'test'
   ...
 # Subtest: patient search works by name or ID, handles empty results and never renders query as markup
 ok 3 - patient search works by name or ID, handles empty results and never renders query as markup
   ---
-  duration_ms: 6.743564
+  duration_ms: 15.006754
   type: 'test'
   ...
 # Subtest: document filters remain distinct as reviews and amendments occur
 ok 4 - document filters remain distinct as reviews and amendments occur
   ---
-  duration_ms: 8.675026
+  duration_ms: 27.74675
   type: 'test'
   ...
 # Subtest: changing active patient stays in the selected clinical workspace
 ok 5 - changing active patient stays in the selected clinical workspace
   ---
-  duration_ms: 7.920515
+  duration_ms: 22.870229
   type: 'test'
   ...
 # Subtest: product editor preserves exact-text review and signed-version protections
 ok 6 - product editor preserves exact-text review and signed-version protections
   ---
-  duration_ms: 10.278287
+  duration_ms: 23.825006
   type: 'test'
   ...
 # Subtest: task status and assignment filters operate on stable source indices
 ok 7 - task status and assignment filters operate on stable source indices
   ---
-  duration_ms: 8.233125
+  duration_ms: 24.646514
   type: 'test'
   ...
 # Subtest: task composer validates inputs and renders user text safely
 ok 8 - task composer validates inputs and renders user text safely
   ---
-  duration_ms: 6.205413
+  duration_ms: 24.122563
   type: 'test'
   ...
 # Subtest: workspace search exposes patient destinations and has keyboard entry
 ok 9 - workspace search exposes patient destinations and has keyboard entry
   ---
-  duration_ms: 6.074412
+  duration_ms: 17.923576
   type: 'test'
   ...
 # Subtest: product navigation moves engineering controls to settings while retaining honest environment state
 ok 10 - product navigation moves engineering controls to settings while retaining honest environment state
   ---
-  duration_ms: 8.235438
+  duration_ms: 13.024713
   type: 'test'
   ...
 # Subtest: repository snapshot covers every ID and preserves exact status totals
 ok 11 - repository snapshot covers every ID and preserves exact status totals
   ---
-  duration_ms: 21.442003
+  duration_ms: 91.645834
   type: 'test'
   ...
 # Subtest: all standard and new routes render and inline handlers parse
 ok 12 - all standard and new routes render and inline handlers parse
   ---
-  duration_ms: 24.051541
+  duration_ms: 100.792834
   type: 'test'
   ...
 # Subtest: all function detail dialogs include source-specific evidence
 ok 13 - all function detail dialogs include source-specific evidence
   ---
-  duration_ms: 16.418549
+  duration_ms: 49.254297
   type: 'test'
   ...
 # Subtest: catalogue filtering remains correct
 ok 14 - catalogue filtering remains correct
   ---
-  duration_ms: 9.246573
+  duration_ms: 12.28928
   type: 'test'
   ...
 # Subtest: consent, speech, AI and review gates survive product changes
 ok 15 - consent, speech, AI and review gates survive product changes
   ---
-  duration_ms: 39.800041
+  duration_ms: 111.061881
   type: 'test'
   ...
 # Subtest: organisation configuration changes proposal only and escapes values
 ok 16 - organisation configuration changes proposal only and escapes values
   ---
-  duration_ms: 7.418597
+  duration_ms: 49.408958
   type: 'test'
   ...
 # Subtest: extension request is saved locally without activation or notification
 ok 17 - extension request is saved locally without activation or notification
   ---
-  duration_ms: 9.111612
+  duration_ms: 23.140292
   type: 'test'
   ...
 # Subtest: 30 work packages and notes never approve a gate
 ok 18 - 30 work packages and notes never approve a gate
   ---
-  duration_ms: 6.202689
+  duration_ms: 11.873099
   type: 'test'
   ...
 # Subtest: theme and reset migrate safely; connection never reports live success
 ok 19 - theme and reset migrate safely; connection never reports live success
   ---
-  duration_ms: 5.897875
+  duration_ms: 31.456279
   type: 'test'
   ...
 # Subtest: HTML loads scripts in dependency order and plan/logo exist
 ok 20 - HTML loads scripts in dependency order and plan/logo exist
   ---
-  duration_ms: 0.764577
+  duration_ms: 3.217518
   type: 'test'
   ...
 # Subtest: failed evidence is prominent even when individual tests passed
 ok 21 - failed evidence is prominent even when individual tests passed
   ---
-  duration_ms: 6.400284
+  duration_ms: 17.257571
   type: 'test'
   ...
 # Subtest: failed loop stops later tests and removes their stale evidence
 ok 22 - failed loop stops later tests and removes their stale evidence
   ---
-  duration_ms: 1197.282083
+  duration_ms: 4262.507369
   type: 'test'
   ...
 # Subtest: syntax failure invalidates all local evidence while retaining blocked records
 ok 23 - syntax failure invalidates all local evidence while retaining blocked records
   ---
-  duration_ms: 772.086015
+  duration_ms: 3060.200064
   type: 'test'
   ...
 # Subtest: successful local verification does not report blocked connected loops as passed
 ok 24 - successful local verification does not report blocked connected loops as passed
   ---
-  duration_ms: 1481.483707
+  duration_ms: 5501.329195
   type: 'test'
   ...
 # Subtest: source changes during verification invalidate the pass and stop later loops
 ok 25 - source changes during verification invalidate the pass and stop later loops
   ---
-  duration_ms: 1112.985576
+  duration_ms: 3550.995701
   type: 'test'
   ...
 # Subtest: unassigned Node suites fail verification instead of silently being skipped
 ok 26 - unassigned Node suites fail verification instead of silently being skipped
   ---
-  duration_ms: 938.684653
+  duration_ms: 2744.132186
   type: 'test'
   ...
 # Subtest: manifest covers nested browser and deployment inputs and excludes generated reports
 ok 27 - manifest covers nested browser and deployment inputs and excludes generated reports
   ---
-  duration_ms: 37.673728
+  duration_ms: 144.506856
   type: 'test'
   ...
 1..27
@@ -169,4 +169,4 @@ ok 27 - manifest covers nested browser and deployment inputs and excludes genera
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 5801.594354
+# duration_ms 20064.709797

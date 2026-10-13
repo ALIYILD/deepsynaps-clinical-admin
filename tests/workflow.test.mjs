@@ -102,3 +102,42 @@ test('failed replacement keeps damaged original data and recovery controls',()=>
  assert.equal(run('storageLoadFailed'),false);
  assert.equal(el('storage-status').hidden,true);
 });
+
+test('restored UI snapshots remain patient-bound and preserve historical source versions',()=>{
+ const base=JSON.parse(setup().run('JSON.stringify(state)'));
+ const id='DEMO-002';
+ const snapshot={patientId:id,at:'2026-10-13T09:00:00Z',status:'DEMO_APPROVED_NOT_SUBMITTED',fields:[{label:'Preference',value:'Morning',original:'Morning',source:'Fictional source',reviewed:true}]};
+ base.patientRecords[id].version=3;
+ base.patientRecords[id].formApproval=snapshot;
+ base.patientRecords[id].history=[{version:1,text:'Historical note',status:'Signed in demo',patientId:id}];
+ base.consultationUi={[id]:{identityChecked:true,elapsed:12,reviewed:true,paused:false}};
+ base.patientPreparation={[id]:{checks:{sources:true},note:'Fictional agenda',fingerprint:null}};
+ base.formUi={[id]:{version:2,history:[{version:1,status:'Approved locally',snapshot}]}};
+ base.handoverDrafts=[{patientId:id,patientName:'Alex Taylor',sourceVersion:1,sourceRevision:0,sourceNote:'Historical note',recipient:'Care team',message:'Fictional handover',createdAt:'2026-10-13T09:00:00Z',deliveryStatus:'not-sent'}];
+ const restored=setup(base);
+ assert.equal(restored.run('storageLoadFailed'),false);
+ assert.equal(restored.run('state.handoverDrafts[0].sourceVersion'),1);
+ assert.equal(restored.run("state.formUi['DEMO-002'].history[0].snapshot.patientId"),id);
+ const mutations=[
+  v=>v.consultationUi[id]=null,
+  v=>v.consultationUi[id].elapsed=-1,
+  v=>v.patientPreparation[id].checks=null,
+  v=>v.patientPreparation[id].note=[],
+  v=>v.formUi[id].history={},
+  v=>v.formUi[id].history[0].snapshot.patientId='DEMO-001',
+  v=>v.patientRecords[id].formApproval.patientId='DEMO-001',
+  v=>v.patientRecords[id].history[0].patientId='DEMO-001',
+  v=>v.handoverDrafts[0]=null,
+  v=>v.handoverDrafts[0].patientId='UNKNOWN',
+  v=>v.handoverDrafts[0].sourceRevision='0',
+  v=>v.formUi.UNKNOWN={version:1,history:[]}
+ ];
+ for(const mutate of mutations){
+  const invalid=structuredClone(base);mutate(invalid);
+  const raw=JSON.stringify(invalid),{run,storage,el}=setup(null,raw);
+  assert.equal(run('storageLoadFailed'),true);
+  assert.equal(el('storage-original').hidden,false);
+  assert.equal(run('save()'),false);
+  assert.equal(storage['clinical-admin-demo-v1'],raw);
+ }
+});

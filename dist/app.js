@@ -9,17 +9,24 @@ function validSavedWorkspace(value){
  const strings=(v,keys)=>keys.every(k=>v[k]===undefined||typeof v[k]==='string');
  const booleans=(v,keys)=>keys.every(k=>v[k]===undefined||typeof v[k]==='boolean');
  const fields=v=>Array.isArray(v)&&v.every(f=>object(f)&&['label','value','original','source'].every(k=>typeof f[k]==='string')&&typeof f.reviewed==='boolean');
- const record=v=>object(v)&&strings(v,['note','noteTemplate'])&&booleans(v,['consent','captured','signed','formFilled','formReviewed'])
+ const patientIds=['DEMO-001','DEMO-002','DEMO-003'];
+ const patientMap=(v,check)=>object(v)&&Object.entries(v).every(([id,item])=>patientIds.includes(id)&&object(item)&&check(item,id));
+ const snapshot=(v,id)=>object(v)&&v.patientId===id&&fields(v.fields)&&strings(v,['at','status']);
+ const record=(v,id)=>object(v)&&strings(v,['note','noteTemplate'])&&booleans(v,['consent','captured','signed','formFilled','formReviewed'])
   &&['version','revision'].every(k=>v[k]===undefined||(Number.isInteger(v[k])&&v[k]>=(k==='version'?1:0)))
-  &&(v.history===undefined||(Array.isArray(v.history)&&v.history.every(h=>object(h)&&typeof h.text==='string'&&typeof h.status==='string'&&Number.isInteger(h.version))))
+  &&(v.history===undefined||(Array.isArray(v.history)&&v.history.every(h=>object(h)&&typeof h.text==='string'&&typeof h.status==='string'&&Number.isInteger(h.version)&&h.version>0&&(h.patientId===undefined||h.patientId===id))))
   &&(v.formData==null||fields(v.formData))
-  &&(v.formApproval==null||(object(v.formApproval)&&typeof v.formApproval.patientId==='string'&&fields(v.formApproval.fields)));
- if(!record(value)||!object(value.settings)||!['ai','speech','sms'].every(k=>typeof value.settings[k]==='boolean'))return false;
+  &&(v.formApproval==null||snapshot(v.formApproval,id));
+ if(!record(value,'DEMO-001')||!object(value.settings)||!['ai','speech','sms'].every(k=>typeof value.settings[k]==='boolean'))return false;
  if(!Array.isArray(value.tasks)||!value.tasks.every(t=>object(t)&&typeof t.text==='string'&&typeof t.owner==='string'&&typeof t.done==='boolean'))return false;
  if(!Array.isArray(value.audit)||!value.audit.every(a=>object(a)&&typeof a.time==='string'&&typeof a.text==='string'))return false;
  if(value.schemaVersion!==undefined&&value.schemaVersion!==1)return false;
- if(value.patientRecords!==undefined&&(!object(value.patientRecords)||!Object.entries(value.patientRecords).every(([id,r])=>['DEMO-001','DEMO-002','DEMO-003'].includes(id)&&record(r))))return false;
+ if(value.patientRecords!==undefined&&!patientMap(value.patientRecords,record))return false;
  if(value.selectedPatientId!==undefined&&!['DEMO-001','DEMO-002','DEMO-003'].includes(value.selectedPatientId))return false;
+ if(value.consultationUi!==undefined&&!patientMap(value.consultationUi,c=>['identityChecked','reviewed','paused'].every(k=>typeof c[k]==='boolean')&&Number.isSafeInteger(c.elapsed)&&c.elapsed>=0))return false;
+ if(value.patientPreparation!==undefined&&!patientMap(value.patientPreparation,p=>object(p.checks)&&Object.entries(p.checks).every(([key,v])=>['sources','gaps','agenda'].includes(key)&&typeof v==='boolean')&&typeof p.note==='string'&&(p.fingerprint===null||typeof p.fingerprint==='string')))return false;
+ if(value.formUi!==undefined&&!patientMap(value.formUi,(f,id)=>Number.isSafeInteger(f.version)&&f.version>0&&Array.isArray(f.history)&&f.history.every(h=>object(h)&&Number.isSafeInteger(h.version)&&h.version>0&&typeof h.status==='string'&&snapshot(h.snapshot,id))))return false;
+ if(value.handoverDrafts!==undefined&&(!Array.isArray(value.handoverDrafts)||!value.handoverDrafts.every(d=>object(d)&&patientIds.includes(d.patientId)&&['patientName','sourceNote','recipient','message','createdAt'].every(k=>typeof d[k]==='string')&&Number.isSafeInteger(d.sourceVersion)&&d.sourceVersion>0&&Number.isSafeInteger(d.sourceRevision)&&d.sourceRevision>=0&&d.deliveryStatus==='not-sent')))return false;
  if(value.product!==undefined){
   const p=value.product;if(!object(p)||!strings(p,['service','theme','role','team','contact','pilotNotes']))return false;
   if(p.planNotes!==undefined&&(!object(p.planNotes)||!Object.values(p.planNotes).every(v=>typeof v==='string')))return false;

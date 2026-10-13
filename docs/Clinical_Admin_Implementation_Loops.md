@@ -106,6 +106,8 @@ Carry forward the detailed plan's supplier and Trust assurance work, manual acce
 
 Pilot entry needs a recorded human decision on the exact release. Pilot stop criteria should include unexpected cross-patient access, lost or misattributed documents, unsafe output patterns, consent failures or recovery failures, with a named escalation route agreed before use. Excluded functions remain excluded: diagnosis/treatment recommendations, autonomous orders, unsupervised risk triage, twins simulations and self-training on identifiable NHS records.
 
+Saved-workspace validation includes nested consultation, preparation, form-history and handover records. Form snapshots and explicitly identified note history must belong to their containing fictional patient. Invalid saved data remains available for recovery export, with saves blocked until an explicit reset; these checks do not authenticate or make browser storage immutable.
+
 ## Verification limits and current result
 
 The release report records local syntax and automated tests. A separate Playwright suite now checks Chromium desktop/mobile workflows, viewport overflow and keyboard dialog controls with `npm run test:browser`; its evidence is retained by the browser CI job. Manual visual and screen-reader verification remain outstanding. No live API or EPR test, Trust UAT, clinical validation or assurance sign-off has occurred. The public function readiness categories continue to describe the inspected upstream register, not 158 implemented functions in this site.

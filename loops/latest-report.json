@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T12:38:53.973Z",
-  "sourceFingerprint": "ca6ec92982c3b90a6dee257bbd529bbf698c6a5b91d2f706b567dcd89d56b673",
+  "generatedAt": "2026-10-13T13:35:19.473Z",
+  "sourceFingerprint": "fdce84cb126d84dd95adddd3232ced34d86a20d559bdeda3905fd2977f4c675d",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "path": "dist/Clinical_Admin_Implementation_Loops.md",
-      "sha256": "61a6c81db73811245f63738a33809926f2fec2855fffd9bdcd811500e2e50afc"
+      "sha256": "3aa81850132d13762da4a559484cd74227f20949450c5d0a5d8a62e599214579"
     },
     {
       "path": "dist/Oxford_Health_Clinical_Admin_Implementation_Plan.md",
@@ -18,7 +18,7 @@
     },
     {
       "path": "dist/app.js",
-      "sha256": "27df5427619af506126970fe63beab7439d7421b6eeac882e3e4529a6b567391"
+      "sha256": "5f7a1498ca8e28ad7d0d08a0e843f01e7d05c7a5d89f5584b189fe09a99fd067"
     },
     {
       "path": "dist/assets/deepsynaps-logo.svg",
@@ -98,7 +98,7 @@
     },
     {
       "path": "docs/Clinical_Admin_Implementation_Loops.md",
-      "sha256": "61a6c81db73811245f63738a33809926f2fec2855fffd9bdcd811500e2e50afc"
+      "sha256": "3aa81850132d13762da4a559484cd74227f20949450c5d0a5d8a62e599214579"
     },
     {
       "path": "docs/Oxford_Health_Clinical_Admin_Implementation_Plan.md",
@@ -110,7 +110,7 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "a440d4043e3778a494806bfd851ba04c7ae9c27374ef6193ff57af44adfdec63"
+      "sha256": "70f6198cb61019af5e1a4ae3749bf8f857bfb11a0d93554c8e934744d30d820d"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
@@ -158,7 +158,7 @@
     },
     {
       "path": "tests/browser/storage.spec.mjs",
-      "sha256": "5b27c9f8f539809e68d570db19df757a20ed56bc3362ce558c3c68b11ae6754f"
+      "sha256": "af24495265f4a45e382b365333e482832c9026426c4bb71667ea3e5d6d898556"
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
@@ -206,7 +206,7 @@
     },
     {
       "path": "tests/workflow.test.mjs",
-      "sha256": "683f8d73f9073e45d0794a12d1c4b46b8910bbc973f148e9eda2e0ccbdf00ce5"
+      "sha256": "077aa0e3644cbe40249ec2f6fbf873811ff8dfc6056d600d6f14a0cfd31295b4"
     }
   ],
   "sourceChanged": false,
@@ -335,7 +335,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 136,
+  "totalPassed": 137,
   "loops": [
     {
       "id": "L01",
@@ -395,7 +395,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 67
+      "testsPassed": 68
     },
     {
       "id": "L04",
