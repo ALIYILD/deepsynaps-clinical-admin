@@ -24,3 +24,5 @@ html[data-theme=dark] .focus-panel{background:var(--accent-wash)}html[data-theme
  .navigation-backdrop:not([hidden]){display:block;position:fixed;inset:0;z-index:60;background:#00151c99;border:0;border-radius:0}
  html.navigation-open{overflow:hidden}
 }
+/* Review dialogs keep all actions reachable on narrow screens and at zoom. */
+.modal-foot{flex-wrap:wrap}.modal-foot>button{max-width:100%;white-space:normal}

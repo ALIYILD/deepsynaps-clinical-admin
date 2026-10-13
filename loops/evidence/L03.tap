@@ -2,549 +2,579 @@ TAP version 13
 # Subtest: consultation requires patient confirmation, consent and example speech setting
 ok 1 - consultation requires patient confirmation, consent and example speech setting
   ---
-  duration_ms: 32.689735
+  duration_ms: 35.455372
   type: 'test'
   ...
 # Subtest: capture pauses, resumes and finishes without accessing a microphone
 ok 2 - capture pauses, resumes and finishes without accessing a microphone
   ---
-  duration_ms: 9.388957
+  duration_ms: 10.173281
   type: 'test'
   ...
 # Subtest: withdrawing consent stops capture immediately and retains existing draft
 ok 3 - withdrawing consent stops capture immediately and retains existing draft
   ---
-  duration_ms: 8.846979
+  duration_ms: 9.018799
   type: 'test'
   ...
 # Subtest: patient switch cancels the timer and keeps elapsed time patient-specific
 ok 4 - patient switch cancels the timer and keeps elapsed time patient-specific
   ---
-  duration_ms: 9.646365
+  duration_ms: 10.468807
   type: 'test'
   ...
 # Subtest: navigation pauses capture and reload preserves elapsed time without restarting
 ok 5 - navigation pauses capture and reload preserves elapsed time without restarting
   ---
-  duration_ms: 14.525027
+  duration_ms: 14.426459
   type: 'test'
   ...
 # Subtest: example drafting requires explicit source review and drafting switch
 ok 6 - example drafting requires explicit source review and drafting switch
   ---
-  duration_ms: 12.948758
+  duration_ms: 10.230678
   type: 'test'
   ...
 # Subtest: existing draft replacement requires confirmation and preserves its text
 ok 7 - existing draft replacement requires confirmation and preserves its text
   ---
-  duration_ms: 8.308766
+  duration_ms: 6.720756
   type: 'test'
   ...
 # Subtest: stale replacement request cannot overwrite edited text or another patient
 ok 8 - stale replacement request cannot overwrite edited text or another patient
   ---
-  duration_ms: 7.944547
+  duration_ms: 7.906281
   type: 'test'
   ...
 # Subtest: reviewed document never gets replaced through consultation controls
 ok 9 - reviewed document never gets replaced through consultation controls
   ---
-  duration_ms: 9.170237
+  duration_ms: 10.675359
   type: 'test'
   ...
 # Subtest: reset clears capture review only after confirmation and preserves notes
 ok 10 - reset clears capture review only after confirmation and preserves notes
   ---
-  duration_ms: 11.238928
+  duration_ms: 7.498034
   type: 'test'
   ...
 # Subtest: all capture states produce valid handlers and one active-patient context
 ok 11 - all capture states produce valid handlers and one active-patient context
   ---
-  duration_ms: 11.159358
+  duration_ms: 10.138549
   type: 'test'
   ...
 # Subtest: document filters combine patient, status, type and search without searching note bodies
 ok 12 - document filters combine patient, status, type and search without searching note bodies
   ---
-  duration_ms: 21.805592
+  duration_ms: 17.539357
   type: 'test'
   ...
 # Subtest: empty and unmatched document searches are distinct and render queries safely
 ok 13 - empty and unmatched document searches are distinct and render queries safely
   ---
-  duration_ms: 8.733678
+  duration_ms: 10.864975
   type: 'test'
   ...
 # Subtest: document preview leaves the selected patient unchanged and opens the correct retained history
 ok 14 - document preview leaves the selected patient unchanged and opens the correct retained history
   ---
-  duration_ms: 20.900516
+  duration_ms: 27.17716
   type: 'test'
   ...
 # Subtest: review queue combines unsigned documents and pending forms with honest field counts
 ok 15 - review queue combines unsigned documents and pending forms with honest field counts
   ---
-  duration_ms: 7.422339
+  duration_ms: 9.225822
   type: 'test'
   ...
 # Subtest: review action selects the exact patient and shows both source and immutable pending text
 ok 16 - review action selects the exact patient and shows both source and immutable pending text
   ---
-  duration_ms: 7.752277
+  duration_ms: 8.663974
   type: 'test'
   ...
 # Subtest: edits and patient changes still invalidate exact-source signing through the new review UI
 ok 17 - edits and patient changes still invalidate exact-source signing through the new review UI
   ---
-  duration_ms: 7.426386
+  duration_ms: 8.955895
   type: 'test'
   ...
 # Subtest: blank template selection leaves text blank and loads only the selected example on request
 ok 18 - blank template selection leaves text blank and loads only the selected example on request
   ---
-  duration_ms: 9.213773
+  duration_ms: 8.684886
   type: 'test'
   ...
 # Subtest: template replacement preserves edits only after confirmation and requires a fresh document review
 ok 19 - template replacement preserves edits only after confirmation and requires a fresh document review
   ---
-  duration_ms: 6.749464
+  duration_ms: 7.994704
   type: 'test'
   ...
 # Subtest: stale replacement requests cannot overwrite edits, changed settings or reviewed versions
 ok 20 - stale replacement requests cannot overwrite edits, changed settings or reviewed versions
   ---
-  duration_ms: 9.385822
+  duration_ms: 9.08587
   type: 'test'
   ...
 # Subtest: cancel and patient switches keep draft text and cancel pending template replacement
 ok 21 - cancel and patient switches keep draft text and cancel pending template replacement
   ---
-  duration_ms: 9.359442
+  duration_ms: 8.521058
   type: 'test'
   ...
 # Subtest: editor and queues escape document content and emit valid handler syntax
 ok 22 - editor and queues escape document content and emit valid handler syntax
   ---
-  duration_ms: 10.316457
+  duration_ms: 10.656751
   type: 'test'
   ...
 # Subtest: failed template replacement persistence reports tab-only changes and retry retains one history copy
 ok 23 - failed template replacement persistence reports tab-only changes and retry retains one history copy
   ---
-  duration_ms: 8.424892
+  duration_ms: 8.352333
   type: 'test'
   ...
 # Subtest: empty form offers a clear start and does not claim completed review
 ok 24 - empty form offers a clear start and does not claim completed review
   ---
-  duration_ms: 13.69917
+  duration_ms: 14.581173
   type: 'test'
   ...
 # Subtest: template search and availability distinguish one usable form from unconnected assessments
 ok 25 - template search and availability distinguish one usable form from unconnected assessments
   ---
-  duration_ms: 5.770557
+  duration_ms: 7.644906
   type: 'test'
   ...
 # Subtest: editing a reviewed field updates progress, clears review and blocks final approval
 ok 26 - editing a reviewed field updates progress, clears review and blocks final approval
   ---
-  duration_ms: 20.029922
+  duration_ms: 26.035247
   type: 'test'
   ...
 # Subtest: approval requires exact snapshot confirmation, and edited values expire a pending review
 ok 27 - approval requires exact snapshot confirmation, and edited values expire a pending review
   ---
-  duration_ms: 6.066414
+  duration_ms: 8.901041
   type: 'test'
   ...
 # Subtest: patient changes cancel pending form approval and return to the current form view
 ok 28 - patient changes cancel pending form approval and return to the current form view
   ---
-  duration_ms: 6.749635
+  duration_ms: 10.002604
   type: 'test'
   ...
 # Subtest: approved form is protected; reopening creates a new version with preserved snapshot
 ok 29 - approved form is protected; reopening creates a new version with preserved snapshot
   ---
-  duration_ms: 7.020994
+  duration_ms: 8.817701
   type: 'test'
   ...
 # Subtest: source reload preserves the previous draft and rejects a stale reload request
 ok 30 - source reload preserves the previous draft and rejects a stale reload request
   ---
-  duration_ms: 6.602282
+  duration_ms: 9.988889
   type: 'test'
   ...
 # Subtest: form version history stays isolated between patient records
 ok 31 - form version history stays isolated between patient records
   ---
-  duration_ms: 9.803492
+  duration_ms: 8.295638
   type: 'test'
   ...
 # Subtest: readable exports identify the patient, version, source and lack of submission
 ok 32 - readable exports identify the patient, version, source and lack of submission
   ---
-  duration_ms: 10.880427
+  duration_ms: 6.873613
   type: 'test'
   ...
 # Subtest: source comparison is reachable by focus and safely renders edited text
 ok 33 - source comparison is reachable by focus and safely renders edited text
   ---
-  duration_ms: 6.607569
+  duration_ms: 6.762504
   type: 'test'
   ...
 # Subtest: forms, library, review and version dialogs emit valid UI handlers
 ok 34 - forms, library, review and version dialogs emit valid UI handlers
   ---
-  duration_ms: 9.924835
+  duration_ms: 6.95871
   type: 'test'
   ...
 # Subtest: handoff separates local review from submission, matching, receipt and retention
 ok 35 - handoff separates local review from submission, matching, receipt and retention
   ---
-  duration_ms: 16.997878
+  duration_ms: 20.587145
   type: 'test'
   ...
 # Subtest: composer validates intended destination, note length and signed source
 ok 36 - composer validates intended destination, note length and signed source
   ---
-  duration_ms: 25.100252
+  duration_ms: 27.552927
   type: 'test'
   ...
 # Subtest: confirmation saves exact patient/source/destination without claiming delivery
 ok 37 - confirmation saves exact patient/source/destination without claiming delivery
   ---
-  duration_ms: 7.506156
+  duration_ms: 9.464111
   type: 'test'
   ...
 # Subtest: identical preparations deduplicate, while distinct destination or context creates a new draft
 ok 38 - identical preparations deduplicate, while distinct destination or context creates a new draft
   ---
-  duration_ms: 11.419996
+  duration_ms: 11.589959
   type: 'test'
   ...
 # Subtest: amendments invalidate pending confirmation and flag retained source without mutating it
 ok 39 - amendments invalidate pending confirmation and flag retained source without mutating it
   ---
-  duration_ms: 9.658072
+  duration_ms: 9.719187
   type: 'test'
   ...
 # Subtest: switching patient cancels composition and isolates saved drafts and exports
 ok 40 - switching patient cancels composition and isolates saved drafts and exports
   ---
-  duration_ms: 10.586954
+  duration_ms: 11.116976
   type: 'test'
   ...
 # Subtest: retained handoff reloads without becoming a receipt or activating any destination
 ok 41 - retained handoff reloads without becoming a receipt or activating any destination
   ---
-  duration_ms: 16.636211
+  duration_ms: 17.554855
   type: 'test'
   ...
 # Subtest: storage failure retains one recoverable draft and reports tab-only persistence
 ok 42 - storage failure retains one recoverable draft and reports tab-only persistence
   ---
-  duration_ms: 10.896892
+  duration_ms: 11.447945
   type: 'test'
   ...
 # Subtest: text exports include exact retained version and explicit source-change, non-delivery and retention status
 ok 43 - text exports include exact retained version and explicit source-change, non-delivery and retention status
   ---
-  duration_ms: 8.593246
+  duration_ms: 8.736183
   type: 'test'
   ...
 # Subtest: draft inspection escapes editable values, exposes unavailable sending and emits valid handlers
 ok 44 - draft inspection escapes editable values, exposes unavailable sending and emits valid handlers
   ---
-  duration_ms: 10.361964
+  duration_ms: 10.151238
+  type: 'test'
+  ...
+# Subtest: back to edit retains EPR destination and escaped context and clears pending approval
+ok 45 - back to edit retains EPR destination and escaped context and clears pending approval
+  ---
+  duration_ms: 8.194335
+  type: 'test'
+  ...
+# Subtest: back to edit cannot transfer EPR text to a changed patient or unreviewed source
+ok 46 - back to edit cannot transfer EPR text to a changed patient or unreviewed source
+  ---
+  duration_ms: 7.812219
   type: 'test'
   ...
 # Subtest: agenda status stays unsaved across renders and clears after successful retry
-ok 45 - agenda status stays unsaved across renders and clears after successful retry
+ok 47 - agenda status stays unsaved across renders and clears after successful retry
   ---
-  duration_ms: 20.781622
+  duration_ms: 21.964274
   type: 'test'
   ...
 # Subtest: patient task save failure does not announce persistence
-ok 46 - patient task save failure does not announce persistence
+ok 48 - patient task save failure does not announce persistence
   ---
-  duration_ms: 32.835274
+  duration_ms: 25.945501
   type: 'test'
   ...
 # Subtest: patient overview shows missing information, example appointment and linked-work status
-ok 47 - patient overview shows missing information, example appointment and linked-work status
+ok 49 - patient overview shows missing information, example appointment and linked-work status
   ---
-  duration_ms: 7.037589
+  duration_ms: 7.217391
   type: 'test'
   ...
 # Subtest: preparation checks and agenda persist independently for each patient without setting consent
-ok 48 - preparation checks and agenda persist independently for each patient without setting consent
+ok 50 - preparation checks and agenda persist independently for each patient without setting consent
   ---
-  duration_ms: 21.001168
+  duration_ms: 18.80725
   type: 'test'
   ...
 # Subtest: document and form changes invalidate preparation; rechecking starts a fresh checklist
-ok 49 - document and form changes invalidate preparation; rechecking starts a fresh checklist
+ok 51 - document and form changes invalidate preparation; rechecking starts a fresh checklist
   ---
-  duration_ms: 10.260291
+  duration_ms: 9.92738
   type: 'test'
   ...
 # Subtest: clearing preparation retains agenda and input is bounded and safely rendered
-ok 50 - clearing preparation retains agenda and input is bounded and safely rendered
+ok 52 - clearing preparation retains agenda and input is bounded and safely rendered
   ---
-  duration_ms: 8.54905
+  duration_ms: 8.829704
   type: 'test'
   ...
 # Subtest: source dialogs use only the selected patient and the exact source passage
-ok 51 - source dialogs use only the selected patient and the exact source passage
+ok 53 - source dialogs use only the selected patient and the exact source passage
   ---
-  duration_ms: 7.301697
+  duration_ms: 7.280195
   type: 'test'
   ...
 # Subtest: next steps prioritise unsigned notes and unapproved forms using existing review state
-ok 52 - next steps prioritise unsigned notes and unapproved forms using existing review state
+ok 54 - next steps prioritise unsigned notes and unapproved forms using existing review state
   ---
-  duration_ms: 8.769978
+  duration_ms: 8.887852
   type: 'test'
   ...
 # Subtest: new patient tasks carry explicit identity, preserve form validation and cancel on patient switch
-ok 53 - new patient tasks carry explicit identity, preserve form validation and cancel on patient switch
+ok 55 - new patient tasks carry explicit identity, preserve form validation and cancel on patient switch
   ---
-  duration_ms: 8.552875
+  duration_ms: 9.008734
   type: 'test'
   ...
 # Subtest: linked task completion updates the patient summary without inferring identity from names
-ok 54 - linked task completion updates the patient summary without inferring identity from names
+ok 56 - linked task completion updates the patient summary without inferring identity from names
   ---
-  duration_ms: 6.341889
+  duration_ms: 8.033493
   type: 'test'
   ...
 # Subtest: activity merges retained snapshots, preserves missing timestamps and isolates patient records
-ok 55 - activity merges retained snapshots, preserves missing timestamps and isolates patient records
+ok 57 - activity merges retained snapshots, preserves missing timestamps and isolates patient records
   ---
-  duration_ms: 8.210288
+  duration_ms: 12.23348
   type: 'test'
   ...
 # Subtest: retained document and form details escape source text and never overwrite the current record
-ok 56 - retained document and form details escape source text and never overwrite the current record
+ok 58 - retained document and form details escape source text and never overwrite the current record
   ---
-  duration_ms: 6.70016
+  duration_ms: 8.375089
   type: 'test'
   ...
 # Subtest: patient overview and activity handlers parse; section shortcuts focus their destination
-ok 57 - patient overview and activity handlers parse; section shortcuts focus their destination
+ok 59 - patient overview and activity handlers parse; section shortcuts focus their destination
   ---
-  duration_ms: 7.412635
+  duration_ms: 9.098199
   type: 'test'
   ...
 # Subtest: task creation and editing distinguish unsaved changes from persisted ones
-ok 58 - task creation and editing distinguish unsaved changes from persisted ones
+ok 60 - task creation and editing distinguish unsaved changes from persisted ones
   ---
-  duration_ms: 42.430001
+  duration_ms: 38.525675
   type: 'test'
   ...
 # Subtest: handover failure keeps a recoverable unsent draft and retry does not duplicate it
-ok 59 - handover failure keeps a recoverable unsent draft and retry does not duplicate it
+ok 61 - handover failure keeps a recoverable unsent draft and retry does not duplicate it
   ---
-  duration_ms: 9.31783
+  duration_ms: 9.318702
   type: 'test'
   ...
 # Subtest: tasks page exposes dates, ownership, priority and truthful delivery state
-ok 60 - tasks page exposes dates, ownership, priority and truthful delivery state
+ok 62 - tasks page exposes dates, ownership, priority and truthful delivery state
   ---
-  duration_ms: 6.752979
+  duration_ms: 6.752099
   type: 'test'
   ...
 # Subtest: due dates validate real calendar days and overdue uses UK calendar boundaries
-ok 61 - due dates validate real calendar days and overdue uses UK calendar boundaries
+ok 63 - due dates validate real calendar days and overdue uses UK calendar boundaries
   ---
-  duration_ms: 8.454907
+  duration_ms: 7.457663
   type: 'test'
   ...
 # Subtest: combined task filters retain original task indices and search safely
-ok 62 - combined task filters retain original task indices and search safely
+ok 64 - combined task filters retain original task indices and search safely
   ---
-  duration_ms: 7.246664
+  duration_ms: 8.624093
   type: 'test'
   ...
 # Subtest: new tasks validate details and clear filters so the saved task is visible
-ok 63 - new tasks validate details and clear filters so the saved task is visible
+ok 65 - new tasks validate details and clear filters so the saved task is visible
   ---
-  duration_ms: 7.328498
+  duration_ms: 7.033794
   type: 'test'
   ...
 # Subtest: task editing retains reviewed sources and completion; stale edits cannot overwrite changes
-ok 64 - task editing retains reviewed sources and completion; stale edits cannot overwrite changes
+ok 66 - task editing retains reviewed sources and completion; stale edits cannot overwrite changes
   ---
-  duration_ms: 7.216479
+  duration_ms: 8.95969
   type: 'test'
   ...
 # Subtest: handover creation requires a signed source and valid example recipient
-ok 65 - handover creation requires a signed source and valid example recipient
+ok 67 - handover creation requires a signed source and valid example recipient
   ---
-  duration_ms: 8.347705
+  duration_ms: 9.491633
   type: 'test'
   ...
 # Subtest: handover saves only after confirmation and binds exact source to its patient
-ok 66 - handover saves only after confirmation and binds exact source to its patient
+ok 68 - handover saves only after confirmation and binds exact source to its patient
   ---
-  duration_ms: 6.93257
+  duration_ms: 9.614628
   type: 'test'
   ...
 # Subtest: changing a signed source during handover review invalidates confirmation
-ok 67 - changing a signed source during handover review invalidates confirmation
+ok 69 - changing a signed source during handover review invalidates confirmation
   ---
-  duration_ms: 7.336911
+  duration_ms: 8.01878
   type: 'test'
   ...
 # Subtest: patient changes cancel pending task and handover edits
-ok 68 - patient changes cancel pending task and handover edits
+ok 70 - patient changes cancel pending task and handover edits
   ---
-  duration_ms: 9.325772
+  duration_ms: 9.341376
   type: 'test'
   ...
 # Subtest: retained handover snapshots flag amendments and exports never imply delivery
-ok 69 - retained handover snapshots flag amendments and exports never imply delivery
+ok 71 - retained handover snapshots flag amendments and exports never imply delivery
   ---
-  duration_ms: 10.611461
+  duration_ms: 8.115847
   type: 'test'
   ...
 # Subtest: task and handover dialogs render valid handlers and escape editable values
-ok 70 - task and handover dialogs render valid handlers and escape editable values
+ok 72 - task and handover dialogs render valid handlers and escape editable values
   ---
-  duration_ms: 9.585033
+  duration_ms: 10.044517
+  type: 'test'
+  ...
+# Subtest: back to edit preserves handover details without retaining a previous confirmation
+ok 73 - back to edit preserves handover details without retaining a previous confirmation
+  ---
+  duration_ms: 9.891015
+  type: 'test'
+  ...
+# Subtest: handover retry deduplicates exact drafts but preserves changed messages
+ok 74 - handover retry deduplicates exact drafts but preserves changed messages
+  ---
+  duration_ms: 5.843648
+  type: 'test'
+  ...
+# Subtest: same-text revision change flags retained handover source and blocks pending approval
+ok 75 - same-text revision change flags retained handover source and blocks pending approval
+  ---
+  duration_ms: 5.741644
   type: 'test'
   ...
 # Subtest: consent, notes and signatures stay with their fictional patient
-ok 71 - consent, notes and signatures stay with their fictional patient
+ok 76 - consent, notes and signatures stay with their fictional patient
   ---
-  duration_ms: 36.890232
+  duration_ms: 26.751868
   type: 'test'
   ...
 # Subtest: saved multi-patient state rehydrates without losing selected record
-ok 72 - saved multi-patient state rehydrates without losing selected record
+ok 77 - saved multi-patient state rehydrates without losing selected record
   ---
-  duration_ms: 14.192755
+  duration_ms: 9.576421
   type: 'test'
   ...
 # Subtest: legacy browser notes migrate to Maya only
-ok 73 - legacy browser notes migrate to Maya only
+ok 78 - legacy browser notes migrate to Maya only
   ---
-  duration_ms: 9.635479
+  duration_ms: 7.97917
   type: 'test'
   ...
 # Subtest: editing after review invalidates the exact snapshot
-ok 74 - editing after review invalidates the exact snapshot
+ok 79 - editing after review invalidates the exact snapshot
   ---
-  duration_ms: 4.696787
+  duration_ms: 4.690989
   type: 'test'
   ...
 # Subtest: switching patients cancels pending signature and stops simulated capture
-ok 75 - switching patients cancels pending signature and stops simulated capture
+ok 80 - switching patients cancels pending signature and stops simulated capture
   ---
-  duration_ms: 6.57444
+  duration_ms: 5.932491
   type: 'test'
   ...
 # Subtest: signed history remains unchanged during an amendment
-ok 76 - signed history remains unchanged during an amendment
+ok 81 - signed history remains unchanged during an amendment
   ---
-  duration_ms: 5.52096
+  duration_ms: 5.282942
   type: 'test'
   ...
 # Subtest: forms require all field reviews; edits invalidate approval eligibility
-ok 77 - forms require all field reviews; edits invalidate approval eligibility
+ok 82 - forms require all field reviews; edits invalidate approval eligibility
   ---
-  duration_ms: 6.563884
+  duration_ms: 5.887514
   type: 'test'
   ...
 # Subtest: approved form snapshot is protected, isolated and explicitly reopened
-ok 78 - approved form snapshot is protected, isolated and explicitly reopened
+ok 83 - approved form snapshot is protected, isolated and explicitly reopened
   ---
-  duration_ms: 8.052791
+  duration_ms: 8.374257
   type: 'test'
   ...
 # Subtest: follow-up tasks deduplicate by patient and signed version and retain source
-ok 79 - follow-up tasks deduplicate by patient and signed version and retain source
+ok 84 - follow-up tasks deduplicate by patient and signed version and retain source
   ---
-  duration_ms: 7.160855
+  duration_ms: 5.835135
   type: 'test'
   ...
 # Subtest: handoff and exports use the selected patient with honest submission status
-ok 80 - handoff and exports use the selected patient with honest submission status
+ok 85 - handoff and exports use the selected patient with honest submission status
   ---
-  duration_ms: 7.129417
+  duration_ms: 4.086096
   type: 'test'
   ...
 # Subtest: refilling cannot overwrite an approved form before explicit reopening
-ok 81 - refilling cannot overwrite an approved form before explicit reopening
+ok 86 - refilling cannot overwrite an approved form before explicit reopening
   ---
-  duration_ms: 7.716423
+  duration_ms: 5.303663
   type: 'test'
   ...
 # Subtest: edited note and form content is escaped when rendered
-ok 82 - edited note and form content is escaped when rendered
+ok 87 - edited note and form content is escaped when rendered
   ---
-  duration_ms: 6.456752
+  duration_ms: 5.874574
   type: 'test'
   ...
 # Subtest: reset clears all patient records and leaves API connection disabled
-ok 83 - reset clears all patient records and leaves API connection disabled
+ok 88 - reset clears all patient records and leaves API connection disabled
   ---
-  duration_ms: 3.992324
+  duration_ms: 4.853714
   type: 'test'
   ...
 # Subtest: failed persistence warns without losing the current draft and retry saves all records
-ok 84 - failed persistence warns without losing the current draft and retry saves all records
+ok 89 - failed persistence warns without losing the current draft and retry saves all records
   ---
-  duration_ms: 4.222352
+  duration_ms: 5.378476
   type: 'test'
   ...
 # Subtest: failed reset does not claim stored records were removed
-ok 85 - failed reset does not claim stored records were removed
+ok 90 - failed reset does not claim stored records were removed
   ---
-  duration_ms: 3.61247
+  duration_ms: 4.858081
   type: 'test'
   ...
 # Subtest: a stale tab cannot save or reset over a newer stored workspace
-ok 86 - a stale tab cannot save or reset over a newer stored workspace
+ok 91 - a stale tab cannot save or reset over a newer stored workspace
   ---
-  duration_ms: 5.578637
+  duration_ms: 5.876347
   type: 'test'
   ...
 # Subtest: cleared storage is not silently repopulated by an older tab
-ok 87 - cleared storage is not silently repopulated by an older tab
+ok 92 - cleared storage is not silently repopulated by an older tab
   ---
-  duration_ms: 5.151984
+  duration_ms: 5.071544
   type: 'test'
   ...
 # Subtest: invalid saved data is preserved and exported instead of silently overwritten
-ok 88 - invalid saved data is preserved and exported instead of silently overwritten
+ok 93 - invalid saved data is preserved and exported instead of silently overwritten
   ---
-  duration_ms: 35.043596
+  duration_ms: 51.656229
   type: 'test'
   ...
 # Subtest: failed replacement keeps damaged original data and recovery controls
-ok 89 - failed replacement keeps damaged original data and recovery controls
+ok 94 - failed replacement keeps damaged original data and recovery controls
   ---
-  duration_ms: 3.025065
+  duration_ms: 4.323875
   type: 'test'
   ...
 # Subtest: restored UI snapshots remain patient-bound and preserve historical source versions
-ok 90 - restored UI snapshots remain patient-bound and preserve historical source versions
+ok 95 - restored UI snapshots remain patient-bound and preserve historical source versions
   ---
-  duration_ms: 59.180084
+  duration_ms: 76.81978
   type: 'test'
   ...
-1..90
-# tests 90
+1..95
+# tests 95
 # suites 0
-# pass 90
+# pass 95
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 375.018678
+# duration_ms 371.02821

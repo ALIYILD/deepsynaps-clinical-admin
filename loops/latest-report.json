@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T13:44:40.384Z",
-  "sourceFingerprint": "a6eb79a96c0b5c0d8b21c74266e72467807ee8316e4368f979d7dae042b3794b",
+  "generatedAt": "2026-10-13T14:17:28.248Z",
+  "sourceFingerprint": "8568c01dd6774d4cba6ddb2fc92e47afde1cfea00efa5ae327d0e9b3e0a6015f",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -58,7 +58,7 @@
     },
     {
       "path": "dist/handoff-ui.js",
-      "sha256": "379036eadb22e727c383f55b0281f52368aa0d0bf9b0a8ac694635c8c512a201"
+      "sha256": "bba735421dc7086948e0116a4b26ced8b569d4fc8680f748004f2aaec929d800"
     },
     {
       "path": "dist/index.html",
@@ -82,7 +82,7 @@
     },
     {
       "path": "dist/product-ui.css",
-      "sha256": "f6876c7a5662d7c94fdef6afe5057352051ec7e5c7473a5710607fa88084a8ba"
+      "sha256": "72e60e9c2150a917311bd1def86996c0e18c62a189a9c0f8c8979f38fc48f2f6"
     },
     {
       "path": "dist/product-ui.js",
@@ -106,7 +106,7 @@
     },
     {
       "path": "dist/tasks-ui.js",
-      "sha256": "879def121bc88d16bdc7e44fdb85ddf1ee3bcf52ce46c8fa446a12992e2c816c"
+      "sha256": "90b9258f9b38161274458945facac67548efe3b74d802df518aa95e267f35905"
     },
     {
       "path": "dist/workflow.js",
@@ -134,7 +134,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "2a438caca2fc59f0360ee35de56d8a5c47e1dffb3c110fe781729dae4a1f127b"
+      "sha256": "7e76948e11d43d81b8837cc3626e1d4541cd832ce0403346df4f4f59b89e9c70"
     },
     {
       "path": "integration/README.md",
@@ -178,7 +178,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "8d44124570bd5af9f2d6369bd8b1c1d445c1e993d5448d78b6dabaf77c34d76d"
+      "sha256": "8381b156cf558760a5121d6e00361f5b60f8c37de4bafa3644bbd7909291a44d"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -198,7 +198,7 @@
     },
     {
       "path": "tests/handoff-ui.test.mjs",
-      "sha256": "120d7f09611531cea3fd5d0995588f59d2fbaff7ecd8d9948c386684e6f07d39"
+      "sha256": "a2ea5e730dfa52220768afb3fb3b76368000556da62efc4799cf8de62a5362fc"
     },
     {
       "path": "tests/integration.test.mjs",
@@ -226,7 +226,7 @@
     },
     {
       "path": "tests/tasks-ui.test.mjs",
-      "sha256": "c62413134239df43788b79e05724aa920eec808edca26714df7e5656d677e528"
+      "sha256": "7104aa940e88bd68db35c819a79460be250b2cc47705534581ebec0e2a54b575"
     },
     {
       "path": "tests/workflow.test.mjs",
@@ -375,7 +375,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 162,
+  "totalPassed": 167,
   "loops": [
     {
       "id": "L01",
@@ -437,7 +437,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 90
+      "testsPassed": 95
     },
     {
       "id": "L04",
