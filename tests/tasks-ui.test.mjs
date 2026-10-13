@@ -86,3 +86,28 @@ test('patient task shortcut clears stale filters and opening its record selects 
  run('openTaskPatient(3)');assert.equal(run('state.selectedPatientId'),'DEMO-002');assert.equal(run('route'),'record');
  run('openTaskPatient(0)');assert.equal(run('state.selectedPatientId'),'DEMO-002');
 });
+
+test('new follow-up tasks retain exact source metadata and become visible despite stale filters',()=>{
+ const {run}=setup();sign(run);run("taskPatientFilter='DEMO-003';taskQuery='missing';taskFilter='done';createFollowup()");
+ assert.equal(run('filteredTasks().length'),1);
+ assert.equal(run('state.tasks[3].sourceVersion'),1);assert.equal(run('state.tasks[3].sourceRevision'),1);
+ assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'current');
+ run('createFollowup()');assert.equal(run('state.tasks.length'),4);
+});
+test('task source comparison flags amendments and preserves the original copy and completion',()=>{
+ const {run,el}=setup();sign(run);run('createFollowup();state.tasks[3].done=true');
+ const source=run('state.tasks[3].sourceNote');
+ run("amendNote();updateNote('New fictional amendment');showTaskSource(3)");
+ assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'changed');
+ assert.equal(run('state.tasks[3].sourceNote'),source);assert.equal(run('state.tasks[3].done'),true);
+ assert.match(el('dialog').innerHTML,/Retained task source/);assert.match(el('dialog').innerHTML,/New fictional amendment/);
+});
+test('legacy task sources remain usable without claiming an exact revision match',()=>{
+ const {run}=setup();sign(run);run('createFollowup();delete state.tasks[3].sourceRevision');
+ assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'unknown');
+ run("state.note='Changed source'");assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'changed');
+});
+test('same-text revision changes and missing patient records cannot appear current',()=>{
+ const {run}=setup();sign(run);run('createFollowup();state.revision++');assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'changed');
+ run("state.tasks[3].patientId='UNKNOWN'");assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'unknown');
+});

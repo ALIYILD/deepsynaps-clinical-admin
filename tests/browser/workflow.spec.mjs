@@ -287,3 +287,24 @@ test('patient task board preserves explicit patient links and separates team tas
  await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
  await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
 });
+
+test('follow-up task compares retained source with an amended document without changing either',async({page})=>{
+ await page.goto('/#N');await page.getByRole('button',{name:'Load example',exact:true}).click();await sign(page);
+ const original=await page.locator('#note-text').inputValue();
+ await page.getByRole('button',{name:'Create follow-up task',exact:true}).click();
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await expect(page.locator('.coordination-task')).toContainText('Matches current reviewed source');
+ await page.getByRole('button',{name:'View source',exact:true}).click();
+ await page.getByRole('button',{name:'Open current document',exact:true}).click();
+ await page.getByRole('button',{name:'Create amendment',exact:true}).click();
+ await page.locator('#note-text').fill('Changed fictional source for the task');
+ await page.goBack();
+ await expect(page.locator('.coordination-task')).toContainText('Source changed');
+ await page.getByRole('button',{name:'View source',exact:true}).click();
+ const copies=page.getByRole('dialog').locator('.review-copy');
+ await expect(copies.nth(0)).toHaveText(original);
+ await expect(copies.nth(1)).toHaveText('Changed fictional source for the task');
+ expect(await page.locator('#dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+ await page.getByRole('button',{name:'Close',exact:true}).click();
+ await page.reload();await expect(page.locator('#main')).toContainText('Source changed');
+});

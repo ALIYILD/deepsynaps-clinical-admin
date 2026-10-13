@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T15:02:49.131Z",
-  "sourceFingerprint": "248fc06720c7832ec6f406f615add7bbd2c855353d1cae238016893d787bbace",
+  "generatedAt": "2026-10-13T15:47:07.431Z",
+  "sourceFingerprint": "a5de9e6b1bbd9b4fe3cd7d566a102b8b097064e7faafb6a4c1ba06786546800f",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -106,11 +106,11 @@
     },
     {
       "path": "dist/tasks-ui.js",
-      "sha256": "8c1530a0dd2a9538d36cd94eb61d4e8ff103918c8999392684f2691f0ff934e9"
+      "sha256": "433314a9710dd417f3ad7866c4bb5ca1b3866ebf3e10e9f7aff878bef7647985"
     },
     {
       "path": "dist/workflow.js",
-      "sha256": "7326927eaf436b553017a7674babdf2329413eb5c4a46baf8ef846f2a5e3110d"
+      "sha256": "b1165e14342b90c5119ee4b867108e3f12b114a934be503d7f6188890aebd2c5"
     },
     {
       "path": "docs/Clinical_Admin_Implementation_Loops.md",
@@ -138,7 +138,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "05154f87236d30d2abb6d07f58db67f1e93590993f9cfc68c9220cfb7b86a6ce"
+      "sha256": "f127ed7d68cabfe1eafa5738887d24679906b163a64260cfe60072efb9506833"
     },
     {
       "path": "integration/README.md",
@@ -190,7 +190,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "2e5d7a2960c93fd4ef71395ce5528613ddf1063614e940d9443520107f49a4e6"
+      "sha256": "b1e011f645083280ac16ac151d1cb0ddc2658800c00f02863d6e99b008ab90cf"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -242,7 +242,7 @@
     },
     {
       "path": "tests/tasks-ui.test.mjs",
-      "sha256": "6cc7f1d394148e8b08e36826dbb1a201aea1f9722f825fc7a1ef357882caaf5f"
+      "sha256": "4abffb8187d1e68b2e917f5666cced0eabdc56efd84e5675fec8d959f72b111d"
     },
     {
       "path": "tests/workflow.test.mjs",
@@ -403,7 +403,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 175,
+  "totalPassed": 179,
   "loops": [
     {
       "id": "L01",
@@ -466,7 +466,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 97
+      "testsPassed": 101
     },
     {
       "id": "L04",
