@@ -8,6 +8,8 @@ const demoPatients=[
 const clinicalFields=['consent','captured','note','signed','version','history','formFilled','formReviewed','formData','formApproval','noteTemplate','revision'];
 const newPatientRecord=()=>({consent:false,captured:false,note:'',signed:false,version:1,history:[],formFilled:false,formReviewed:false,formData:null,formApproval:null,noteTemplate:'soap',revision:0});
 let pendingReview=null;
+document.getElementById('dialog').addEventListener('close',()=>{pendingReview=null;});
+document.getElementById('dialog').addEventListener('cancel',()=>{pendingReview=null;});
 function ensurePatientState(){
  if(!state.patientRecords){const legacy=newPatientRecord();for(const k of clinicalFields)if(state[k]!==undefined)legacy[k]=state[k];state.patientRecords={'DEMO-001':legacy};}
  for(const p of demoPatients)state.patientRecords[p.id]=Object.assign(newPatientRecord(),state.patientRecords[p.id]||{});

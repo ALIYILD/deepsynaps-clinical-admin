@@ -4,9 +4,13 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "check": "node --check dist/app.js && node --check dist/product.js && node --check dist/data.js && node --check dist/product-data.js && node --check dist/registry-evidence.js && node --check dist/workflow.js && node --check dist/loops.js && node --check integration/clinical-admin-gateway.mjs && node --check integration/clinical-os-reader.mjs && node --check scripts/run-loops.mjs",
-    "loops": "node scripts/run-loops.mjs"
+    "loops": "node scripts/run-loops.mjs",
+    "test:browser": "playwright test"
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
   }
 }

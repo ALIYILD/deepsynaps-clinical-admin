@@ -17,7 +17,7 @@ All published prototype actions use fictional data and localStorage under `clini
 
 Production connection requires approved staging infrastructure and authentication. The partner API is read-only; writes require authenticated workspace APIs. Do not place keys in `dist/`, localStorage, URLs or exported proposals. Preserve existing upstream tenant, consent, processor and governance gates. Do not restart or deploy Fly.io or deploy the Clinical OS repository as part of this Site change.
 
-Run `npm test` and `npm run check`. Browser-based visual and accessibility QA was unavailable in this execution environment and remains outstanding.
+Run `npm test` and `npm run check`. Manual visual and screen-reader accessibility QA remain outstanding. Automated browser coverage is described below.
 
 ## Implementation loops
 
@@ -27,4 +27,10 @@ See `docs/Clinical_Admin_Implementation_Loops.md` for the loop runbook and `loop
 
 The [staging handoff](docs/STAGING_HANDOFF.md) records the missing identity/deployment inputs and S01–S14 acceptance cases. The [pilot evidence checklist](docs/PILOT_EVIDENCE_CHECKLIST.md) provides owner nominations, evidence requirements and a decision record. Neither advances the blocked connected loops.
 
-GitHub Actions runs local checks and uploads verification evidence on pushes and pull requests. It does not deploy or run connected tests. Use Node.js 22 or later for local verification; no third-party dependencies are required.
+GitHub Actions runs local checks and uploads verification evidence on pushes and pull requests. It does not deploy or run connected tests. Use Node.js 22 or later for local verification. The Node loop tests need no third-party dependencies; browser tests use the locked Playwright development dependency.
+
+## Browser workflow verification
+
+Run `npm ci`, `npx playwright install chromium`, then `npm run test:browser`. Python 3 serves `dist/` on loopback port 4179 for the test run; the server stops when testing ends. No external service or deployment is contacted by the demo workflows.
+
+The Chromium suite exercises desktop (1440 × 1000) and mobile (390 × 844) layouts, patient isolation and reload, exact-text review, signing/amendment history, form review and downloaded provenance, capture interruption, reset, viewport overflow and keyboard dialog controls. GitHub Actions retains the browser HTML report and failure screenshots/traces separately from the Node loop evidence. Automated checks do not replace manual accessibility, clinical validation or staging access tests.

@@ -23,3 +23,11 @@ The read adapter now requires an integer timeout from 1 to 30,000 milliseconds, 
 Added staging identity/deployment inputs and fourteen connected acceptance cases in `STAGING_HANDOFF.md`, plus the owner and release evidence checklist in `PILOT_EVIDENCE_CHECKLIST.md`. GitHub Actions runs syntax and local loop checks and retains the resulting evidence. It performs no deployment or connected tests.
 
 Validation: `npm run check` and `npm run loops` pass with 51 local tests (13 product/runner, 25 adapter/gateway, 13 workflow). Runner regression tests exercise failing tests, syntax failures, skipped evidence removal and blocked-loop reporting in isolated temporary fixtures. L04–L06 remain blocked on the documented external inputs. Manual browser/accessibility checks, live staging tests and human release decisions remain outstanding.
+
+## Real browser workflow verification
+
+Added a locked Playwright development dependency and ten Chromium tests across desktop and mobile viewports. The suite verifies patient isolation/reload, exact-text review, signing and amendment history, per-field review invalidation, downloaded form provenance, capture interruption, reset, route rendering, horizontal overflow and keyboard dialog controls. GitHub Actions now retains the browser report and failure traces in a separate job.
+
+Browser testing exposed stale screen content after URL fragment changes. Hash navigation now resolves through the same route handler as application buttons, stops simulated capture, dismisses dialogs and moves keyboard focus to the main content. Closing or cancelling a review clears the pending signature snapshot.
+
+Validation: 10 Chromium checks pass at 1440 × 1000 and 390 × 844. The 51 Node checks and syntax validation also pass. This is automated interaction coverage, not a manual visual or screen-reader audit. L04–L06 still require the staging contracts and named human decisions recorded in the handoff.

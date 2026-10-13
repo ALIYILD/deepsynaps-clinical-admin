@@ -108,6 +108,6 @@ Pilot entry needs a recorded human decision on the exact release. Pilot stop cri
 
 ## Verification limits and current result
 
-The release report records local syntax and automated tests. Browser visual/keyboard/screen-reader verification was not available in this execution environment. No live API or EPR test, Trust UAT, clinical validation or assurance sign-off has occurred. The public function readiness categories continue to describe the inspected upstream register, not 158 implemented functions in this site.
+The release report records local syntax and automated tests. A separate Playwright suite now checks Chromium desktop/mobile workflows, viewport overflow and keyboard dialog controls with `npm run test:browser`; its evidence is retained by the browser CI job. Manual visual and screen-reader verification remain outstanding. No live API or EPR test, Trust UAT, clinical validation or assurance sign-off has occurred. The public function readiness categories continue to describe the inspected upstream register, not 158 implemented functions in this site.
 
 The actionable next handoff is the L04 staging and identity contract. Until that exists, the published product remains a private synthetic demonstration and the integration modules remain source-only.

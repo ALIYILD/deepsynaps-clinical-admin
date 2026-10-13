@@ -11,7 +11,7 @@ function toast(text){const el=document.getElementById('toast');el.textContent=te
 function pill(s){return `<span class="pill ${statusInfo[s].color}">${statusInfo[s].label}</span>`}
 const catFor=key=>categories.find(c=>c.key===key);
 function count(status,cat){return features.filter(f=>(!status||f.status===status)&&(!cat||f.cat===cat)).length}
-function nav(to){if(recording)pauseRecord();route=to;categoryTab='workflow';document.getElementById('sidebar').classList.remove('open');render();window.scrollTo(0,0);history.replaceState(null,'','#'+to)}
+function nav(to){if(recording)pauseRecord();closeModal();route=to;categoryTab='workflow';document.getElementById('sidebar').classList.remove('open');render();window.scrollTo(0,0);history.replaceState(null,'','#'+to);document.getElementById('main').focus?.({preventScroll:true})}
 function catalogue(status='all',cat='all',q=''){filterStatus=status;filterCat=cat;search=q;nav('catalogue')}
 function head(title,subtitle,actions='',eyebrow='CLINICAL ADMIN / WORKSPACE'){return `<div class="page-head"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${subtitle}</p></div><div class="actions">${actions}</div></div>`}
 function render(){renderSidebar();document.getElementById('topbar').innerHTML=`<button class="mobile-menu top-icon" aria-label="Open navigation" onclick="document.getElementById('sidebar').classList.toggle('open')">${icon('menu')}</button><div class="breadcrumb">Workspace <span style="margin:0 10px;color:#b6c6ca">/</span> <b>${esc(catFor(route)?.short||({home:'Overview',catalogue:'All functions',patients:'Patient context',settings:'Demo settings'}[route]||'Overview'))}</b></div><form class="top-search" onsubmit="event.preventDefault();catalogue('all','all',this.query.value)">${icon('search')}<input name="query" aria-label="Search all functions" placeholder="Search functions, IDs, workflows…"><span style="font-size:10px">↵</span></form><button class="top-icon" aria-label="Demo settings" onclick="nav('settings')">${icon('settings')}</button><div class="avatar" title="Fictional clinician">JM</div>`;
@@ -69,3 +69,9 @@ function download(filename,content,type){const blob=new Blob([content],{type});c
 function exportCatalogue(){const quote=v=>'"'+String(v).replace(/"/g,'""')+'"';const rows=[['ID','Category','Function','Reported readiness','Dependency / limitation'],...getFiltered().map(f=>[f.id,catFor(f.cat).name,f.title,statusInfo[f.status].label,f.detail])];download('clinical-admin-function-catalogue.csv','\uFEFF'+rows.map(r=>r.map(quote).join(',')).join('\r\n'),'text/csv;charset=utf-8')}
 document.getElementById('dialog').addEventListener('click',e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeModal()}});
 const initialRoute=location.hash.slice(1);if(['home','catalogue','patients','settings',...categories.map(c=>c.key)].includes(initialRoute))route=initialRoute;render();
+
+// Hash links and browser history must resolve through the same navigation path.
+window.addEventListener?.('hashchange',()=>{
+ const target=location.hash.slice(1)||'home';
+ if(['home','catalogue','patients','settings','organisation','extensions','connections','delivery','loops',...categories.map(c=>c.key)].includes(target)&&target!==route)nav(target);
+});
