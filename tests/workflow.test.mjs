@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-function setup(seed){
- const nodes={},storage=seed?{'clinical-admin-demo-v1':JSON.stringify(seed)}:{};
+function setup(seed,raw){
+ const nodes={},storage=raw!==undefined?{'clinical-admin-demo-v1':raw}:seed?{'clinical-admin-demo-v1':JSON.stringify(seed)}:{};
  const el=id=>nodes[id]||(nodes[id]={innerHTML:'',textContent:'',value:'',checked:false,disabled:false,open:false,style:{},dataset:{},classList:{remove(){},toggle(){}},insertAdjacentHTML(_,s){this.innerHTML+=s},addEventListener(){},showModal(){this.open=true;this.checked=false;el('review-confirm').checked=false},close(){this.open=false}});
  const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null},localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},window:{scrollTo(){}},location:{hash:''},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
  for(const file of ['data.js','registry-evidence.js','product-data.js','app.js','product.js','workflow.js'])vm.runInContext(fs.readFileSync(new URL('../dist/'+file,import.meta.url),'utf8'),ctx);
@@ -74,4 +74,31 @@ test('cleared storage is not silently repopulated by an older tab',()=>{
  run('let recovered;download=(name,body)=>{recovered=JSON.parse(body)};exportRecovery()');
  assert.equal(run('recovered.status'),'DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT');
  assert.match(run("recovered.workspace.patientRecords['DEMO-001'].note"),/Maya Collins/);
+});
+test('invalid saved data is preserved and exported instead of silently overwritten',()=>{
+ const base=JSON.parse(setup().run('JSON.stringify(initial())'));
+ for(const raw of ['{broken', 'null', '[]', '42',JSON.stringify({...base,schemaVersion:99}),JSON.stringify({...base,tasks:{}}),JSON.stringify({...base,patientRecords:{'DEMO-001':{history:'broken'}}})]){
+  const {run,storage,el}=setup(null,raw);
+  assert.equal(el('storage-status').hidden,false);
+  assert.match(el('storage-message').textContent,/could not be loaded/);
+  run('draftNote();saveNote();retrySave()');
+  assert.equal(storage['clinical-admin-demo-v1'],raw);
+  run('let originalExport;download=(name,body)=>originalExport=JSON.parse(body);exportStoredRecovery()');
+  assert.equal(run('originalExport.original'),raw);
+  assert.equal(run('originalExport.status'),'UNREADABLE_DEMO_STORAGE_NOT_FOR_IMPORT');
+  run('resetDemo()');
+  assert.equal(run('storageLoadFailed'),false);
+  assert.equal(el('storage-status').hidden,true);
+  assert.equal(JSON.parse(storage['clinical-admin-demo-v1']).note,'');
+ }
+});
+test('failed replacement keeps damaged original data and recovery controls',()=>{
+ const {run,storage,el}=setup(null,'{broken');
+ run("const write=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')};resetDemo()");
+ assert.equal(storage['clinical-admin-demo-v1'],'{broken');
+ assert.equal(run('storageLoadFailed'),true);
+ assert.equal(el('storage-original').hidden,false);
+ run('localStorage.setItem=write;resetDemo()');
+ assert.equal(run('storageLoadFailed'),false);
+ assert.equal(el('storage-status').hidden,true);
 });

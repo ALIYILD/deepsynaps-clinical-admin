@@ -3,19 +3,51 @@ const paths={grid:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',mic:'M
 const icon=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.grid}"/></svg>`;
 const esc=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=()=>({consent:false,captured:false,note:'',signed:false,version:1,history:[],formFilled:false,formReviewed:false,settings:{ai:true,speech:true,sms:false},tasks:[{text:'Review Maya’s consultation summary',owner:'Dr Morgan',done:false},{text:'Confirm follow-up appointment preference',owner:'Care team',done:false},{text:'Prepare Alex’s pre-appointment briefing',owner:'Admin team',done:false}],audit:[{time:'09:00',text:'Demo workspace opened. All records are fictional.'}]});
-let state,storageBaseline=null;try{storageBaseline=localStorage.getItem('clinical-admin-demo-v1');state=JSON.parse(storageBaseline)||initial()}catch{state=initial()}
+// Validate known persisted fields before any renderer or migration uses them.
+function validSavedWorkspace(value){
+ const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+ const strings=(v,keys)=>keys.every(k=>v[k]===undefined||typeof v[k]==='string');
+ const booleans=(v,keys)=>keys.every(k=>v[k]===undefined||typeof v[k]==='boolean');
+ const fields=v=>Array.isArray(v)&&v.every(f=>object(f)&&['label','value','original','source'].every(k=>typeof f[k]==='string')&&typeof f.reviewed==='boolean');
+ const record=v=>object(v)&&strings(v,['note','noteTemplate'])&&booleans(v,['consent','captured','signed','formFilled','formReviewed'])
+  &&['version','revision'].every(k=>v[k]===undefined||(Number.isInteger(v[k])&&v[k]>=(k==='version'?1:0)))
+  &&(v.history===undefined||(Array.isArray(v.history)&&v.history.every(h=>object(h)&&typeof h.text==='string'&&typeof h.status==='string'&&Number.isInteger(h.version))))
+  &&(v.formData==null||fields(v.formData))
+  &&(v.formApproval==null||(object(v.formApproval)&&typeof v.formApproval.patientId==='string'&&fields(v.formApproval.fields)));
+ if(!record(value)||!object(value.settings)||!['ai','speech','sms'].every(k=>typeof value.settings[k]==='boolean'))return false;
+ if(!Array.isArray(value.tasks)||!value.tasks.every(t=>object(t)&&typeof t.text==='string'&&typeof t.owner==='string'&&typeof t.done==='boolean'))return false;
+ if(!Array.isArray(value.audit)||!value.audit.every(a=>object(a)&&typeof a.time==='string'&&typeof a.text==='string'))return false;
+ if(value.schemaVersion!==undefined&&value.schemaVersion!==1)return false;
+ if(value.patientRecords!==undefined&&(!object(value.patientRecords)||!Object.entries(value.patientRecords).every(([id,r])=>['DEMO-001','DEMO-002','DEMO-003'].includes(id)&&record(r))))return false;
+ if(value.selectedPatientId!==undefined&&!['DEMO-001','DEMO-002','DEMO-003'].includes(value.selectedPatientId))return false;
+ if(value.product!==undefined){
+  const p=value.product;if(!object(p)||!strings(p,['service','theme','role','team','contact','pilotNotes']))return false;
+  if(p.planNotes!==undefined&&(!object(p.planNotes)||!Object.values(p.planNotes).every(v=>typeof v==='string')))return false;
+  if(p.extensions!==undefined&&(!object(p.extensions)||!Object.values(p.extensions).every(e=>object(e)&&strings(e,['reason','date'])&&booleans(e,['requested']))))return false;
+ }
+ return true;
+}
+let state,storageBaseline=null,storageLoadFailed=false;
+try{
+ storageBaseline=localStorage.getItem('clinical-admin-demo-v1');
+ if(storageBaseline===null)state=initial();
+ else{const loaded=JSON.parse(storageBaseline);if(!validSavedWorkspace(loaded))throw Error('unsupported_saved_workspace');state=loaded;}
+}catch{state=initial();storageLoadFailed=true;}
+
 let route='home',filterStatus='all',filterCat='all',search='',categoryTab='workflow',recording=false,seconds=0,recordTimer,toastTimer,tourIndex=0;
-let storageSaveFailed=false,storageConflict=false;
+let storageSaveFailed=storageLoadFailed,storageConflict=false;
 function showStorageStatus(){
  const banner=document.getElementById('storage-status');if(!banner)return;
  banner.hidden=!storageSaveFailed;
  document.getElementById('storage-message').textContent=storageConflict
   ?'Another tab changed or cleared the saved demo. Saving from this tab is blocked to avoid overwriting those records. Export this tab’s changes if needed, then reload the saved version.'
-  :storageSaveFailed?'Changes are not saved. They exist only in this tab and may be lost if you reload or close it. Free browser storage or allow site storage, then retry.':'';
- document.getElementById('storage-retry').hidden=storageConflict;
- document.getElementById('storage-reload').hidden=!storageConflict;
+  :storageLoadFailed?'The saved demo could not be loaded. This is a temporary fresh preview; saving is blocked to preserve the original. Export the original saved value if available before choosing Reset demo data in settings.':storageSaveFailed?'Changes are not saved. They exist only in this tab and may be lost if you reload or close it. Free browser storage or allow site storage, then retry.':'';
+ document.getElementById('storage-retry').hidden=storageConflict||storageLoadFailed;
+ document.getElementById('storage-original').hidden=!storageLoadFailed||storageBaseline===null;
+ document.getElementById('storage-reload').hidden=!storageConflict&&!storageLoadFailed;
 }
 function save(){
+ if(storageLoadFailed){storageSaveFailed=true;showStorageStatus();return false;}
  try{
   if(storageConflict||localStorage.getItem('clinical-admin-demo-v1')!==storageBaseline){storageConflict=true;storageSaveFailed=true;showStorageStatus();return false;}
   const snapshot=JSON.stringify(state);
@@ -23,6 +55,7 @@ function save(){
   storageSaveFailed=false;showStorageStatus();return true;
  }catch{storageSaveFailed=true;showStorageStatus();return false;}
 }
+function exportStoredRecovery(){if(storageBaseline!==null)download('clinical-admin-original-storage.json',JSON.stringify({status:'UNREADABLE_DEMO_STORAGE_NOT_FOR_IMPORT',original:storageBaseline},null,2),'application/json');}
 function exportRecovery(){download('clinical-admin-tab-recovery.json',JSON.stringify({status:'DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT',exportedAt:new Date().toISOString(),workspace:state},null,2),'application/json');}
 function confirmReloadSaved(){modal('Reload saved demo?', '<p>This discards changes held only in this tab and loads the current saved demo. Export this tab’s changes first if you need to keep them.</p>', '<button onclick="closeModal()">Keep this tab</button><button class="primary" onclick="reloadSavedState()">Discard tab changes and reload</button>');}
 function reloadSavedState(){storageSaveFailed=false;location.reload();}
@@ -82,8 +115,8 @@ function intelligence(){return `<div class="notice">These are reported existing 
 function patientPage(){return head('Patients & appointments','A fictional clinic day, with patient context ready before the conversation.',`<button class="primary" onclick="nav('C')">Open Maya’s consultation</button>`)+`<div class="work-grid"><div class="panel"><h2>Tuesday’s appointments</h2>${appointment('09:15','MC','Maya Collins','Follow-up · Community care',true)}${appointment('10:00','AT','Alex Taylor','Initial consultation',false)}${appointment('10:45','SW','Sam Wilson','Care plan review',false)}<p class="fine">All names, appointment details and records shown here are fictional.</p></div><div class="panel"><h2>Maya’s patient context</h2><p class="fine">DEMO-001 · Age 42 · No real NHS Number</p><div class="timeline-item"><small>Today · Patient priority</small><p>Discuss sleep and the impact on the working day.</p></div><div class="timeline-item"><small>Today · Source document</small><p>Patient reports keeping a diary; its contents are not included.</p></div><div class="timeline-item"><small>Follow-up preference</small><p>Tuesday morning.</p></div><button class="wide" onclick="nav('E')">Open pre-appointment briefing →</button></div></div>`}
 function patientDetail(name){if(name==='Maya Collins')return nav('patients');modal(name+' — fictional record',`<p>${name==='Alex Taylor'?'Initial consultation · 10:00':'Care plan review · 10:45'}</p><p>This fictional schedule entry shows how an appointment is presented. Maya Collins is the fully scripted patient journey in this demo.</p>`,`<button onclick="closeModal()">Close</button><button class="primary" onclick="closeModal();nav('C')">Explore Maya’s consultation</button>`)}
 function settingsPage(){return head('Demo settings','Explore service dependencies without connecting external services.')+`<div class="work-grid"><div class="panel"><h2>Simulated service switches</h2>${[['ai','AI drafting','Allows the predefined note drafting preview. No AI provider is called.'],['speech','Speech engine','Allows the sample transcript. No microphone or speech service is used.'],['sms','SMS service','Changes the SMS preview state. No message is sent.']].map(([key,title,desc])=>`<div class="toggle-row"><div><strong>${title}</strong><p>${desc}</p></div><button role="switch" aria-checked="${state.settings[key]}" aria-label="${title}" class="switch" onclick="state.settings.${key}=!state.settings.${key};audit('${title} simulation '+(state.settings.${key}?'enabled':'disabled'));render()"></button></div>`).join('')}<div class="notice">These switches only affect this demo. They do not configure the production product or change any capability’s reported readiness.</div></div><aside class="panel"><h3>Reset your walkthrough</h3><p class="fine">Demo notes, tasks, settings and activity are saved in this browser only. Use fictional content throughout.</p><button onclick="confirmReset()">Reset demo data</button><button class="wide" onclick="showAbout()">Source & demo scope</button></aside></div>`}
-function resetDemo(){state=initial();seconds=0;const saved=save();closeModal();nav('home');toast(saved?'Demo reset.':'Reset applies to this tab only. Saving failed; previous saved records may return after reload.')}
-function confirmReset(){modal('Reset this demo?',`<p>This removes only the demo notes, tasks and settings saved in this browser and restores the fictional starting records.</p>`,`<button onclick="closeModal()">Cancel</button><button class="primary" onclick="resetDemo()">Reset demo</button>`)}
+function resetDemo(){state=initial();seconds=0;const loadFailed=storageLoadFailed;storageLoadFailed=false;const saved=save();if(!saved){storageLoadFailed=loadFailed;showStorageStatus();}closeModal();nav('home');toast(saved?'Demo reset.':'Reset applies to this tab only. Saving failed; previous saved records may return after reload.')}
+function confirmReset(){modal('Reset this demo?',`<p>This replaces the saved demo notes, tasks and settings with the fictional starting records. If the saved data could not be loaded, export its original value before resetting. This cannot be undone.</p>`,`<button onclick="closeModal()">Cancel</button><button class="primary" onclick="resetDemo()">Reset demo</button>`)}
 function feature(id){const f=features.find(x=>x.id===id);if(!f)return;const special={T04:state.settings.sms?'SMS demo service is enabled. Example: “Your care team will contact you to confirm your preferred follow-up time.” No message is sent.':'Enable the SMS demo switch to preview a follow-up message. No message is sent.',T07:'Safeguarding concerns must be escalated to a human care team. This demo does not detect, assess or triage risk.',DS26:'The reported implementation remembers writing preferences only, not agent task outcomes.'};modal(f.title,`<div style="display:flex;gap:10px;margin-bottom:18px"><span class="pill grey">${f.id}</span>${pill(f.status)}</div><p>${esc(statusInfo[f.status].description)}</p>${f.detail?`<div class="notice ${['partial','external','approval'].includes(f.status)?'amber':''}">${esc(f.detail)}</div>`:''}${special[id]?`<p>${esc(special[id])}</p>`:''}<dl><dt>Category</dt><dd>${catFor(f.cat).name}</dd><dt>Source</dt><dd>Clinical OS repository register, commit 2be80acd</dd><dt>Evidence</dt><dd><code>docs/clinical-workspace/FUNCTION_STATUS.md</code><br>Register and API source inspected; upstream tests not rerun here.</dd><dt>Here you can</dt><dd>${f.status==='excluded'?'Inspect the scope boundary. This action is intentionally unavailable.':f.status==='linked'?'Explore the module’s place in the wider platform. Live module requires the main DeepSynaps application.':'Explore a representative category workflow. This is not an individual end-to-end implementation of every listed function.'}</dd></dl>`,`<button onclick="closeModal()">Close</button>${f.status==='excluded'?'':`<button class="primary" onclick="closeModal();nav('${f.cat}')">Open ${catFor(f.cat).short} →</button>`}`)}
 function sourceDetail(title,detail){modal('Source: '+title,`<p>${esc(detail)}</p><span class="pill grey">Fictional demonstration source</span>`)}
 function modal(title,body,foot='<button onclick="closeModal()">Close</button>'){const d=document.getElementById('dialog');d.innerHTML=`<div class="modal-head"><h2 id="dialog-title">${esc(title)}</h2><button class="close" aria-label="Close dialog" onclick="closeModal()">×</button></div><div class="modal-body">${body}</div><div class="modal-foot">${foot}</div>`;if(!d.open)d.showModal()}
@@ -102,3 +135,5 @@ window.addEventListener?.('hashchange',()=>{
  const target=location.hash.slice(1)||'home';
  if(['home','catalogue','patients','settings','organisation','extensions','connections','delivery','loops',...categories.map(c=>c.key)].includes(target)&&target!==route)nav(target);
 });
+
+showStorageStatus();

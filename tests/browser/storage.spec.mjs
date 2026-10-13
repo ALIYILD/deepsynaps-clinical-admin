@@ -1,5 +1,33 @@
 import {test,expect} from '@playwright/test';
 
+for(const original of ['{broken-json','{"tasks":{},"settings":{}}']){
+ test(`unreadable saved workspace is preserved until confirmed reset: ${original}`,async({page})=>{
+  await page.goto('/');
+  await page.evaluate(raw=>localStorage.setItem('clinical-admin-demo-v1',raw),original);
+  await page.reload();
+  await expect(page.locator('#storage-status')).toContainText('could not be loaded');
+  await page.goto('/#N');
+  await page.getByRole('button',{name:'Load sample note',exact:true}).click();
+  await expect(page.locator('#storage-status')).toBeVisible();
+  expect(await page.evaluate(()=>localStorage.getItem('clinical-admin-demo-v1'))).toBe(original);
+  const pending=page.waitForEvent('download');
+  await page.getByRole('button',{name:'Export original saved value',exact:true}).click();
+  const stream=await(await pending).createReadStream();const chunks=[];
+  for await(const chunk of stream)chunks.push(chunk);
+  expect(JSON.parse(Buffer.concat(chunks).toString()).original).toBe(original);
+  await page.goto('/#settings');
+  await page.getByRole('button',{name:'Reset demo data',exact:true}).click();
+  await page.getByRole('button',{name:'Cancel',exact:true}).click();
+  expect(await page.evaluate(()=>localStorage.getItem('clinical-admin-demo-v1'))).toBe(original);
+  await page.getByRole('button',{name:'Reset demo data',exact:true}).click();
+  await page.getByRole('button',{name:'Reset demo',exact:true}).click();
+  await expect(page.locator('#storage-status')).toBeHidden();
+  await page.reload();
+  await expect(page.locator('#storage-status')).toBeHidden();
+  await expect(page.getByRole('heading',{name:'Your day, connected.'})).toBeVisible();
+ });
+}
+
 for(const failure of ['QuotaExceededError','SecurityError']){
  test(`${failure} is visible and retry preserves the reviewed note after reload`,async({page})=>{
   await page.goto('/#N');

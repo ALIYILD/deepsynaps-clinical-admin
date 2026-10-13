@@ -2,111 +2,123 @@ TAP version 13
 # Subtest: consent, notes and signatures stay with their fictional patient
 ok 1 - consent, notes and signatures stay with their fictional patient
   ---
-  duration_ms: 37.665748
+  duration_ms: 48.933295
   type: 'test'
   ...
 # Subtest: saved multi-patient state rehydrates without losing selected record
 ok 2 - saved multi-patient state rehydrates without losing selected record
   ---
-  duration_ms: 9.833289
+  duration_ms: 13.357347
   type: 'test'
   ...
 # Subtest: legacy browser notes migrate to Maya only
 ok 3 - legacy browser notes migrate to Maya only
   ---
-  duration_ms: 8.811579
+  duration_ms: 11.185748
   type: 'test'
   ...
 # Subtest: editing after review invalidates the exact snapshot
 ok 4 - editing after review invalidates the exact snapshot
   ---
-  duration_ms: 5.334162
+  duration_ms: 5.621602
   type: 'test'
   ...
 # Subtest: switching patients cancels pending signature and stops simulated capture
 ok 5 - switching patients cancels pending signature and stops simulated capture
   ---
-  duration_ms: 4.382561
+  duration_ms: 6.139527
   type: 'test'
   ...
 # Subtest: signed history remains unchanged during an amendment
 ok 6 - signed history remains unchanged during an amendment
   ---
-  duration_ms: 4.561091
+  duration_ms: 6.788161
   type: 'test'
   ...
 # Subtest: forms require all field reviews; edits invalidate approval eligibility
 ok 7 - forms require all field reviews; edits invalidate approval eligibility
   ---
-  duration_ms: 5.077207
+  duration_ms: 10.797764
   type: 'test'
   ...
 # Subtest: approved form snapshot is protected, isolated and explicitly reopened
 ok 8 - approved form snapshot is protected, isolated and explicitly reopened
   ---
-  duration_ms: 5.707923
+  duration_ms: 11.595583
   type: 'test'
   ...
 # Subtest: follow-up tasks deduplicate by patient and signed version and retain source
 ok 9 - follow-up tasks deduplicate by patient and signed version and retain source
   ---
-  duration_ms: 5.033461
+  duration_ms: 11.516403
   type: 'test'
   ...
 # Subtest: handoff and exports use the selected patient with honest submission status
 ok 10 - handoff and exports use the selected patient with honest submission status
   ---
-  duration_ms: 4.772992
+  duration_ms: 9.861836
   type: 'test'
   ...
 # Subtest: refilling cannot overwrite an approved form before explicit reopening
 ok 11 - refilling cannot overwrite an approved form before explicit reopening
   ---
-  duration_ms: 4.47893
+  duration_ms: 7.340662
   type: 'test'
   ...
 # Subtest: edited note and form content is escaped when rendered
 ok 12 - edited note and form content is escaped when rendered
   ---
-  duration_ms: 4.314113
+  duration_ms: 6.468949
   type: 'test'
   ...
 # Subtest: reset clears all patient records and leaves API connection disabled
 ok 13 - reset clears all patient records and leaves API connection disabled
   ---
-  duration_ms: 4.121199
+  duration_ms: 6.114374
   type: 'test'
   ...
 # Subtest: failed persistence warns without losing the current draft and retry saves all records
 ok 14 - failed persistence warns without losing the current draft and retry saves all records
   ---
-  duration_ms: 4.712934
+  duration_ms: 5.380568
   type: 'test'
   ...
 # Subtest: failed reset does not claim stored records were removed
 ok 15 - failed reset does not claim stored records were removed
   ---
-  duration_ms: 4.517621
+  duration_ms: 6.574518
   type: 'test'
   ...
 # Subtest: a stale tab cannot save or reset over a newer stored workspace
 ok 16 - a stale tab cannot save or reset over a newer stored workspace
   ---
-  duration_ms: 4.604769
+  duration_ms: 7.457952
   type: 'test'
   ...
 # Subtest: cleared storage is not silently repopulated by an older tab
 ok 17 - cleared storage is not silently repopulated by an older tab
   ---
-  duration_ms: 3.848896
+  duration_ms: 6.159131
   type: 'test'
   ...
-1..17
-# tests 17
+# Subtest: invalid saved data is preserved and exported instead of silently overwritten
+ok 18 - invalid saved data is preserved and exported instead of silently overwritten
+  ---
+  duration_ms: 55.373806
+  type: 'test'
+  ...
+# Subtest: failed replacement keeps damaged original data and recovery controls
+ok 19 - failed replacement keeps damaged original data and recovery controls
+  ---
+  duration_ms: 5.690246
+  type: 'test'
+  ...
+1..19
+# tests 19
 # suites 0
-# pass 17
+# pass 19
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 323.711418
+# duration_ms 503.466375

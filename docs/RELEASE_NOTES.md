@@ -45,3 +45,11 @@ Validation: 53 Node tests and 14 Chromium desktop/mobile tests pass. New tests i
 Each tab retains the exact saved snapshot it loaded or last wrote. Before saving, it compares the current storage value with that snapshot and blocks writes if another tab has changed or cleared it. Storage events surface conflicts promptly. A stale tab cannot bypass the conflict with Retry saving or reset; users can export the tab's fictional state and explicitly reload the saved version. Recovery exports are marked `DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT`.
 
 Validation: 55 Node tests and 16 Chromium desktop/mobile tests pass. The two-tab browser scenario verifies that stale edits cannot overwrite a newer signed note, exported recovery content retains the stale edit, cancelling reload preserves the tab, and confirmed reload restores the newer signature. Node checks cover stale resets and externally cleared storage. This detects observed stale snapshots; localStorage comparison and write are not atomic. Server-side concurrency, idempotency and authoritative audit remain L05 dependencies.
+
+## Damaged saved data recovery
+
+The loader now validates saved workspace structure before rendering or migrating it. Malformed JSON, invalid root/settings/task/audit structures, unsupported schema versions and incompatible patient or product fields enter a clearly labelled temporary preview. Normal saves and retries are blocked so the original saved value is preserved. Valid legacy single-patient records remain supported.
+
+Users can export the exact original value in a recovery JSON wrapper before explicitly resetting the demo. Reset confirmation explains replacement and irreversibility. A failed replacement preserves the original and keeps recovery controls available. These exports are for inspection, not automatic import, and no clinical data integrity or immutable audit guarantee is implied.
+
+Validation: 57 Node tests and 20 Chromium desktop/mobile checks pass. New cases cover malformed JSON, invalid structures, unknown versions, original-value export, blocked ordinary writes, cancellation, confirmed reset and failed-reset recovery. Staging integration and human approval dependencies are unchanged.
