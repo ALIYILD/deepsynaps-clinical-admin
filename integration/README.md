@@ -26,3 +26,5 @@ Run `node --test tests/integration.test.mjs`.
 ## Gateway policy module
 
 `clinical-admin-gateway.mjs` composes the reader with trusted `verifySession`, `resolveTenantReader` and `canReadPatient` services. It validates expiry, operation permissions, tenant binding and explicit boolean patient-access decisions. It denies mutations and query scope overrides. It is not mounted, and no concrete identity or tenant service is implemented here. Read the L02/L04 contracts in `docs/Clinical_Admin_Implementation_Loops.md`. Tests use injected synthetic dependencies: `node --test tests/gateway.test.mjs`.
+
+The reader accepts integer timeouts from 1 to 30,000 ms (default 10,000 ms), exact JSON or FHIR JSON media types, and at most 1 MiB of response bytes. The byte limit is enforced while streaming, including when Content-Length is absent. See [the staging handoff](../docs/STAGING_HANDOFF.md) for required identity inputs and deployment acceptance cases.

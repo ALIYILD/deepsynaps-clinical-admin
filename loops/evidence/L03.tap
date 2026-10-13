@@ -2,81 +2,111 @@ TAP version 13
 # Subtest: consent, notes and signatures stay with their fictional patient
 ok 1 - consent, notes and signatures stay with their fictional patient
   ---
-  duration_ms: 23.696885
+  duration_ms: 37.665748
   type: 'test'
   ...
 # Subtest: saved multi-patient state rehydrates without losing selected record
 ok 2 - saved multi-patient state rehydrates without losing selected record
   ---
-  duration_ms: 8.315496
+  duration_ms: 9.833289
   type: 'test'
   ...
 # Subtest: legacy browser notes migrate to Maya only
 ok 3 - legacy browser notes migrate to Maya only
   ---
-  duration_ms: 7.195147
+  duration_ms: 8.811579
   type: 'test'
   ...
 # Subtest: editing after review invalidates the exact snapshot
 ok 4 - editing after review invalidates the exact snapshot
   ---
-  duration_ms: 4.560852
+  duration_ms: 5.334162
   type: 'test'
   ...
 # Subtest: switching patients cancels pending signature and stops simulated capture
 ok 5 - switching patients cancels pending signature and stops simulated capture
   ---
-  duration_ms: 4.189251
+  duration_ms: 4.382561
   type: 'test'
   ...
 # Subtest: signed history remains unchanged during an amendment
 ok 6 - signed history remains unchanged during an amendment
   ---
-  duration_ms: 3.591179
+  duration_ms: 4.561091
   type: 'test'
   ...
 # Subtest: forms require all field reviews; edits invalidate approval eligibility
 ok 7 - forms require all field reviews; edits invalidate approval eligibility
   ---
-  duration_ms: 3.946595
+  duration_ms: 5.077207
   type: 'test'
   ...
 # Subtest: approved form snapshot is protected, isolated and explicitly reopened
 ok 8 - approved form snapshot is protected, isolated and explicitly reopened
   ---
-  duration_ms: 5.198003
+  duration_ms: 5.707923
   type: 'test'
   ...
 # Subtest: follow-up tasks deduplicate by patient and signed version and retain source
 ok 9 - follow-up tasks deduplicate by patient and signed version and retain source
   ---
-  duration_ms: 5.49466
+  duration_ms: 5.033461
   type: 'test'
   ...
 # Subtest: handoff and exports use the selected patient with honest submission status
 ok 10 - handoff and exports use the selected patient with honest submission status
   ---
-  duration_ms: 3.683077
+  duration_ms: 4.772992
+  type: 'test'
+  ...
+# Subtest: refilling cannot overwrite an approved form before explicit reopening
+ok 11 - refilling cannot overwrite an approved form before explicit reopening
+  ---
+  duration_ms: 4.47893
   type: 'test'
   ...
 # Subtest: edited note and form content is escaped when rendered
-ok 11 - edited note and form content is escaped when rendered
+ok 12 - edited note and form content is escaped when rendered
   ---
-  duration_ms: 3.394131
+  duration_ms: 4.314113
   type: 'test'
   ...
 # Subtest: reset clears all patient records and leaves API connection disabled
-ok 12 - reset clears all patient records and leaves API connection disabled
+ok 13 - reset clears all patient records and leaves API connection disabled
   ---
-  duration_ms: 3.649787
+  duration_ms: 4.121199
   type: 'test'
   ...
-1..12
-# tests 12
+# Subtest: failed persistence warns without losing the current draft and retry saves all records
+ok 14 - failed persistence warns without losing the current draft and retry saves all records
+  ---
+  duration_ms: 4.712934
+  type: 'test'
+  ...
+# Subtest: failed reset does not claim stored records were removed
+ok 15 - failed reset does not claim stored records were removed
+  ---
+  duration_ms: 4.517621
+  type: 'test'
+  ...
+# Subtest: a stale tab cannot save or reset over a newer stored workspace
+ok 16 - a stale tab cannot save or reset over a newer stored workspace
+  ---
+  duration_ms: 4.604769
+  type: 'test'
+  ...
+# Subtest: cleared storage is not silently repopulated by an older tab
+ok 17 - cleared storage is not silently repopulated by an older tab
+  ---
+  duration_ms: 3.848896
+  type: 'test'
+  ...
+1..17
+# tests 17
 # suites 0
-# pass 12
+# pass 17
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 163.966546
+# duration_ms 323.711418

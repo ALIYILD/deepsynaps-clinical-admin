@@ -1,0 +1,43 @@
+name: Verify implementation loops
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  local-loops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run check
+      - run: npm run loops
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: local-loop-evidence
+          path: |
+            loops/latest-report.json
+            loops/evidence/*.tap
+          retention-days: 30
+  browser-workflows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-workflow-evidence
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30

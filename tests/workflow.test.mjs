@@ -19,5 +19,59 @@ test('forms require all field reviews; edits invalidate approval eligibility',()
 test('approved form snapshot is protected, isolated and explicitly reopened',()=>{const {run}=setup();run('fillForm();reviewFormField(0,true);reviewFormField(1,true);reviewFormField(2,true);approveForm()');run("editFormField(1,'Forbidden')");assert.equal(run('state.formData[1].value'),'Tuesday morning');run("selectPatient('DEMO-003');fillForm()");assert.equal(run('state.formApproval'),null);assert.equal(run('state.formData[1].value'),'Thursday morning');run("selectPatient('DEMO-001')");assert.equal(run('state.formApproval.patientId'),'DEMO-001');run('reopenForm()');assert.equal(run('state.formReviewed'),false);assert.equal(run('state.formData.some(f=>f.reviewed)'),false);});
 test('follow-up tasks deduplicate by patient and signed version and retain source',()=>{const {run,sign}=setup();run('draftNote()');sign();run('createFollowup();createFollowup()');assert.equal(run('state.tasks.length'),4);const original=run('state.tasks[3].sourceNote');run("amendNote();updateNote('Updated next steps')");sign();run('createFollowup()');assert.equal(run('state.tasks.length'),5);assert.equal(run('state.tasks[3].sourceNote'),original);assert.equal(run('state.tasks[4].sourceNote'),'Updated next steps');});
 test('handoff and exports use the selected patient with honest submission status',()=>{const {run,sign,el}=setup();run("selectPatient('DEMO-002');draftNote()");sign();run('previewHandoff()');assert(el('dialog').innerHTML.includes('DEMO-002'));assert(!el('dialog').innerHTML.includes('DEMO-001'));assert(el('dialog').innerHTML.includes('NOT_SUBMITTED'));run("let lastExport;download=(...args)=>lastExport=args;exportNote()");assert.equal(run('lastExport[0]'),'DEMO-002-note-v1.txt');assert(run("lastExport[1].includes('Alex Taylor')"));});
+test('refilling cannot overwrite an approved form before explicit reopening',()=>{
+ const {run}=setup();
+ run("fillForm();editFormField(1,'Friday morning');reviewFormField(0,true);reviewFormField(1,true);reviewFormField(2,true);approveForm()");
+ const approved=run('JSON.stringify(state.formApproval)');
+ run('fillForm()');
+ assert.equal(run('JSON.stringify(state.formApproval)'),approved);
+ assert.equal(run('state.formData[1].value'),'Friday morning');
+ run('reopenForm();fillForm()');
+ assert.equal(run('state.formApproval'),null);
+ assert.equal(run('state.formData[1].value'),'Tuesday morning');
+});
 test('edited note and form content is escaped when rendered',()=>{const {run}=setup();run("updateNote('<img src=x onerror=alert(1)>');fillForm();editFormField(0,'<script>bad()</script>')");assert(!run('notes()').includes('<img src=x'));assert(run('notes()').includes('&lt;img'));assert(!run('forms()').includes('<script>'));assert(run('forms()').includes('&lt;script&gt;'));});
 test('reset clears all patient records and leaves API connection disabled',()=>{const {run}=setup();run("draftNote();selectPatient('DEMO-003');fillForm();state=initial();nav('home')");assert.equal(run('state.selectedPatientId'),'DEMO-001');assert.equal(run('Object.values(state.patientRecords).some(r=>r.note||r.formData)'),false);assert.equal(run('productConfig.apiConnected'),false);});
+test('failed persistence warns without losing the current draft and retry saves all records',()=>{
+ const {run,el,storage}=setup();
+ run("const originalSetItem=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')};draftNote();saveNote()");
+ assert.equal(el('storage-status').hidden,false);
+ assert.match(el('toast').textContent,/Saving failed/);
+ assert.match(run('state.note'),/Maya Collins/);
+ run("selectPatient('DEMO-002');draftNote();localStorage.setItem=originalSetItem;retrySave()");
+ assert.equal(el('storage-status').hidden,true);
+ const saved=JSON.parse(storage['clinical-admin-demo-v1']);
+ assert.match(saved.patientRecords['DEMO-001'].note,/Maya Collins/);
+ assert.match(saved.patientRecords['DEMO-002'].note,/Alex Taylor/);
+});
+test('failed reset does not claim stored records were removed',()=>{
+ const {run,el,storage}=setup();
+ run("draftNote();const persistedBeforeReset=localStorage.getItem('clinical-admin-demo-v1');localStorage.setItem=()=>{throw Error('denied')};resetDemo()");
+ assert.equal(storage['clinical-admin-demo-v1'],run('persistedBeforeReset'));
+ assert.match(el('toast').textContent,/previous saved records may return/);
+ assert.equal(el('storage-status').hidden,false);
+ assert.equal(run('state.note'),'');
+});
+test('a stale tab cannot save or reset over a newer stored workspace',()=>{
+ const {run,storage,el}=setup();run('draftNote()');
+ const newer=JSON.parse(storage['clinical-admin-demo-v1']);
+ newer.patientRecords['DEMO-001'].note='Newer signed note from another tab';
+ newer.patientRecords['DEMO-001'].signed=true;
+ storage['clinical-admin-demo-v1']=JSON.stringify(newer);
+ run("updateNote('Stale edit');retrySave()");
+ assert.equal(storage['clinical-admin-demo-v1'],JSON.stringify(newer));
+ assert.match(el('storage-message').textContent,/Another tab/);
+ assert.equal(el('storage-retry').hidden,true);
+ assert.equal(el('storage-reload').hidden,false);
+ run('resetDemo()');
+ assert.equal(storage['clinical-admin-demo-v1'],JSON.stringify(newer));
+});
+test('cleared storage is not silently repopulated by an older tab',()=>{
+ const {run,storage}=setup();run('draftNote()');
+ delete storage['clinical-admin-demo-v1'];
+ assert.equal(run('save()'),false);
+ assert.equal(storage['clinical-admin-demo-v1'],undefined);
+ run('let recovered;download=(name,body)=>{recovered=JSON.parse(body)};exportRecovery()');
+ assert.equal(run('recovered.status'),'DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT');
+ assert.match(run("recovered.workspace.patientRecords['DEMO-001'].note"),/Maya Collins/);
+});
