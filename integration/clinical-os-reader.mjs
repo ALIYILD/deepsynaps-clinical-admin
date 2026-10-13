@@ -28,10 +28,16 @@ export function createClinicalOsReader({origin,approvedOrigins=[],partnerSandbox
   }
   if(partnerSandboxKey&&(!/^dsk_test_[A-Za-z0-9_-]+$/.test(partnerSandboxKey)))throw new IntegrationError('sandbox_key_required',400);
   const configured=()=>{if(!base)throw new IntegrationError('integration_not_configured');if(typeof fetchImpl!=='function')throw new IntegrationError('fetch_unavailable')};
-  async function read(path,headers){
+  async function read(path,headers,externalSignal){
     configured();const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);
+    const cancel=()=>controller.abort();
+    externalSignal?.addEventListener('abort',cancel,{once:true});
+    if(externalSignal?.aborted)cancel();
+    const assertActive=()=>{if(controller.signal.aborted)throw new IntegrationError(externalSignal?.aborted?'request_cancelled':'upstream_timeout',externalSignal?.aborted?408:504);};
     try{
+      assertActive();
       const response=await fetchImpl(new URL(path,base).href,{method:'GET',headers:{Accept:'application/json, application/fhir+json',...headers},redirect:'error',cache:'no-store',signal:controller.signal});
+      assertActive();
       if(!response.ok)throw new IntegrationError(response.status===401?'upstream_authentication_required':response.status===403?'upstream_access_denied':response.status===404?'upstream_not_found':response.status===429?'upstream_rate_limited':'upstream_unavailable',response.status);
       if(!['application/json','application/fhir+json'].includes((response.headers.get('content-type')||'').split(';')[0].trim().toLowerCase()))throw new IntegrationError('invalid_upstream_content',502);
       const declared=Number(response.headers.get('content-length')||0);if(declared>1048576)throw new IntegrationError('upstream_response_too_large',502);
@@ -39,7 +45,7 @@ export function createClinicalOsReader({origin,approvedOrigins=[],partnerSandbox
       const body=response.body?.getReader();const chunks=[];let size=0;
       if(body)try{
         while(true){
-          const {done,value}=await body.read();if(done)break;
+          const {done,value}=await body.read();assertActive();if(done)break;
           size+=value.byteLength;
           if(size>1048576){controller.abort();await body.cancel().catch(()=>{});throw new IntegrationError('upstream_response_too_large',502);}
           chunks.push(value);
@@ -51,19 +57,19 @@ export function createClinicalOsReader({origin,approvedOrigins=[],partnerSandbox
       let value;try{value=JSON.parse(text)}catch{throw new IntegrationError('invalid_upstream_json',502)}
       if(!value||typeof value!=='object'||Array.isArray(value))throw new IntegrationError('invalid_upstream_shape',502);
       return value;
-    }catch(error){if(error instanceof IntegrationError)throw error;throw new IntegrationError(controller.signal.aborted?'upstream_timeout':'upstream_unavailable',controller.signal.aborted?504:502)}finally{clearTimeout(timer)}
+    }catch(error){if(error instanceof IntegrationError)throw error;assertActive();throw new IntegrationError('upstream_unavailable',502)}finally{clearTimeout(timer);externalSignal?.removeEventListener('abort',cancel)}
   }
   return Object.freeze({
     configuration(){return {originConfigured:!!base,partnerSandboxKeyConfigured:!!partnerSandboxKey,connected:false,mode:'synthetic-staging',writesSupported:false};},
     async workspace(operation,{accessToken,...params}={}){
       configured();if(!Object.hasOwn(workspaceRoutes,operation))throw new IntegrationError('unsupported_operation',400);
       if(typeof accessToken!=='string'||!accessToken||/[\r\n]/.test(accessToken))throw new IntegrationError('user_session_required',401);
-      return read(workspaceRoutes[operation](params),{Authorization:'Bearer '+accessToken});
+      return read(workspaceRoutes[operation](params),{Authorization:'Bearer '+accessToken},params.signal);
     },
     async partner(operation,params={}){
       configured();if(!Object.hasOwn(partnerRoutes,operation))throw new IntegrationError('unsupported_operation',400);
       if(!partnerSandboxKey)throw new IntegrationError('sandbox_key_not_configured');
-      return read(partnerRoutes[operation](params),{'X-API-Key':partnerSandboxKey});
+      return read(partnerRoutes[operation](params),{'X-API-Key':partnerSandboxKey},params.signal);
     }
   });
 }

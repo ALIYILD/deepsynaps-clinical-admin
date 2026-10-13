@@ -77,3 +77,9 @@ The source-only gateway now rechecks session expiry after patient authorisation,
 Known integration errors retain their HTTP error statuses; arbitrary typed error messages and success/redirect statuses are sanitised. Missing or non-object reader results return 502, and method rejections include Allow: GET. These controls do not implement session revocation or endpoint-specific schema validation.
 
 Validation targets 127 Node checks, including eight added gateway regressions for delayed expiry, shared-session mutation, malformed dependency results and redacted errors. All dependencies in these checks are injected fixtures. No staging service, identity integration or clinical deployment was created.
+
+## Bounded gateway requests and cancellation
+
+A configurable shared deadline now bounds asynchronous gateway session, patient-access, tenant and reader calls. Deadline expiry returns a sanitised 504; caller cancellation returns 408. All trusted dependencies receive an optional cancellation signal, and the read adapter propagates it to fetch and response-body consumption. Timers and request listeners are removed when the handler finishes. No retry or synthetic fallback is added.
+
+Nine new local tests cover bounded configuration, stalled dependencies, late completion, pre-cancelled requests, mid-request cancellation and gateway-to-reader abort propagation. The gateway stops waiting even if a custom dependency ignores cancellation; that dependency must cooperate to release its own resources. No deployed identity service is claimed. The full local suite contains 136 tests; browser tests remain separate in CI.

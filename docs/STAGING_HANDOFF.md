@@ -19,9 +19,11 @@ Record references to secret-store entries only; never put credentials, cookies, 
 
 `createClinicalAdminGateway` takes three trusted server functions. Identity services must be implemented against the agreed deployment contract, not against browser headers or local demo records.
 
-- `verifySession(request)` returns `null` for an invalid session or a verified object with nonempty `subject` and `organisationId`, numeric `expiresAt` in milliseconds, explicit `permissions`, and `upstreamAccessToken` for workspace reads. Permissions are `workspace:read`, `partner:read` and the separate clinic-wide `partner:clinic_read` grant. Revalidate expiry, revocation and membership according to the approved lifecycle.
-- `resolveTenantReader(organisationId)` returns `{organisationId, reader}` for that exact organisation, or no binding. Construct the reader using approved server configuration and that organisation's sandbox key. Never allow the caller to choose an upstream origin or key.
-- `canReadPatient(session, patientId)` returns the boolean `true` only after an authoritative subject, organisation and patient access decision. Missing or denied access must never inherit the broad permissions of a partner key.
+- `verifySession(request, {signal})` returns `null` for an invalid session or a verified object with nonempty `subject` and `organisationId`, numeric `expiresAt` in milliseconds, explicit `permissions`, and `upstreamAccessToken` for workspace reads. Permissions are `workspace:read`, `partner:read` and the separate clinic-wide `partner:clinic_read` grant. Revalidate expiry, revocation and membership according to the approved lifecycle.
+- `resolveTenantReader(organisationId, {signal})` returns `{organisationId, reader}` for that exact organisation, or no binding. Construct the reader using approved server configuration and that organisation's sandbox key. Never allow the caller to choose an upstream origin or key.
+- `canReadPatient(session, patientId, {signal})` returns the boolean `true` only after an authoritative subject, organisation and patient access decision. Missing or denied access must never inherit the broad permissions of a partner key.
+
+The optional final `{signal}` argument carries the gateway deadline and caller cancellation. Trusted services must honour it and release their resources. The host must connect client disconnects to the incoming Request signal. Staging tests must cover stalled identity/permission lookups, timeout, caller cancellation and late completion without a later upstream call.
 
 Mount only `/api/clinical-admin/` GET routes on the authenticated server. Keep responses non-cacheable. The static `dist/` site must remain in demo mode until real reads have passed the following acceptance cases. Do not add secret-entry fields or import server modules into the browser.
 

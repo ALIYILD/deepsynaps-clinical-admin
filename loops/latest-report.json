@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T12:33:39.304Z",
-  "sourceFingerprint": "84bc75566bf8277ab39d59099b3f00f41714502a78601b066da52f83a3f2540c",
+  "generatedAt": "2026-10-13T12:38:53.973Z",
+  "sourceFingerprint": "ca6ec92982c3b90a6dee257bbd529bbf698c6a5b91d2f706b567dcd89d56b673",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -110,11 +110,11 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "63b393a02c1276ef34e53913d698df13563a0a8a18da4842504d71e0f928a365"
+      "sha256": "a440d4043e3778a494806bfd851ba04c7ae9c27374ef6193ff57af44adfdec63"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
-      "sha256": "4be1739a7eb912142034e69144d0d616a0ef7d29335e3f87329fa33240ff7122"
+      "sha256": "7640595a648a576d1dbdec1b1e47e996ba3f965ad0a104e4cdfe88644c177561"
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
@@ -122,15 +122,15 @@
     },
     {
       "path": "integration/README.md",
-      "sha256": "52b75bdc0e8566c3d9938581dae5d6cdf436948d1a6bfffbd699ef6aba3a067c"
+      "sha256": "49b5e122e5bf48ee1e65d1fe621a2139c01887ee4518093823b05d3c6aeb7c78"
     },
     {
       "path": "integration/clinical-admin-gateway.mjs",
-      "sha256": "0ec88a4ccdd89ffe0226a8c0c445e40dc64f9c3ab9d752c51d283c71886636e0"
+      "sha256": "c45dc6054982023d80f58d101e10d4227b923f800769e7c4bbd5dc30f24bf851"
     },
     {
       "path": "integration/clinical-os-reader.mjs",
-      "sha256": "929d48947cee9d361223b8a63b8d130051b49cb4da0f025d1e14d53a28ae9ecc"
+      "sha256": "87882756255b5aba6377fcd6b84017cac7176e353cbe342b15870a272cb9b145"
     },
     {
       "path": "loops/implementation.json",
@@ -174,11 +174,11 @@
     },
     {
       "path": "tests/gateway.test.mjs",
-      "sha256": "549a1578af2c0229946c64496e05320534e1d94d846525f915a1351b8a3de8dc"
+      "sha256": "e46e58989da0573956f9b5741c211c33b07ac17960e0a69a4febed32fc9c46cb"
     },
     {
       "path": "tests/integration.test.mjs",
-      "sha256": "bc485b459ff978316dd35feb7f9ec7242c29a41de9d389945177020c7a91cc6d"
+      "sha256": "2f616e44071ea951ae9a7827c7540e7821f5aacd8feb9aee82b904930607540d"
     },
     {
       "path": "tests/patient-ui.test.mjs",
@@ -335,7 +335,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 127,
+  "totalPassed": 136,
   "loops": [
     {
       "id": "L01",
@@ -374,7 +374,7 @@
       "acceptance": "Read allowlist, tenant binding, verified-session inputs, patient access checks and upstream denials pass isolated tests.",
       "limit": "Source-only foundation. OH06 and OH07 are not complete identity or tenancy integrations; trusted session and tenant services must be supplied.",
       "result": "passed",
-      "testsPassed": 33
+      "testsPassed": 42
     },
     {
       "id": "L03",

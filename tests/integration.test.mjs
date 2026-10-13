@@ -44,3 +44,21 @@ test('timeout also covers a stalled response body',async()=>{
   const api=createClinicalOsReader({...options,timeoutMs:5,fetchImpl:async(url,{signal})=>new Response(new ReadableStream({start(controller){signal.addEventListener('abort',()=>controller.error(Error('aborted')));}}),{headers:{'content-type':'application/json'}})});
   await assert.rejects(api.partner('meta'),{code:'upstream_timeout',status:504});
 });
+test('already cancelled reader calls perform no upstream fetch',async()=>{
+ const controller=new AbortController();controller.abort('private reason');let calls=0;
+ const api=createClinicalOsReader({...options,fetchImpl:async()=>{calls++;return ok({});}});
+ for(const call of [()=>api.partner('meta',{signal:controller.signal}),()=>api.workspace('profile',{accessToken:'fixture',signal:controller.signal})])await assert.rejects(call,{code:'request_cancelled',status:408});
+ assert.equal(calls,0);
+});
+test('external cancellation aborts an in-flight reader fetch',{timeout:2000},async()=>{
+ const controller=new AbortController();let entered,upstreamSignal;const started=new Promise(resolve=>{entered=resolve;});
+ const api=createClinicalOsReader({...options,fetchImpl:async(url,{signal})=>{upstreamSignal=signal;entered();return new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('private reason')),{once:true}));}});
+ const pending=api.partner('meta',{signal:controller.signal});await started;controller.abort();
+ await assert.rejects(pending,{code:'request_cancelled',status:408});assert.equal(upstreamSignal.aborted,true);
+});
+test('external cancellation also stops a stalled response body',{timeout:2000},async()=>{
+ const controller=new AbortController();let entered;const started=new Promise(resolve=>{entered=resolve;});
+ const api=createClinicalOsReader({...options,fetchImpl:async(url,{signal})=>new Response(new ReadableStream({start(body){signal.addEventListener('abort',()=>body.error(Error('cancelled')),{once:true});},pull(){entered();}}),{headers:{'content-type':'application/json'}})});
+ const pending=api.partner('meta',{signal:controller.signal});await started;controller.abort();
+ await assert.rejects(pending,{code:'request_cancelled',status:408});
+});

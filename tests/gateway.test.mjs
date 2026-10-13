@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {createClinicalAdminGateway} from '../integration/clinical-admin-gateway.mjs';
-import {IntegrationError} from '../integration/clinical-os-reader.mjs';
+import {IntegrationError,createClinicalOsReader} from '../integration/clinical-os-reader.mjs';
 const request=(path,init)=>new Request('https://clinical-admin.example.invalid/api/clinical-admin/'+path,init);
 const session=()=>({subject:'tester-1',organisationId:'synthetic-oxford',expiresAt:2000,permissions:['workspace:read','partner:read','partner:clinic_read'],upstreamAccessToken:'test-user-token'});
 function configured(overrides={}){const calls=[];return {calls,handle:createClinicalAdminGateway({now:()=>1000,verifySession:async()=>session(),canReadPatient:async()=>true,resolveTenantReader:async org=>({organisationId:org,reader:{workspace:async(op,p)=>{calls.push({org,op,p});return {sample:true}},partner:async(op,p)=>{calls.push({org,op,p});return {sample:true}}}}),...overrides})}}
@@ -70,4 +70,54 @@ test('method errors advertise GET and retain non-cacheable security headers',asy
  assert.equal(r.headers.get('cache-control'),'no-store');
  assert.equal(r.headers.get('x-content-type-options'),'nosniff');
  assert.equal(r.headers.get('referrer-policy'),'no-referrer');
+});
+test('gateway deadlines require bounded integer configuration',()=>{
+ for(const timeoutMs of [0,-1,NaN,Infinity,0.5,30001,'1000'])assert.throws(()=>createClinicalAdminGateway({timeoutMs}),{code:'invalid_timeout'});
+ for(const timeoutMs of [1,30000])assert.doesNotThrow(()=>createClinicalAdminGateway({timeoutMs}));
+});
+test('stalled session, patient, tenant and reader dependencies hit the shared deadline',{timeout:2000},async()=>{
+ for(const stage of ['session','patient','tenant','reader']){
+  let receivedSignal;
+  const hang=signal=>{receivedSignal=signal;return new Promise(()=>{});};
+  const {handle}=configured({timeoutMs:10,
+   verifySession:async(request,{signal})=>stage==='session'?hang(signal):session(),
+   canReadPatient:async(s,id,{signal})=>stage==='patient'?hang(signal):true,
+   resolveTenantReader:async(organisationId,{signal})=>stage==='tenant'?hang(signal):({organisationId,reader:{partner:async(op,params)=>stage==='reader'?hang(params.signal):{}}})
+  });
+  const r=await handle(request('partner/documents?patientId=DEMO-001'));
+  assert.equal(r.status,504,stage);assert.deepEqual(await r.json(),{error:'gateway_timeout'});
+  assert.equal(receivedSignal.aborted,true);assert.equal(r.headers.get('cache-control'),'no-store');
+ }
+});
+test('late completion after timeout cannot perform downstream work',{timeout:2000},async()=>{
+ let complete;let resolutions=0;
+ const {handle}=configured({timeoutMs:10,verifySession:()=>new Promise(resolve=>{complete=resolve;}),resolveTenantReader:async()=>{resolutions++;}});
+ assert.equal((await handle(request('partner/meta'))).status,504);
+ complete(session());await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(resolutions,0);
+});
+test('already cancelled requests never call the verifier',async()=>{
+ let verifications=0;const controller=new AbortController();controller.abort('private cancellation reason');
+ const {handle}=configured({verifySession:async()=>{verifications++;return session();}});
+ const r=await handle(request('partner/meta',{signal:controller.signal}));
+ assert.equal(r.status,408);assert.deepEqual(await r.json(),{error:'request_cancelled'});assert.equal(verifications,0);
+});
+test('caller cancellation aborts pending access checks and prevents later reads',{timeout:2000},async()=>{
+ const controller=new AbortController();let entered,complete,dependencySignal;let resolutions=0;
+ const started=new Promise(resolve=>{entered=resolve;});
+ const {handle}=configured({canReadPatient:(s,id,{signal})=>{dependencySignal=signal;entered();return new Promise(resolve=>{complete=resolve;});},resolveTenantReader:async()=>{resolutions++;}});
+ const pending=handle(request('partner/documents?patientId=DEMO-001',{signal:controller.signal}));
+ await started;controller.abort('private cancellation reason');
+ const r=await pending;assert.equal(r.status,408);assert.deepEqual(await r.json(),{error:'request_cancelled'});
+ assert.equal(dependencySignal.aborted,true);complete(true);await new Promise(resolve=>setImmediate(resolve));assert.equal(resolutions,0);
+});
+test('gateway deadline propagates through the real reader into upstream fetch',{timeout:2000},async()=>{
+ let fetchSignal;
+ const origin='https://synthetic.example.invalid';
+ const reader=createClinicalOsReader({origin,approvedOrigins:[origin],partnerSandboxKey:'dsk_test_fixture',timeoutMs:1000,fetchImpl:async(url,{signal})=>{
+  fetchSignal=signal;return new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('cancelled')),{once:true}));
+ }});
+ const {handle}=configured({timeoutMs:20,resolveTenantReader:async organisationId=>({organisationId,reader})});
+ const r=await handle(request('partner/meta'));assert.equal(r.status,504);assert.equal(fetchSignal.aborted,true);
+ assert.deepEqual(await r.json(),{error:'gateway_timeout'});
 });

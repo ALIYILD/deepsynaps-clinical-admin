@@ -2,207 +2,261 @@ TAP version 13
 # Subtest: unconfigured sessions cannot be bypassed by request headers
 ok 1 - unconfigured sessions cannot be bypassed by request headers
   ---
-  duration_ms: 71.962672
+  duration_ms: 66.983397
   type: 'test'
   ...
 # Subtest: missing, expired and malformed sessions denied
 ok 2 - missing, expired and malformed sessions denied
   ---
-  duration_ms: 1.768491
+  duration_ms: 1.994288
   type: 'test'
   ...
 # Subtest: upstream identity is taken from verified session
 ok 3 - upstream identity is taken from verified session
   ---
-  duration_ms: 1.259169
+  duration_ms: 1.187479
   type: 'test'
   ...
 # Subtest: missing permission and absent upstream session denied
 ok 4 - missing permission and absent upstream session denied
   ---
-  duration_ms: 0.815934
+  duration_ms: 0.844113
   type: 'test'
   ...
 # Subtest: patient access cannot be inherited from a broad partner key
 ok 5 - patient access cannot be inherited from a broad partner key
   ---
-  duration_ms: 1.832891
+  duration_ms: 2.07656
   type: 'test'
   ...
 # Subtest: missing patient authoriser and mismatched tenant binding fail closed
 ok 6 - missing patient authoriser and mismatched tenant binding fail closed
   ---
-  duration_ms: 0.577471
+  duration_ms: 0.524762
   type: 'test'
   ...
 # Subtest: clinic-wide handovers require explicit permission
 ok 7 - clinic-wide handovers require explicit permission
   ---
-  duration_ms: 0.416484
+  duration_ms: 0.254356
   type: 'test'
   ...
 # Subtest: writes, unknown routes and scope-injecting query parameters denied
 ok 8 - writes, unknown routes and scope-injecting query parameters denied
   ---
-  duration_ms: 1.028842
+  duration_ms: 0.817979
   type: 'test'
   ...
 # Subtest: approved patient read succeeds through bound reader
 ok 9 - approved patient read succeeds through bound reader
   ---
-  duration_ms: 0.556767
+  duration_ms: 0.377777
   type: 'test'
   ...
 # Subtest: upstream denials preserved; unexpected errors never expose secrets
 ok 10 - upstream denials preserved; unexpected errors never expose secrets
   ---
-  duration_ms: 2.397385
+  duration_ms: 1.966685
   type: 'test'
   ...
 # Subtest: expiry during patient authorisation stops before tenant resolution
 ok 11 - expiry during patient authorisation stops before tenant resolution
   ---
-  duration_ms: 0.454462
+  duration_ms: 0.36961
   type: 'test'
   ...
 # Subtest: expiry during tenant lookup prevents an upstream request
 ok 12 - expiry during tenant lookup prevents an upstream request
   ---
-  duration_ms: 0.368061
+  duration_ms: 0.365197
   type: 'test'
   ...
 # Subtest: a session that expires during an upstream read cannot receive its patient data
 ok 13 - a session that expires during an upstream read cannot receive its patient data
   ---
-  duration_ms: 2.249874
+  duration_ms: 2.254727
   type: 'test'
   ...
 # Subtest: invalid clocks and whitespace identities fail closed
 ok 14 - invalid clocks and whitespace identities fail closed
   ---
-  duration_ms: 1.037441
+  duration_ms: 1.077496
   type: 'test'
   ...
 # Subtest: shared verified objects cannot mutate the identity used for the pending read
 ok 15 - shared verified objects cannot mutate the identity used for the pending read
   ---
-  duration_ms: 0.461952
+  duration_ms: 0.49165
   type: 'test'
   ...
 # Subtest: unknown typed errors and invalid HTTP error statuses never escape
 ok 16 - unknown typed errors and invalid HTTP error statuses never escape
   ---
-  duration_ms: 1.318103
+  duration_ms: 1.599135
   type: 'test'
   ...
 # Subtest: malformed reader values cannot become successful connected responses
 ok 17 - malformed reader values cannot become successful connected responses
   ---
-  duration_ms: 1.790223
+  duration_ms: 1.955677
   type: 'test'
   ...
 # Subtest: method errors advertise GET and retain non-cacheable security headers
 ok 18 - method errors advertise GET and retain non-cacheable security headers
   ---
-  duration_ms: 0.301861
+  duration_ms: 0.246475
+  type: 'test'
+  ...
+# Subtest: gateway deadlines require bounded integer configuration
+ok 19 - gateway deadlines require bounded integer configuration
+  ---
+  duration_ms: 0.800331
+  type: 'test'
+  ...
+# Subtest: stalled session, patient, tenant and reader dependencies hit the shared deadline
+ok 20 - stalled session, patient, tenant and reader dependencies hit the shared deadline
+  ---
+  duration_ms: 45.878498
+  type: 'test'
+  ...
+# Subtest: late completion after timeout cannot perform downstream work
+ok 21 - late completion after timeout cannot perform downstream work
+  ---
+  duration_ms: 11.498635
+  type: 'test'
+  ...
+# Subtest: already cancelled requests never call the verifier
+ok 22 - already cancelled requests never call the verifier
+  ---
+  duration_ms: 0.805899
+  type: 'test'
+  ...
+# Subtest: caller cancellation aborts pending access checks and prevents later reads
+ok 23 - caller cancellation aborts pending access checks and prevents later reads
+  ---
+  duration_ms: 1.624721
+  type: 'test'
+  ...
+# Subtest: gateway deadline propagates through the real reader into upstream fetch
+ok 24 - gateway deadline propagates through the real reader into upstream fetch
+  ---
+  duration_ms: 21.367173
   type: 'test'
   ...
 # Subtest: missing configuration performs no network call
-ok 19 - missing configuration performs no network call
+ok 25 - missing configuration performs no network call
   ---
-  duration_ms: 4.480739
+  duration_ms: 4.050564
   type: 'test'
   ...
 # Subtest: unapproved origins, credentials and non-HTTPS origins rejected
-ok 20 - unapproved origins, credentials and non-HTTPS origins rejected
+ok 26 - unapproved origins, credentials and non-HTTPS origins rejected
   ---
-  duration_ms: 0.505308
+  duration_ms: 0.367741
   type: 'test'
   ...
 # Subtest: live keys rejected by synthetic-only adapter
-ok 21 - live keys rejected by synthetic-only adapter
+ok 27 - live keys rejected by synthetic-only adapter
   ---
-  duration_ms: 0.27372
+  duration_ms: 0.204461
   type: 'test'
   ...
 # Subtest: metadata uses exact read endpoint and server key
-ok 22 - metadata uses exact read endpoint and server key
+ok 28 - metadata uses exact read endpoint and server key
   ---
-  duration_ms: 72.059333
+  duration_ms: 65.667837
   type: 'test'
   ...
 # Subtest: workspace requires per-user session, not partner key
-ok 23 - workspace requires per-user session, not partner key
+ok 29 - workspace requires per-user session, not partner key
   ---
-  duration_ms: 0.869182
+  duration_ms: 0.650621
   type: 'test'
   ...
 # Subtest: traversal and unexpected operations rejected before network
-ok 24 - traversal and unexpected operations rejected before network
+ok 30 - traversal and unexpected operations rejected before network
   ---
-  duration_ms: 0.803862
+  duration_ms: 0.651261
   type: 'test'
   ...
 # Subtest: patient document route matches inspected contract
-ok 25 - patient document route matches inspected contract
+ok 31 - patient document route matches inspected contract
   ---
-  duration_ms: 0.595066
+  duration_ms: 0.471033
   type: 'test'
   ...
 # Subtest: upstream denials preserved without PHI body or fallback
-ok 26 - upstream denials preserved without PHI body or fallback
+ok 32 - upstream denials preserved without PHI body or fallback
   ---
-  duration_ms: 1.505366
+  duration_ms: 1.228781
   type: 'test'
   ...
 # Subtest: HTML login and invalid JSON responses rejected
-ok 27 - HTML login and invalid JSON responses rejected
+ok 33 - HTML login and invalid JSON responses rejected
   ---
-  duration_ms: 1.539704
+  duration_ms: 1.589929
   type: 'test'
   ...
 # Subtest: network errors are sanitised and timeout aborts
-ok 28 - network errors are sanitised and timeout aborts
+ok 34 - network errors are sanitised and timeout aborts
   ---
-  duration_ms: 7.974072
+  duration_ms: 7.20485
   type: 'test'
   ...
 # Subtest: timeout configuration is finite and bounded
-ok 29 - timeout configuration is finite and bounded
+ok 35 - timeout configuration is finite and bounded
   ---
-  duration_ms: 0.564939
+  duration_ms: 0.430259
   type: 'test'
   ...
 # Subtest: JSON media types must match exactly
-ok 30 - JSON media types must match exactly
+ok 36 - JSON media types must match exactly
   ---
-  duration_ms: 1.596679
+  duration_ms: 1.653914
   type: 'test'
   ...
 # Subtest: oversized chunked responses are cancelled before the entire body is buffered
-ok 31 - oversized chunked responses are cancelled before the entire body is buffered
+ok 37 - oversized chunked responses are cancelled before the entire body is buffered
   ---
-  duration_ms: 1.933764
+  duration_ms: 1.838288
   type: 'test'
   ...
 # Subtest: streamed JSON preserves multibyte characters split across chunks
-ok 32 - streamed JSON preserves multibyte characters split across chunks
+ok 38 - streamed JSON preserves multibyte characters split across chunks
   ---
-  duration_ms: 0.812637
+  duration_ms: 0.78503
   type: 'test'
   ...
 # Subtest: timeout also covers a stalled response body
-ok 33 - timeout also covers a stalled response body
+ok 39 - timeout also covers a stalled response body
   ---
-  duration_ms: 6.278263
+  duration_ms: 6.977103
   type: 'test'
   ...
-1..33
-# tests 33
+# Subtest: already cancelled reader calls perform no upstream fetch
+ok 40 - already cancelled reader calls perform no upstream fetch
+  ---
+  duration_ms: 0.881431
+  type: 'test'
+  ...
+# Subtest: external cancellation aborts an in-flight reader fetch
+ok 41 - external cancellation aborts an in-flight reader fetch
+  ---
+  duration_ms: 0.848978
+  type: 'test'
+  ...
+# Subtest: external cancellation also stops a stalled response body
+ok 42 - external cancellation also stops a stalled response body
+  ---
+  duration_ms: 1.084205
+  type: 'test'
+  ...
+1..42
+# tests 42
 # suites 0
-# pass 33
+# pass 42
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 336.653664
+# duration_ms 356.101216
