@@ -1,88 +1,148 @@
 TAP version 13
-# Subtest: repository snapshot covers every ID and preserves exact status totals
-ok 1 - repository snapshot covers every ID and preserves exact status totals
+# Subtest: product routes and dialogs render with valid interaction handlers
+ok 1 - product routes and dialogs render with valid interaction handlers
   ---
-  duration_ms: 21.035337
+  duration_ms: 61.514413
+  type: 'test'
+  ...
+# Subtest: review queue and home counts aggregate separate patient notes and forms
+ok 2 - review queue and home counts aggregate separate patient notes and forms
+  ---
+  duration_ms: 9.131327
+  type: 'test'
+  ...
+# Subtest: patient search works by name or ID, handles empty results and never renders query as markup
+ok 3 - patient search works by name or ID, handles empty results and never renders query as markup
+  ---
+  duration_ms: 6.805455
+  type: 'test'
+  ...
+# Subtest: document filters remain distinct as reviews and amendments occur
+ok 4 - document filters remain distinct as reviews and amendments occur
+  ---
+  duration_ms: 8.551794
+  type: 'test'
+  ...
+# Subtest: changing active patient stays in the selected clinical workspace
+ok 5 - changing active patient stays in the selected clinical workspace
+  ---
+  duration_ms: 6.69104
+  type: 'test'
+  ...
+# Subtest: product editor preserves exact-text review and signed-version protections
+ok 6 - product editor preserves exact-text review and signed-version protections
+  ---
+  duration_ms: 7.661114
+  type: 'test'
+  ...
+# Subtest: task status and assignment filters operate on stable source indices
+ok 7 - task status and assignment filters operate on stable source indices
+  ---
+  duration_ms: 7.122222
+  type: 'test'
+  ...
+# Subtest: task composer validates inputs and renders user text safely
+ok 8 - task composer validates inputs and renders user text safely
+  ---
+  duration_ms: 5.875264
+  type: 'test'
+  ...
+# Subtest: workspace search exposes patient destinations and has keyboard entry
+ok 9 - workspace search exposes patient destinations and has keyboard entry
+  ---
+  duration_ms: 6.061187
+  type: 'test'
+  ...
+# Subtest: product navigation moves engineering controls to settings while retaining honest environment state
+ok 10 - product navigation moves engineering controls to settings while retaining honest environment state
+  ---
+  duration_ms: 7.110622
+  type: 'test'
+  ...
+# Subtest: repository snapshot covers every ID and preserves exact status totals
+ok 11 - repository snapshot covers every ID and preserves exact status totals
+  ---
+  duration_ms: 14.944716
   type: 'test'
   ...
 # Subtest: all standard and new routes render and inline handlers parse
-ok 2 - all standard and new routes render and inline handlers parse
+ok 12 - all standard and new routes render and inline handlers parse
   ---
-  duration_ms: 25.719194
+  duration_ms: 19.73919
   type: 'test'
   ...
 # Subtest: all function detail dialogs include source-specific evidence
-ok 3 - all function detail dialogs include source-specific evidence
+ok 13 - all function detail dialogs include source-specific evidence
   ---
-  duration_ms: 16.709692
+  duration_ms: 13.505791
   type: 'test'
   ...
 # Subtest: catalogue filtering remains correct
-ok 4 - catalogue filtering remains correct
+ok 14 - catalogue filtering remains correct
   ---
-  duration_ms: 6.920938
+  duration_ms: 7.046302
   type: 'test'
   ...
 # Subtest: consent, speech, AI and review gates survive product changes
-ok 5 - consent, speech, AI and review gates survive product changes
+ok 15 - consent, speech, AI and review gates survive product changes
   ---
-  duration_ms: 34.742541
+  duration_ms: 34.81302
   type: 'test'
   ...
 # Subtest: organisation configuration changes proposal only and escapes values
-ok 6 - organisation configuration changes proposal only and escapes values
+ok 16 - organisation configuration changes proposal only and escapes values
   ---
-  duration_ms: 9.677119
+  duration_ms: 5.977182
   type: 'test'
   ...
 # Subtest: extension request is saved locally without activation or notification
-ok 7 - extension request is saved locally without activation or notification
+ok 17 - extension request is saved locally without activation or notification
   ---
-  duration_ms: 7.902726
+  duration_ms: 7.109774
   type: 'test'
   ...
 # Subtest: 30 work packages and notes never approve a gate
-ok 8 - 30 work packages and notes never approve a gate
+ok 18 - 30 work packages and notes never approve a gate
   ---
-  duration_ms: 6.172318
+  duration_ms: 6.38678
   type: 'test'
   ...
 # Subtest: theme and reset migrate safely; connection never reports live success
-ok 9 - theme and reset migrate safely; connection never reports live success
+ok 19 - theme and reset migrate safely; connection never reports live success
   ---
-  duration_ms: 5.394877
+  duration_ms: 5.61143
   type: 'test'
   ...
 # Subtest: HTML loads scripts in dependency order and plan/logo exist
-ok 10 - HTML loads scripts in dependency order and plan/logo exist
+ok 20 - HTML loads scripts in dependency order and plan/logo exist
   ---
-  duration_ms: 1.402558
+  duration_ms: 1.292192
   type: 'test'
   ...
 # Subtest: failed loop stops later tests and removes their stale evidence
-ok 11 - failed loop stops later tests and removes their stale evidence
+ok 21 - failed loop stops later tests and removes their stale evidence
   ---
-  duration_ms: 963.057205
+  duration_ms: 738.58767
   type: 'test'
   ...
 # Subtest: syntax failure invalidates all local evidence while retaining blocked records
-ok 12 - syntax failure invalidates all local evidence while retaining blocked records
+ok 22 - syntax failure invalidates all local evidence while retaining blocked records
   ---
-  duration_ms: 416.612233
+  duration_ms: 341.744544
   type: 'test'
   ...
 # Subtest: successful local verification does not report blocked connected loops as passed
-ok 13 - successful local verification does not report blocked connected loops as passed
+ok 23 - successful local verification does not report blocked connected loops as passed
   ---
-  duration_ms: 1406.716776
+  duration_ms: 1100.706092
   type: 'test'
   ...
-1..13
-# tests 13
+1..23
+# tests 23
 # suites 0
-# pass 13
+# pass 23
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 3052.761234
+# duration_ms 2415.228308

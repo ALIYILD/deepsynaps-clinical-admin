@@ -7,7 +7,7 @@ for(const original of ['{broken-json','{"tasks":{},"settings":{}}']){
   await page.reload();
   await expect(page.locator('#storage-status')).toContainText('could not be loaded');
   await page.goto('/#N');
-  await page.getByRole('button',{name:'Load sample note',exact:true}).click();
+  await page.getByRole('button',{name:'Load example',exact:true}).click();
   await expect(page.locator('#storage-status')).toBeVisible();
   expect(await page.evaluate(()=>localStorage.getItem('clinical-admin-demo-v1'))).toBe(original);
   const pending=page.waitForEvent('download');
@@ -16,15 +16,16 @@ for(const original of ['{broken-json','{"tasks":{},"settings":{}}']){
   for await(const chunk of stream)chunks.push(chunk);
   expect(JSON.parse(Buffer.concat(chunks).toString()).original).toBe(original);
   await page.goto('/#settings');
-  await page.getByRole('button',{name:'Reset demo data',exact:true}).click();
+  await page.locator('details.advanced-settings summary').click();
+  await page.getByRole('button',{name:'Reset synthetic workspace',exact:true}).click();
   await page.getByRole('button',{name:'Cancel',exact:true}).click();
   expect(await page.evaluate(()=>localStorage.getItem('clinical-admin-demo-v1'))).toBe(original);
-  await page.getByRole('button',{name:'Reset demo data',exact:true}).click();
+  await page.getByRole('button',{name:'Reset synthetic workspace',exact:true}).click();
   await page.getByRole('button',{name:'Reset demo',exact:true}).click();
   await expect(page.locator('#storage-status')).toBeHidden();
   await page.reload();
   await expect(page.locator('#storage-status')).toBeHidden();
-  await expect(page.getByRole('heading',{name:'Your day, connected.'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'My workspace'})).toBeVisible();
  });
 }
 
@@ -39,9 +40,9 @@ for(const failure of ['QuotaExceededError','SecurityError']){
     return original.call(this,key,value);
    };
   },failure);
-  await page.getByRole('button',{name:'Load sample note',exact:true}).click();
+  await page.getByRole('button',{name:'Load example',exact:true}).click();
   await page.locator('#note-text').fill('Fictional reviewed note retained during a storage failure');
-  await page.getByRole('button',{name:'Save draft',exact:true}).click();
+  await page.getByRole('button',{name:'Save draft version',exact:true}).click();
   await expect(page.locator('#toast')).toContainText('Saving failed');
   await expect(page.locator('#storage-status')).toBeVisible();
   await expect(page.locator('#storage-status')).toContainText('Changes are not saved');
@@ -62,7 +63,7 @@ for(const failure of ['QuotaExceededError','SecurityError']){
 
 test('stale tabs preserve the newer signed note and can export then reload',async({page,context})=>{
  await page.goto('/#N');
- await page.getByRole('button',{name:'Load sample note',exact:true}).click();
+ await page.getByRole('button',{name:'Load example',exact:true}).click();
  const stale=await context.newPage();await stale.goto('/#N');
  await page.locator('#note-text').fill('Newer signed fictional note from the first tab');
  await page.getByRole('button',{name:'Review & sign',exact:true}).click();
@@ -70,7 +71,7 @@ test('stale tabs preserve the newer signed note and can export then reload',asyn
  await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
  await expect(stale.locator('#storage-status')).toContainText('Another tab');
  await stale.locator('#note-text').fill('Unsaved stale-tab edit for recovery');
- await stale.getByRole('button',{name:'Save draft',exact:true}).click();
+ await stale.getByRole('button',{name:'Save draft version',exact:true}).click();
  await expect(stale.getByRole('button',{name:'Retry saving',exact:true})).toBeHidden();
  const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('clinical-admin-demo-v1')));
  expect(stored.patientRecords['DEMO-001']).toMatchObject({note:'Newer signed fictional note from the first tab',signed:true});

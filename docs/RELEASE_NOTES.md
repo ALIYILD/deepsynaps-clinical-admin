@@ -53,3 +53,5 @@ The loader now validates saved workspace structure before rendering or migrating
 Users can export the exact original value in a recovery JSON wrapper before explicitly resetting the demo. Reset confirmation explains replacement and irreversibility. A failed replacement preserves the original and keeps recovery controls available. These exports are for inspection, not automatic import, and no clinical data integrity or immutable audit guarantee is implied.
 
 Validation: 57 Node tests and 20 Chromium desktop/mobile checks pass. New cases cover malformed JSON, invalid structures, unknown versions, original-value export, blocked ordinary writes, cancellation, confirmed reset and failed-reset recovery. Staging integration and human approval dependencies are unchanged.
+
+Integrated the independently merged Oxford Health workspace UI, retaining its patient, consultation, forms, tasks and handover changes. Recovery browser tests now use the new interface. Added all five UI Node suites to the finite loop ledger: the combined release passes 111 Node tests (23 product/runner/UI, 25 integration, 63 workflow/UI) and 20 Chromium tests.

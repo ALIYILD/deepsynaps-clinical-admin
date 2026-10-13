@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-13T12:13:05.941Z",
-  "sourceFingerprint": "43e3927068ccddd486cb6ab97f69487ca06da903d1e1de441e4cb0b516a20fa2",
+  "generatedAt": "2026-10-13T12:15:30.080Z",
+  "sourceFingerprint": "63c9c921bb48712882c5b4a1de29d3844ea9157e94618f2c4ad02e952e4afce1",
   "verification": "Local Node tests and static syntax checks; no browser visual audit or live staging tests",
-  "totalPassed": 57,
+  "totalPassed": 111,
   "loops": [
     {
       "id": "L01",
@@ -16,12 +16,13 @@
       ],
       "tests": [
         "tests/product.test.mjs",
-        "tests/runner.test.mjs"
+        "tests/runner.test.mjs",
+        "tests/product-ui.test.mjs"
       ],
       "acceptance": "All 158 source-backed IDs remain consistent; routes, extension requests and local proposal controls work.",
       "limit": "Source inspection is not independent execution of upstream Clinical OS tests.",
       "result": "passed",
-      "testsPassed": 13
+      "testsPassed": 23
     },
     {
       "id": "L02",
@@ -51,12 +52,16 @@
         "OH17"
       ],
       "tests": [
-        "tests/workflow.test.mjs"
+        "tests/workflow.test.mjs",
+        "tests/consultation-ui.test.mjs",
+        "tests/forms-ui.test.mjs",
+        "tests/tasks-ui.test.mjs",
+        "tests/patient-ui.test.mjs"
       ],
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 19
+      "testsPassed": 63
     },
     {
       "id": "L04",
