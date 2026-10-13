@@ -56,3 +56,15 @@ New UI tests cover nineteen route outputs and dialog handlers, cross-patient rev
 Run `node --check dist/product-ui.js` and `node --test tests/product-ui.test.mjs`; run `npm test` for the combined suite. The ten new tests plus the existing forty-two give fifty-two checks. The earlier loop-report snapshot remains unchanged because the CLI owns the loop evidence workflow; it still records the previous forty-two-test pass and its original timestamp/fingerprint.
 
 Browser visual verification and manual accessibility testing were unavailable during this UI build and remain outstanding. No staging or live Clinical OS request was performed.
+
+## Consultation UI increment
+
+Added `dist/consultation-ui.js`, `dist/consultation-ui.css` and `tests/consultation-ui.test.mjs`, with the loader changes in `dist/index.html`. The new module is loaded after `product-ui.js`. It owns a synthetic capture timer and patient-scoped UI state under `state.consultationUi`, without modifying the original workflow or gateway files.
+
+The consultation screen now has preparation, capture, source review and document stages. It presents explicit patient confirmation and consent, a disconnected microphone/transcription status, start/pause/resume/finish controls for the local example, timestamped scripted source, source-review confirmation and a protected draft-creation path. There is no microphone access, audio upload or speech provider call. Elapsed capture time describes the local example and is not the source transcript duration.
+
+Navigation and patient changes pause capture. Reload restores elapsed time without restarting. Consent withdrawal stops capture immediately. Reset confirms before clearing capture state and retains existing documents. Preparing a replacement draft preserves a history copy and checks the current patient, text, revision and version before writing; signed versions cannot be replaced by this route. Source review is distinct from final document review/signing.
+
+The UI module wraps the existing `pauseRecord` and `selectPatient` hooks to stop its own timer. The CLI should preserve those hooks or provide an explicit capture lifecycle adapter when introducing real services. The controller must be removed/replaced for a connected recording service; do not interpret synthetic elapsed time or local consent as proof of real capture or server consent. The original generic note example controls remain governed by the existing workflow module; the new replacement confirmation applies to the consultation's preparation path.
+
+Validation: 11 additional Node tests cover preparation gates, pause/resume/finish, consent withdrawal, patient-scoped elapsed time, stale timer callbacks, navigation/reload, source-review gates, draft replacement preservation and stale confirmations, signed-document protection, reset behaviour and rendered handler syntax. Combined local suite: 63 tests. Manual visual, keyboard traversal and screen-reader checks for this increment remain outstanding.
