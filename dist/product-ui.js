@@ -43,3 +43,5 @@ render=function(){previousProductUiRender();document.documentElement.dataset.wor
 document.addEventListener?.('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();openWorkspaceSearch();}if(event.key==='Escape')document.getElementById('sidebar').classList.remove('open');});
 const uiInitialRoute=location.hash.slice(1);if(Object.hasOwn(workspaceLabels,uiInitialRoute))route=uiInitialRoute;
 render();
+// Workspace routes added here must also resolve through hash links and browser history.
+window.addEventListener?.('hashchange',()=>{const target=location.hash.slice(1)||'home';if(Object.hasOwn(workspaceLabels,target)&&target!==route)nav(target);});
