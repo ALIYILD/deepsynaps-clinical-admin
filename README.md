@@ -24,3 +24,7 @@ Run `npm test` and `npm run check`. Browser-based visual and accessibility QA wa
 Run `npm run loops` for a finite local verification pass and evidence refresh. View the recorded result at `#loops` in the site. L01–L03 verify the product, source-only gateway and three-patient workflow. L04–L06 record staging, write-integration and human assurance dependencies. No background task is scheduled.
 
 See `docs/Clinical_Admin_Implementation_Loops.md` for the loop runbook and `loops/implementation.json` for the OH01–OH30 mapping. `dist/workflow.js` applies patient separation, snapshot-bound note review, per-field form approval and version-linked tasks. `integration/clinical-admin-gateway.mjs` is a source-only policy handler whose trusted session and permission services still need implementation.
+
+The [staging handoff](docs/STAGING_HANDOFF.md) records the missing identity/deployment inputs and S01–S14 acceptance cases. The [pilot evidence checklist](docs/PILOT_EVIDENCE_CHECKLIST.md) provides owner nominations, evidence requirements and a decision record. Neither advances the blocked connected loops.
+
+GitHub Actions runs local checks and uploads verification evidence on pushes and pull requests. It does not deploy or run connected tests. Use Node.js 22 or later for local verification; no third-party dependencies are required.

@@ -21,6 +21,7 @@ const partnerRoutes={
   referrals:o=>`/api/partner/v1/fhir/Patient/${id(o.patientId)}/ServiceRequest`
 };
 export function createClinicalOsReader({origin,approvedOrigins=[],partnerSandboxKey,fetchImpl=globalThis.fetch,timeoutMs=10000}={}){
+  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>30000)throw new IntegrationError('invalid_timeout',400);
   let base;
   if(origin){try{base=new URL(origin)}catch{throw new IntegrationError('invalid_origin',400)}
     if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||base.pathname!=='/'||!approvedOrigins.includes(base.origin))throw new IntegrationError('origin_not_approved',400);
@@ -32,9 +33,21 @@ export function createClinicalOsReader({origin,approvedOrigins=[],partnerSandbox
     try{
       const response=await fetchImpl(new URL(path,base).href,{method:'GET',headers:{Accept:'application/json, application/fhir+json',...headers},redirect:'error',cache:'no-store',signal:controller.signal});
       if(!response.ok)throw new IntegrationError(response.status===401?'upstream_authentication_required':response.status===403?'upstream_access_denied':response.status===404?'upstream_not_found':response.status===429?'upstream_rate_limited':'upstream_unavailable',response.status);
-      if(!/(application\/json|application\/fhir\+json)/i.test(response.headers.get('content-type')||''))throw new IntegrationError('invalid_upstream_content',502);
+      if(!['application/json','application/fhir+json'].includes((response.headers.get('content-type')||'').split(';')[0].trim().toLowerCase()))throw new IntegrationError('invalid_upstream_content',502);
       const declared=Number(response.headers.get('content-length')||0);if(declared>1048576)throw new IntegrationError('upstream_response_too_large',502);
-      const text=await response.text();if(new TextEncoder().encode(text).length>1048576)throw new IntegrationError('upstream_response_too_large',502);
+      // Bound actual streamed bytes, including responses without Content-Length.
+      const body=response.body?.getReader();const chunks=[];let size=0;
+      if(body)try{
+        while(true){
+          const {done,value}=await body.read();if(done)break;
+          size+=value.byteLength;
+          if(size>1048576){controller.abort();await body.cancel().catch(()=>{});throw new IntegrationError('upstream_response_too_large',502);}
+          chunks.push(value);
+        }
+      }finally{body.releaseLock();}
+      const bytes=new Uint8Array(size);let offset=0;
+      for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+      const text=new TextDecoder().decode(bytes);
       let value;try{value=JSON.parse(text)}catch{throw new IntegrationError('invalid_upstream_json',502)}
       if(!value||typeof value!=='object'||Array.isArray(value))throw new IntegrationError('invalid_upstream_shape',502);
       return value;

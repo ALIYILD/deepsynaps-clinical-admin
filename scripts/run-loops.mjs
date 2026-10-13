@@ -7,6 +7,11 @@ import {createHash} from 'node:crypto';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const ledger=JSON.parse(fs.readFileSync(path.join(root,'loops/implementation.json'),'utf8'));
 const records=[];let failed=false;
+// Remove prior TAP files so skipped loops cannot appear verified by this run.
+fs.mkdirSync(path.join(root,'loops/evidence'),{recursive:true});
+for(const file of fs.readdirSync(path.join(root,'loops/evidence')).filter(f=>f.endsWith('.tap'))){
+ fs.unlinkSync(path.join(root,'loops/evidence',file));
+}
 // Validate shipped JS before recording any passing local loop.
 for(const file of fs.readdirSync(path.join(root,'dist')).filter(f=>f.endsWith('.js')&&f!=='loop-report.js')){
  const r=spawnSync(process.execPath,['--check','dist/'+file],{cwd:root,encoding:'utf8',timeout:30000});
@@ -16,7 +21,7 @@ for(const loop of ledger.loops){
  if(loop.mode==='blocked'){records.push({...loop,result:'blocked',testsPassed:0});console.log(loop.id+' BLOCKED — '+loop.blockers[0]);continue;}
  if(failed){records.push({...loop,result:'not_run',testsPassed:0});continue;}
  const r=spawnSync(process.execPath,['--test','--test-reporter=tap',...loop.tests],{cwd:root,encoding:'utf8',timeout:60000});
- const output=(r.stdout||'')+(r.stderr||'');const passed=r.status===0;
+ const output=(r.stdout||'')+(r.stderr||'')+(r.error?'\nRunner error: '+r.error.code+'\n':'');const passed=r.status===0;
  const testsPassed=Number(output.match(/^# pass (\d+)/m)?.[1]||0);
  fs.mkdirSync(path.join(root,'loops/evidence'),{recursive:true});fs.writeFileSync(path.join(root,'loops/evidence',loop.id+'.tap'),output);
  records.push({...loop,result:passed?'passed':'failed',testsPassed});

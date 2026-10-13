@@ -14,3 +14,33 @@ test('patient document route matches inspected contract',async()=>{let path;cons
 test('upstream denials preserved without PHI body or fallback',async()=>{for(const status of [401,403,404,429,503]){const api=createClinicalOsReader({...options,fetchImpl:async()=>new Response('sensitive diagnostic information',{status})});await assert.rejects(api.partner('meta'),err=>err instanceof IntegrationError&&err.status===status&&!err.message.includes('sensitive'))}});
 test('HTML login and invalid JSON responses rejected',async()=>{for(const response of [new Response('<html>login</html>',{headers:{'content-type':'text/html'}}),new Response('bad-json',{headers:{'content-type':'application/json'}}),ok(null)]){const api=createClinicalOsReader({...options,fetchImpl:async()=>response});await assert.rejects(api.partner('meta'),IntegrationError)}});
 test('network errors are sanitised and timeout aborts',async()=>{let api=createClinicalOsReader({...options,fetchImpl:async()=>{throw Error('secret-url-token')}});await assert.rejects(api.partner('meta'),err=>err.code==='upstream_unavailable'&&!err.message.includes('secret'));api=createClinicalOsReader({...options,timeoutMs:5,fetchImpl:async(u,o)=>new Promise((_,reject)=>o.signal.addEventListener('abort',()=>reject(Error('abort'))))});await assert.rejects(api.partner('meta'),{code:'upstream_timeout',status:504})});
+test('timeout configuration is finite and bounded',()=>{
+  for(const timeoutMs of [0,-1,NaN,Infinity,0.5,30001,'10000',null])
+    assert.throws(()=>createClinicalOsReader({...options,timeoutMs}),{code:'invalid_timeout'});
+  for(const timeoutMs of [1,30000])assert.doesNotThrow(()=>createClinicalOsReader({...options,timeoutMs}));
+});
+test('JSON media types must match exactly',async()=>{
+  for(const contentType of ['text/application/json','application/jsonp','application/json-malicious']){
+    const api=createClinicalOsReader({...options,fetchImpl:async()=>new Response('{}',{headers:{'content-type':contentType}})});
+    await assert.rejects(api.partner('meta'),{code:'invalid_upstream_content'});
+  }
+  const api=createClinicalOsReader({...options,fetchImpl:async()=>new Response('{}',{headers:{'content-type':'Application/Fhir+Json; charset=utf-8'}})});
+  assert.deepEqual(await api.partner('meta'),{});
+});
+test('oversized chunked responses are cancelled before the entire body is buffered',async()=>{
+  let cancelled=false;let reads=0;
+  const body=new ReadableStream({pull(controller){reads++;controller.enqueue(new Uint8Array(262144));},cancel(){cancelled=true;}});
+  const api=createClinicalOsReader({...options,fetchImpl:async()=>new Response(body,{headers:{'content-type':'application/json'}})});
+  await assert.rejects(api.partner('meta'),{code:'upstream_response_too_large',status:502});
+  assert.equal(cancelled,true);assert(reads<=6);
+});
+test('streamed JSON preserves multibyte characters split across chunks',async()=>{
+  const bytes=new TextEncoder().encode(JSON.stringify({text:'Résumé 🧪'}));
+  const body=new ReadableStream({start(controller){for(const byte of bytes)controller.enqueue(Uint8Array.of(byte));controller.close();}});
+  const api=createClinicalOsReader({...options,fetchImpl:async()=>new Response(body,{headers:{'content-type':'application/json'}})});
+  assert.deepEqual(await api.partner('meta'),{text:'Résumé 🧪'});
+});
+test('timeout also covers a stalled response body',async()=>{
+  const api=createClinicalOsReader({...options,timeoutMs:5,fetchImpl:async(url,{signal})=>new Response(new ReadableStream({start(controller){signal.addEventListener('abort',()=>controller.error(Error('aborted')));}}),{headers:{'content-type':'application/json'}})});
+  await assert.rejects(api.partner('meta'),{code:'upstream_timeout',status:504});
+});

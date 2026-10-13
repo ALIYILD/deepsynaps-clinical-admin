@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-13T09:25:40.780Z",
-  "sourceFingerprint": "db49fa1ee7cf2d7962dc1cd04926e30cff4a2eb35a920e9745846e82086ee31b",
+  "generatedAt": "2026-10-13T09:57:35.026Z",
+  "sourceFingerprint": "bc858c7a69810e817a28a4fa28aba1c9f4f54583aea6e20a044764883c1cd0cd",
   "verification": "Local Node tests and static syntax checks; no browser visual audit or live staging tests",
-  "totalPassed": 42,
+  "totalPassed": 51,
   "loops": [
     {
       "id": "L01",
@@ -15,12 +15,13 @@
         "OH21"
       ],
       "tests": [
-        "tests/product.test.mjs"
+        "tests/product.test.mjs",
+        "tests/runner.test.mjs"
       ],
       "acceptance": "All 158 source-backed IDs remain consistent; routes, extension requests and local proposal controls work.",
       "limit": "Source inspection is not independent execution of upstream Clinical OS tests.",
       "result": "passed",
-      "testsPassed": 10
+      "testsPassed": 13
     },
     {
       "id": "L02",
@@ -38,7 +39,7 @@
       "acceptance": "Read allowlist, tenant binding, verified-session inputs, patient access checks and upstream denials pass isolated tests.",
       "limit": "Source-only foundation. OH06 and OH07 are not complete identity or tenancy integrations; trusted session and tenant services must be supplied.",
       "result": "passed",
-      "testsPassed": 20
+      "testsPassed": 25
     },
     {
       "id": "L03",
@@ -55,7 +56,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 12
+      "testsPassed": 13
     },
     {
       "id": "L04",
