@@ -5,9 +5,9 @@ test.beforeEach(async({page})=>{
 });
 
 async function sign(page){
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
  await page.locator('#review-confirm').check();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(page.locator('#note-text')).toHaveAttribute('readonly','');
 }
 
@@ -42,17 +42,17 @@ test('patient selection survives reload and keeps signed amendments isolated',as
 test('review requires confirmation and cancelling allows a fresh exact-text review',async({page})=>{
  await page.goto('/#N');
  await page.getByRole('button',{name:'Load example',exact:true}).click();
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();
  await page.keyboard.press('Escape');
  await expect(page.getByRole('dialog')).not.toBeVisible();
  await page.locator('#note-text').fill('Exact reviewed fictional text');
- await page.getByRole('button',{name:'Review & sign',exact:true}).click();
+ await page.getByRole('button',{name:'Review document',exact:true}).click();
  await expect(page.locator('.review-copy')).toHaveText('Exact reviewed fictional text');
  await expect(page.locator('#review-confirm')).not.toBeChecked();
  await page.locator('#review-confirm').check();
- await page.getByRole('button',{name:'Sign demo note',exact:true}).click();
+ await page.getByRole('button',{name:'Record local review',exact:true}).click();
  await expect(page.locator('#note-text')).toHaveAttribute('readonly','');
 });
 
@@ -118,10 +118,26 @@ test('core pages fit the viewport and the keyboard can open and dismiss a dialog
  await page.goto('/#N');
  const button=page.getByRole('button',{name:'Load example',exact:true});
  await button.focus();await page.keyboard.press('Enter');
- await page.getByRole('button',{name:'Review & sign',exact:true}).focus();
+ await page.getByRole('button',{name:'Review document',exact:true}).focus();
  await page.keyboard.press('Enter');
  await expect(page.getByRole('dialog')).toBeVisible();
- await expect(page.getByRole('dialog')).toHaveAccessibleName(/Review Maya Collins/);
+ await expect(page.getByRole('dialog')).toHaveAccessibleName(/Review document · Version 1/);
  await page.keyboard.press('Escape');
  await expect(page.getByRole('dialog')).not.toBeVisible();
+});
+
+test('template replacement keeps edited draft until confirmation and retains its history copy',async({page})=>{
+ await page.goto('/#N');
+ await page.locator('#note-text').fill('Manually edited fictional note to preserve');
+ await page.locator('#note-template').selectOption('summary');
+ await expect(page.getByRole('dialog')).toHaveAccessibleName('Keep a copy before replacing this draft?');
+ await page.getByRole('button',{name:'Keep current draft',exact:true}).click();
+ await expect(page.locator('#note-text')).toHaveValue('Manually edited fictional note to preserve');
+ await expect(page.locator('#note-template')).toHaveValue('soap');
+ await page.locator('#note-template').selectOption('summary');
+ await page.getByRole('button',{name:'Save copy & load example',exact:true}).click();
+ await expect(page.locator('#note-text')).toHaveValue(/YOUR APPOINTMENT SUMMARY/);
+ await expect(page.locator('#note-template')).toHaveValue('summary');
+ await page.getByRole('button',{name:'Version history',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('Manually edited fictional note to preserve');
 });
