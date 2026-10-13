@@ -166,3 +166,15 @@ test('EPR drafts retain reviewed source and stay unsent after an amendment',asyn
  await expect(page.getByRole('button',{name:'Prepare draft',exact:true})).toBeDisabled();
  await expect(page.locator('.epr-receipt-panel')).toContainText('None received');
 });
+
+test('hosted service check separates site availability from clinical connectivity',async({page})=>{
+ await page.goto('/#settings');
+ await page.locator('details.advanced-settings summary').click();
+ await page.getByRole('button',{name:'Check hosted service'}).click();
+ await expect(page.locator('#hosting-status')).toContainText('Site responding. Synthetic demonstration only.');
+ await expect(page.locator('#hosting-status')).toContainText('Clinical OS is not connected.');
+ await page.route('**/healthz',route=>route.fulfill({status:200,contentType:'text/html',body:'<html>Fallback page</html>'}));
+ await page.getByRole('button',{name:'Check hosted service'}).click();
+ await expect(page.locator('#hosting-status')).toContainText('Could not verify');
+ await expect(page.getByRole('button',{name:'Check hosted service'})).toBeEnabled();
+});

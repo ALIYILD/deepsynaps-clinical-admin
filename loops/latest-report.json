@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T14:48:22.491Z",
-  "sourceFingerprint": "2e828d257922aa39a47eb045896fe9d225e499330eba6241f867489b154f2d1d",
+  "generatedAt": "2026-10-13T18:31:27.643Z",
+  "sourceFingerprint": "7cb4ee0c7d363bfad53f10d6b77aa4961ff987876cb2e1bfb1ef5ae934082239",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -86,7 +86,7 @@
     },
     {
       "path": "dist/product-ui.js",
-      "sha256": "e1282cfd932396da804ed2beb5c6b9cccf28d3a5cc9553235473fc2885da6cbb"
+      "sha256": "c5f11206ebf615ab2e8e61172359a6fc22a56762d488bd7ed9743e6faf94eb3d"
     },
     {
       "path": "dist/product.js",
@@ -121,6 +121,10 @@
       "sha256": "4e847d9f7fb2c07d92b801d9d281936d9570da25b0264618d055eab1b5229103"
     },
     {
+      "path": "docs/NETLIFY_DEPLOYMENT.md",
+      "sha256": "29a17e67a775fea0320ba5b2d9a220b1c1e4ad6e03860d53b53a0cbb5d640908"
+    },
+    {
       "path": "docs/Oxford_Health_Clinical_Admin_Implementation_Plan.md",
       "sha256": "3acd86005bb1d96df6deeb072553dc2f904e9b3ab262de24041a69979634ad8e"
     },
@@ -130,7 +134,7 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "2d261d4e13241044943f51b2fdf4afccada9c1aee968cf73e039553f0e3c7237"
+      "sha256": "02d4e9a5c406f79408c8ea8407de1f09abc631d8eb5513e0de42723b6b2a827a"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
@@ -150,15 +154,31 @@
     },
     {
       "path": "integration/clinical-admin-server.mjs",
-      "sha256": "1de678ff8b6a23f6717a166719ff9790e266815cdbbf189da941c5008e117fcf"
+      "sha256": "b4785ed7f25309a44f4761a5b0f6a3f49414a5b7ee70a34c2c3f9de38deb9403"
     },
     {
       "path": "integration/clinical-os-reader.mjs",
       "sha256": "87882756255b5aba6377fcd6b84017cac7176e353cbe342b15870a272cb9b145"
     },
     {
+      "path": "integration/runtime-health.mjs",
+      "sha256": "8087ab2edcdd88ba3c9ef408a1ff51f0f2ec1f7bd54913e7f176823143051f92"
+    },
+    {
       "path": "loops/implementation.json",
       "sha256": "978dd0a2cd369dcce93d6c2a1f8e63cdb53ad6d7f74b7ba8d2cc02d46f0ac5a6"
+    },
+    {
+      "path": "netlify.toml",
+      "sha256": "2091c56c2ff6b1b418cbdc832bdb733fe9fb182d8ef1fb4c552ed6286cb2ddb5"
+    },
+    {
+      "path": "netlify/functions/clinical-admin.mjs",
+      "sha256": "e8838047590d08a29ada8d81d89110561363befd77e54a4af1547f6e9edaae7f"
+    },
+    {
+      "path": "netlify/functions/health.mjs",
+      "sha256": "053dd0f9157720eca885e0d4cbff3cce712ac84590a6d40680dd03200a4957d0"
     },
     {
       "path": "package-lock.json",
@@ -182,7 +202,7 @@
     },
     {
       "path": "scripts/source-evidence.mjs",
-      "sha256": "3208d251126d14e0e6553829816a3a111b8251879f6a70478eab38b9005eb35d"
+      "sha256": "91c343c4a9e566be6c8b83e5a00c2ad3e53e984de3cc8bf84bfa8f2fa5409269"
     },
     {
       "path": "tests/browser/storage.spec.mjs",
@@ -190,7 +210,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "32872c74c9fa165d3f24823ca70f6db4256462a9c2d5fa1871fd137d064276b2"
+      "sha256": "c32faab065d1a954703807dd9eb951a73fb9d3bf99c00b4428f09bc57777aec7"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -234,11 +254,11 @@
     },
     {
       "path": "tests/server.test.mjs",
-      "sha256": "38b150686cba24a227ac6a9c0a79f8a51ca037b6e1f7ecbae891f6df83bd8b49"
+      "sha256": "4746147b86be7b78be2e98102204e7090aaf8b5eaaa4850e92970d15c2292710"
     },
     {
       "path": "tests/source-evidence.test.mjs",
-      "sha256": "3703fee506e4ea5df8b2512ca0e3f67f8bacbbfa8cb89fc8e299eceff11df16b"
+      "sha256": "4146d95f5a006d3d8d7c34cf94d0e172954be6b9fb14e0f3a63cdb68b3a8635e"
     },
     {
       "path": "tests/tasks-ui.test.mjs",
@@ -318,6 +338,18 @@
     },
     {
       "file": "integration/clinical-os-reader.mjs",
+      "result": "passed"
+    },
+    {
+      "file": "integration/runtime-health.mjs",
+      "result": "passed"
+    },
+    {
+      "file": "netlify/functions/clinical-admin.mjs",
+      "result": "passed"
+    },
+    {
+      "file": "netlify/functions/health.mjs",
       "result": "passed"
     },
     {
@@ -403,7 +435,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 165,
+  "totalPassed": 166,
   "loops": [
     {
       "id": "L01",
@@ -443,7 +475,7 @@
       "acceptance": "Read allowlist, tenant binding, verified-session inputs, patient access checks and upstream denials pass isolated tests.",
       "limit": "Source-only foundation. OH06 and OH07 are not complete identity or tenancy integrations; trusted session and tenant services must be supplied.",
       "result": "passed",
-      "testsPassed": 48
+      "testsPassed": 49
     },
     {
       "id": "L03",

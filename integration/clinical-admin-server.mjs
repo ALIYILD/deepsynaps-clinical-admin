@@ -4,6 +4,7 @@ import {readFile,realpath,stat} from 'node:fs/promises';
 import {dirname,extname,isAbsolute,relative,resolve,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createClinicalAdminGateway} from './clinical-admin-gateway.mjs';
+import {runtimeHealth} from './runtime-health.mjs';
 
 const defaultRoot=resolve(dirname(fileURLToPath(import.meta.url)),'../dist');
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.md':'text/markdown; charset=utf-8','.png':'image/png','.ico':'image/x-icon'};
@@ -33,7 +34,7 @@ export function createClinicalAdminServer({staticRoot=defaultRoot,gatewayDepende
     return send(result.status,await result.text(),result.headers.get('Content-Type'),Object.fromEntries(result.headers));
    }
    if(!['GET','HEAD'].includes(req.method))return send(405,'{"error":"method_not_allowed"}',undefined,{Allow:'GET, HEAD'});
-   if(url.pathname==='/healthz')return send(200,JSON.stringify({status:'ok',uiMode:'synthetic-demo',gatewayConfigured:!!gatewayDependencies,connectedVerified:false,writesSupported:false}));
+   if(url.pathname==='/healthz')return send(200,JSON.stringify(runtimeHealth(!!gatewayDependencies)));
    let path;
    try{path=decodeURIComponent(url.pathname);}catch{return send(400,'{"error":"invalid_path"}');}
    if(path.includes('\0')||path.includes('\\')||path.split('/').some(part=>part==='..'||part.startsWith('.')))return send(404,'{"error":"not_found"}');

@@ -46,3 +46,7 @@ The loop report includes an explicit, sorted source manifest covering shipped as
 ## Run the local application
 
 Run `npm start`, then open `http://127.0.0.1:4179`. This serves the synthetic UI and mounts the read gateway, which returns 503 until trusted server identity and tenant dependencies are supplied. `/healthz` reports configuration separately from verified connectivity. See [server setup](integration/README.md#node-server-host) and [the recovered Hetzner test setup](docs/HETZNER_TEST_ENVIRONMENT.md).
+
+## Netlify publication
+
+The standalone synthetic app can be published with the included `netlify.toml` and serverless health/read-gateway handlers. See [Netlify delivery](docs/NETLIFY_DEPLOYMENT.md). Settings → Development workspace → Check hosted service verifies site availability without claiming a Clinical OS connection. The local Netlify link directory is excluded from Git.

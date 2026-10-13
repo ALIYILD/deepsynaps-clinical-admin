@@ -13,8 +13,8 @@ export function sourceEvidence(root){
   if(stat.isDirectory())for(const name of fs.readdirSync(absolute).sort())visit(relative+'/'+name);
   else if(stat.isFile()&&relative!=='dist/loop-report.js')files.push(relative);
  }
- for(const directory of ['dist','docs','integration','scripts','tests','.github/workflows'])visit(directory);
- for(const file of ['loops/implementation.json','package.json','package-lock.json','playwright.config.mjs'])visit(file);
+ for(const directory of ['dist','docs','integration','scripts','tests','netlify','.github/workflows'])visit(directory);
+ for(const file of ['loops/implementation.json','package.json','package-lock.json','playwright.config.mjs','netlify.toml'])visit(file);
  const manifest=files.sort().map(file=>({path:file,sha256:digest(fs.readFileSync(path.join(root,file)))}));
  return {algorithm:'sha256-manifest-v1',fingerprint:digest(JSON.stringify(manifest)),manifest};
 }

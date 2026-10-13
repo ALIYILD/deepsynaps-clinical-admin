@@ -8,7 +8,7 @@ import {sourceEvidence} from '../scripts/source-evidence.mjs';
 test('manifest covers nested browser and deployment inputs and excludes generated reports',t=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'clinical-evidence-'));
  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
- const inputs=['dist/index.html','dist/style.css','dist/assets/logo.svg','docs/runbook.md','tests/browser/workflow.spec.mjs','package-lock.json','.github/workflows/verify.yml'];
+ const inputs=['dist/index.html','dist/style.css','dist/assets/logo.svg','docs/runbook.md','tests/browser/workflow.spec.mjs','package-lock.json','netlify.toml','netlify/functions/health.mjs','.github/workflows/verify.yml'];
  for(const file of inputs){fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),'original');}
  const original=sourceEvidence(root);
  assert.deepEqual(original.manifest.map(f=>f.path),inputs.sort());
