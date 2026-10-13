@@ -263,3 +263,28 @@ test('EPR handoff can return to edit without losing details or reusing confirmat
  await expect(page.locator('.epr-draft-row')).toHaveCount(1);
  await expect(page.locator('.epr-draft-row')).toContainText('Draft · Not sent');
 });
+
+test('patient task board preserves explicit patient links and separates team tasks',async({page})=>{
+ await page.goto('/#record');
+ await page.getByRole('button',{name:'Change active patient',exact:true}).click();
+ await page.getByRole('dialog').getByRole('button',{name:/Alex Taylor/}).click();
+ await page.locator('#patient-follow-up').getByRole('button',{name:'Add task',exact:true}).click();
+ await page.getByLabel('Task description',{exact:true}).fill('Fictional Alex follow-up');
+ await page.getByRole('button',{name:'Save task',exact:true}).click();
+ await page.getByRole('button',{name:'View this patient’s tasks',exact:true}).click();
+ await expect(page.getByLabel('Patient or team',{exact:true})).toHaveValue('DEMO-002');
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await page.getByRole('button',{name:'Details',exact:false}).count();
+ await page.getByRole('button',{name:'Edit task: Fictional Alex follow-up',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('DEMO-002 · Linked patient cannot be changed here');
+ await page.getByRole('button',{name:'Cancel',exact:true}).click();
+ await page.getByLabel('Search tasks',{exact:true}).fill('DEMO-002');
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await page.getByLabel('Patient or team',{exact:true}).selectOption('team');
+ await expect(page.locator('.coordination-task')).toHaveCount(0);
+ await page.getByLabel('Search tasks',{exact:true}).fill('');
+ await expect(page.locator('.coordination-task')).toHaveCount(3);
+ await page.getByLabel('Patient or team',{exact:true}).selectOption('DEMO-002');
+ await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
+});

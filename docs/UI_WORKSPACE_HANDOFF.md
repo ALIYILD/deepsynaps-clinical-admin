@@ -151,3 +151,9 @@ Team and EPR handover reviews now provide Back to edit. Patient/source selection
 Team handover drafts now deduplicate the exact patient, source text/version/revision, recipient and message combination. A different message remains a separate draft. Source revision changes flag retained handovers even if text is unchanged. Closing or cancelling task/handovers clears pending edit/review state. Review footers wrap at narrow sizes so correction and save controls remain reachable.
 
 Added five Node regressions and two desktop/mobile browser scenarios for correction, confirmation reset, retry, cancellation and footer width. Local loops are regenerated for this revision; browser verification runs in GitHub CI. Drafts remain local and unsent. This is UI verification, not clinical acceptance or live integration evidence.
+
+## UI readiness loop: patient-linked task navigation
+
+Added a Patient or team task filter, including a separate team-administration option, and search by explicit patient ID. The patient overview now opens that patient's tasks with stale task filters cleared. Task rows link to their patient record; task details display patient name/ID and make the fixed association explicit. A new team task resets the patient filter so it remains visible after saving. Existing records are never linked by matching names in their text.
+
+Reconciled CLI main `262957faef349c6a88e3b0341add60a2b3ef85da`, retaining the optional Node host, socket tests and browser configuration. The published Sites app remains static and does not mount that host or activate the gateway. Added local and desktop/mobile browser regression coverage for patient/task navigation and filter combinations.

@@ -8,7 +8,7 @@ A private, synthetic-data Sites prototype with actual DeepSynaps branding, organ
 - `dist/registry-evidence.js`: exact 158-function source snapshot and limitations from Clinical OS revision `2be80acd1ac68b01756c1acccad8010363755389`.
 - `dist/product-data.js`: proposed organisation profiles, extension catalogue, inspected integration map and 30 delivery work packages.
 - `docs/Oxford_Health_Clinical_Admin_Implementation_Plan.md`: detailed plan; same downloadable file in `dist/`.
-- `integration/clinical-os-reader.mjs`: server-only, synthetic-staging read adapter. **Not imported by the site, mounted or deployed.**
+- `integration/clinical-os-reader.mjs`: server-only, synthetic-staging read adapter. Not imported by the browser or connected to a live service. The optional Node host mounts the gateway.
 - `tests/`: prototype behaviour and adapter unit tests. No claim of upstream/live verification.
 
 ## Runtime boundary
@@ -42,3 +42,7 @@ When another tab changes or clears the saved demo, this tab blocks writes once i
 Saved data is checked before migration and rendering. Malformed JSON, unsupported schema versions and incompatible known field structures open a temporary fresh preview with saving blocked. Export original saved value preserves the exact value read from storage in a recovery JSON wrapper; no automatic repair or import is performed. Reset demo data explicitly replaces it after confirmation. If storage cannot be read at all, the original export is unavailable and existing data is not assumed empty.
 
 The loop report includes an explicit, sorted source manifest covering shipped assets, documentation, nested tests and build/CI inputs. It records the fingerprint algorithm and syntax outcomes. A Node test suite omitted from the ledger or a source change during verification produces a failed report, not a passing snapshot. The generated report itself is excluded from its own fingerprint. Browser test code is included for traceability; browser execution remains a separate CI result.
+
+## Run the local application
+
+Run `npm start`, then open `http://127.0.0.1:4179`. This serves the synthetic UI and mounts the read gateway, which returns 503 until trusted server identity and tenant dependencies are supplied. `/healthz` reports configuration separately from verified connectivity. See [server setup](integration/README.md#node-server-host) and [the recovered Hetzner test setup](docs/HETZNER_TEST_ENVIRONMENT.md).

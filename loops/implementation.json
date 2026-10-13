@@ -33,7 +33,8 @@
       ],
       "tests": [
         "tests/integration.test.mjs",
-        "tests/gateway.test.mjs"
+        "tests/gateway.test.mjs",
+        "tests/server.test.mjs"
       ],
       "acceptance": "Read allowlist, tenant binding, verified-session inputs, patient access checks and upstream denials pass isolated tests.",
       "limit": "Source-only foundation. OH06 and OH07 are not complete identity or tenancy integrations; trusted session and tenant services must be supplied."
