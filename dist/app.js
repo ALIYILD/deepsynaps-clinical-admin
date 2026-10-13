@@ -3,18 +3,33 @@ const paths={grid:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',mic:'M
 const icon=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.grid}"/></svg>`;
 const esc=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=()=>({consent:false,captured:false,note:'',signed:false,version:1,history:[],formFilled:false,formReviewed:false,settings:{ai:true,speech:true,sms:false},tasks:[{text:'Review Maya’s consultation summary',owner:'Dr Morgan',done:false},{text:'Confirm follow-up appointment preference',owner:'Care team',done:false},{text:'Prepare Alex’s pre-appointment briefing',owner:'Admin team',done:false}],audit:[{time:'09:00',text:'Demo workspace opened. All records are fictional.'}]});
-let state;try{state=JSON.parse(localStorage.getItem('clinical-admin-demo-v1'))||initial()}catch{state=initial()}
+let state,storageBaseline=null;try{storageBaseline=localStorage.getItem('clinical-admin-demo-v1');state=JSON.parse(storageBaseline)||initial()}catch{state=initial()}
 let route='home',filterStatus='all',filterCat='all',search='',categoryTab='workflow',recording=false,seconds=0,recordTimer,toastTimer,tourIndex=0;
-let storageSaveFailed=false;
+let storageSaveFailed=false,storageConflict=false;
 function showStorageStatus(){
  const banner=document.getElementById('storage-status');if(!banner)return;
  banner.hidden=!storageSaveFailed;
- document.getElementById('storage-message').textContent=storageSaveFailed?'Changes are not saved. They exist only in this tab and may be lost if you reload or close it. Free browser storage or allow site storage, then retry.':'';
+ document.getElementById('storage-message').textContent=storageConflict
+  ?'Another tab changed or cleared the saved demo. Saving from this tab is blocked to avoid overwriting those records. Export this tab’s changes if needed, then reload the saved version.'
+  :storageSaveFailed?'Changes are not saved. They exist only in this tab and may be lost if you reload or close it. Free browser storage or allow site storage, then retry.':'';
+ document.getElementById('storage-retry').hidden=storageConflict;
+ document.getElementById('storage-reload').hidden=!storageConflict;
 }
 function save(){
- try{localStorage.setItem('clinical-admin-demo-v1',JSON.stringify(state));storageSaveFailed=false;showStorageStatus();return true;}
- catch{storageSaveFailed=true;showStorageStatus();return false;}
+ try{
+  if(storageConflict||localStorage.getItem('clinical-admin-demo-v1')!==storageBaseline){storageConflict=true;storageSaveFailed=true;showStorageStatus();return false;}
+  const snapshot=JSON.stringify(state);
+  localStorage.setItem('clinical-admin-demo-v1',snapshot);storageBaseline=snapshot;
+  storageSaveFailed=false;showStorageStatus();return true;
+ }catch{storageSaveFailed=true;showStorageStatus();return false;}
 }
+function exportRecovery(){download('clinical-admin-tab-recovery.json',JSON.stringify({status:'DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT',exportedAt:new Date().toISOString(),workspace:state},null,2),'application/json');}
+function confirmReloadSaved(){modal('Reload saved demo?', '<p>This discards changes held only in this tab and loads the current saved demo. Export this tab’s changes first if you need to keep them.</p>', '<button onclick="closeModal()">Keep this tab</button><button class="primary" onclick="reloadSavedState()">Discard tab changes and reload</button>');}
+function reloadSavedState(){storageSaveFailed=false;location.reload();}
+window.addEventListener?.('storage',event=>{
+ if(event.storageArea!==localStorage||(event.key!==null&&event.key!=='clinical-admin-demo-v1'))return;
+ if(event.newValue!==storageBaseline){storageConflict=true;storageSaveFailed=true;showStorageStatus();}
+});
 function retrySave(){if(save())toast('Demo changes saved in this browser.');}
 window.addEventListener?.('beforeunload',event=>{if(storageSaveFailed){event.preventDefault();event.returnValue='';}});
 function audit(text){state.audit.unshift({time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),text});return save()}

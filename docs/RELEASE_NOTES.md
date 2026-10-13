@@ -39,3 +39,9 @@ Browser storage quota and permission failures now leave a persistent, accessible
 Draft, organisation, extension-request, planning-note and reset notifications now distinguish successful persistence from changes retained only in the current tab. A failed reset warns that previously stored records may return after reload. This remains browser-local demo storage, not server persistence or an immutable audit record.
 
 Validation: 53 Node tests and 14 Chromium desktop/mobile tests pass. New tests inject quota and permission failures, verify the warning persists through signing and unsuccessful retries, then restore storage and confirm the signed note survives reload. Node regression checks also verify multi-patient recovery and failed-reset messaging. Connected staging, real writes and pilot approval remain blocked.
+
+## Stale browser tab detection
+
+Each tab retains the exact saved snapshot it loaded or last wrote. Before saving, it compares the current storage value with that snapshot and blocks writes if another tab has changed or cleared it. Storage events surface conflicts promptly. A stale tab cannot bypass the conflict with Retry saving or reset; users can export the tab's fictional state and explicitly reload the saved version. Recovery exports are marked `DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT`.
+
+Validation: 55 Node tests and 16 Chromium desktop/mobile tests pass. The two-tab browser scenario verifies that stale edits cannot overwrite a newer signed note, exported recovery content retains the stale edit, cancelling reload preserves the tab, and confirmed reload restores the newer signature. Node checks cover stale resets and externally cleared storage. This detects observed stale snapshots; localStorage comparison and write are not atomic. Server-side concurrency, idempotency and authoritative audit remain L05 dependencies.

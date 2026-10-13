@@ -52,3 +52,26 @@ test('failed reset does not claim stored records were removed',()=>{
  assert.equal(el('storage-status').hidden,false);
  assert.equal(run('state.note'),'');
 });
+test('a stale tab cannot save or reset over a newer stored workspace',()=>{
+ const {run,storage,el}=setup();run('draftNote()');
+ const newer=JSON.parse(storage['clinical-admin-demo-v1']);
+ newer.patientRecords['DEMO-001'].note='Newer signed note from another tab';
+ newer.patientRecords['DEMO-001'].signed=true;
+ storage['clinical-admin-demo-v1']=JSON.stringify(newer);
+ run("updateNote('Stale edit');retrySave()");
+ assert.equal(storage['clinical-admin-demo-v1'],JSON.stringify(newer));
+ assert.match(el('storage-message').textContent,/Another tab/);
+ assert.equal(el('storage-retry').hidden,true);
+ assert.equal(el('storage-reload').hidden,false);
+ run('resetDemo()');
+ assert.equal(storage['clinical-admin-demo-v1'],JSON.stringify(newer));
+});
+test('cleared storage is not silently repopulated by an older tab',()=>{
+ const {run,storage}=setup();run('draftNote()');
+ delete storage['clinical-admin-demo-v1'];
+ assert.equal(run('save()'),false);
+ assert.equal(storage['clinical-admin-demo-v1'],undefined);
+ run('let recovered;download=(name,body)=>{recovered=JSON.parse(body)};exportRecovery()');
+ assert.equal(run('recovered.status'),'DEMO_LOCAL_RECOVERY_NOT_FOR_IMPORT');
+ assert.match(run("recovered.workspace.patientRecords['DEMO-001'].note"),/Maya Collins/);
+});

@@ -2,79 +2,79 @@ TAP version 13
 # Subtest: repository snapshot covers every ID and preserves exact status totals
 ok 1 - repository snapshot covers every ID and preserves exact status totals
   ---
-  duration_ms: 44.068981
+  duration_ms: 15.217748
   type: 'test'
   ...
 # Subtest: all standard and new routes render and inline handlers parse
 ok 2 - all standard and new routes render and inline handlers parse
   ---
-  duration_ms: 52.481531
+  duration_ms: 16.538615
   type: 'test'
   ...
 # Subtest: all function detail dialogs include source-specific evidence
 ok 3 - all function detail dialogs include source-specific evidence
   ---
-  duration_ms: 37.010147
+  duration_ms: 13.315179
   type: 'test'
   ...
 # Subtest: catalogue filtering remains correct
 ok 4 - catalogue filtering remains correct
   ---
-  duration_ms: 16.170381
+  duration_ms: 6.544678
   type: 'test'
   ...
 # Subtest: consent, speech, AI and review gates survive product changes
 ok 5 - consent, speech, AI and review gates survive product changes
   ---
-  duration_ms: 99.073458
+  duration_ms: 39.368768
   type: 'test'
   ...
 # Subtest: organisation configuration changes proposal only and escapes values
 ok 6 - organisation configuration changes proposal only and escapes values
   ---
-  duration_ms: 18.293532
+  duration_ms: 5.909299
   type: 'test'
   ...
 # Subtest: extension request is saved locally without activation or notification
 ok 7 - extension request is saved locally without activation or notification
   ---
-  duration_ms: 18.309653
+  duration_ms: 5.061399
   type: 'test'
   ...
 # Subtest: 30 work packages and notes never approve a gate
 ok 8 - 30 work packages and notes never approve a gate
   ---
-  duration_ms: 15.442442
+  duration_ms: 4.51179
   type: 'test'
   ...
 # Subtest: theme and reset migrate safely; connection never reports live success
 ok 9 - theme and reset migrate safely; connection never reports live success
   ---
-  duration_ms: 14.90847
+  duration_ms: 4.288227
   type: 'test'
   ...
 # Subtest: HTML loads scripts in dependency order and plan/logo exist
 ok 10 - HTML loads scripts in dependency order and plan/logo exist
   ---
-  duration_ms: 3.484834
+  duration_ms: 1.168844
   type: 'test'
   ...
 # Subtest: failed loop stops later tests and removes their stale evidence
 ok 11 - failed loop stops later tests and removes their stale evidence
   ---
-  duration_ms: 2007.938736
+  duration_ms: 632.586698
   type: 'test'
   ...
 # Subtest: syntax failure invalidates all local evidence while retaining blocked records
 ok 12 - syntax failure invalidates all local evidence while retaining blocked records
   ---
-  duration_ms: 943.254019
+  duration_ms: 289.232302
   type: 'test'
   ...
 # Subtest: successful local verification does not report blocked connected loops as passed
 ok 13 - successful local verification does not report blocked connected loops as passed
   ---
-  duration_ms: 4065.993224
+  duration_ms: 941.316731
   type: 'test'
   ...
 1..13
@@ -85,4 +85,4 @@ ok 13 - successful local verification does not report blocked connected loops as
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 7661.005731
+# duration_ms 2055.420548
