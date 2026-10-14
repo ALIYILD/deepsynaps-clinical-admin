@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-14T09:18:31.685Z",
-  "sourceFingerprint": "29f5c4e60b142006fe41655778161a04744b144d8e7e6cd0f17d822b20773a74",
+  "generatedAt": "2026-10-14T09:21:14.191Z",
+  "sourceFingerprint": "c683a80b531169085ca80c8c94b43078ec8d734dec53d7aa9ce333a68742d07f",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -206,7 +206,7 @@
     },
     {
       "path": "tests/browser/storage.spec.mjs",
-      "sha256": "09554aa32f222bbf4fd95585b89e9d10921d089b51349e58c9b2521356460483"
+      "sha256": "0711da5cac31995d8bffc5b0eef18979a35699727ae9b11c29c4e09eacee139e"
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
