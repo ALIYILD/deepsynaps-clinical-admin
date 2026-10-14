@@ -385,3 +385,26 @@ test('document and review filters retain focus and open the correct patient for 
  await expect(page.getByRole('dialog')).toContainText('Alex Taylor');await expect(page.locator('#review-confirm')).not.toBeChecked();
  await expect(page.getByRole('region',{name:'Active patient'})).toContainText('DEMO-002');
 });
+
+test('task completion and reopening retain keyboard focus through filtering and patient views',async({page})=>{
+ await page.goto('/#T');
+ await page.getByLabel('Sort tasks',{exact:true}).selectOption('due');
+ const checks=page.locator('#task-results input[type=checkbox]');
+ const first=await checks.first().getAttribute('id');
+ const next=await checks.nth(1).getAttribute('id');
+ await page.locator('#'+first).focus();await page.keyboard.press('Space');
+ await expect(page.locator('#'+first)).toHaveCount(0);
+ await expect(page.locator('#'+next)).toBeFocused();
+ await expect(page.locator('#toast')).toContainText('Saved in this browser');
+ await page.getByRole('button',{name:'Completed',exact:true}).click();
+ await page.locator('#'+first).focus();await page.keyboard.press('Space');
+ await expect(page.locator('#task-results')).toBeFocused();
+ await expect(page.locator('#toast')).toContainText('Task reopened');
+ await page.evaluate(()=>{state.tasks[0].patientId=state.selectedPatientId;save();nav('record');});
+ await page.locator('#patient-task-check-0').focus();await page.keyboard.press('Space');
+ await expect(page.locator('#patient-task-check-0')).toBeChecked();
+ await expect(page.locator('#patient-task-check-0')).toBeFocused();
+ await page.keyboard.press('Space');
+ await expect(page.locator('#patient-task-check-0')).not.toBeChecked();
+ await expect(page.locator('#patient-task-check-0')).toBeFocused();
+});

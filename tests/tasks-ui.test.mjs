@@ -145,3 +145,17 @@ test('task filters update results without replacing controls and reject unsuppor
  run("updateTaskFilter('patient','DEMO-003')");assert.equal(run('filteredTasks().length'),0);
  run("updateTaskFilter('due','none');updateTaskFilter('priority','routine')");assert.equal(run('taskDueFilter'),'none');assert.equal(run('taskPriorityFilter'),'routine');
 });
+
+test('completion validates input, preserves task source and reports recoverable save failure',()=>{
+ const {run,el}=setup();
+ run("state.tasks[1].patientId='DEMO-002';state.tasks[1].sourceNote='Retained source';const beforeInvalid=JSON.stringify(state.tasks);setTaskDone('1',true);setTaskDone(1,'true');setTaskDone(-1,true)");
+ assert.equal(run('JSON.stringify(state.tasks)===beforeInvalid'),true);
+ run("const originalWrite=localStorage.setItem;localStorage.setItem=()=>{throw Error('quota')};setTaskDone(1,true)");
+ assert.match(el('toast').textContent,/in this tab only.*Saving failed/);
+ assert.equal(run('state.tasks[1].done'),true);
+ assert.equal(run('state.tasks[1].sourceNote'),'Retained source');
+ assert.equal(run('state.tasks[1].patientId'),'DEMO-002');
+ run('localStorage.setItem=originalWrite;retrySave()');
+ assert.equal(run("JSON.parse(localStorage.getItem('clinical-admin-demo-v1')).tasks[1].done"),true);
+ run('setTaskDone(1,false)');assert.match(el('toast').textContent,/reopened. Saved in this browser/);
+});

@@ -166,3 +166,14 @@ test('invalid nested UI storage opens a recoverable preview without renderer err
  }
  expect(errors).toEqual([]);
 });
+
+test('task completion reports a failed save and recovers the exact completion state',async({page})=>{
+ await page.goto('/#T');await blockStorage(page);
+ await page.locator('#task-check-0').check();
+ await expect(page.locator('#toast')).toContainText('in this tab only. Saving failed');
+ await expect(page.locator('#storage-status')).toBeVisible();
+ await page.evaluate(()=>{window.restoreDemoStorage();retrySave();});
+ await page.reload();
+ await page.getByRole('button',{name:'Completed',exact:true}).click();
+ await expect(page.locator('#task-check-0')).toBeChecked();
+});
