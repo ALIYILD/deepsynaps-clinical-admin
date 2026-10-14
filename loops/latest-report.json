@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-14T07:01:55.610Z",
-  "sourceFingerprint": "fc8f7966e8e178f44e1396da0279eb9d8fe3d25b15bb5a60d121d341e78b070d",
+  "generatedAt": "2026-10-14T09:06:21.663Z",
+  "sourceFingerprint": "f8103e2a226c29c3b329a4ccbcdf71fb350adc69fed9eeeec5b932da07932194",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -42,7 +42,7 @@
     },
     {
       "path": "dist/documents-ui.js",
-      "sha256": "970dc03bbca3d8e1bb3d2afee9f3b8dbd0c4586e9c972aeb6a65caa94365af93"
+      "sha256": "b216fd29c5fd38d711931343b40a95a0535afbe0459d87d33a56ecbe4b0a5203"
     },
     {
       "path": "dist/forms-ui.css",
@@ -142,7 +142,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "ce35f0939aefaf18ed8cf5319b9157b1d6648dba6ad07e492dbbcb2840896776"
+      "sha256": "283671b17507d791854aa10063883417d07c03b696c8aba17a098fa2c3b8b929"
     },
     {
       "path": "integration/README.md",
@@ -210,7 +210,7 @@
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "272e8a23d2ff89820cb53f9f741a696c8377342513245f8b67a637dcb10fb95c"
+      "sha256": "5855accff140cc6cc80646a18431d17f752e5b1964452dbe00f20d434a86b93c"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -218,7 +218,7 @@
     },
     {
       "path": "tests/documents-ui.test.mjs",
-      "sha256": "7a095a4d56537cea16804daada8b3baf9f337adef9de69b1d7f34ffefd6416b6"
+      "sha256": "7db8c7b9b56155ee9a6b1effe9545ed0faa24dffbbeea243c03f295392b3ef4c"
     },
     {
       "path": "tests/forms-ui.test.mjs",
@@ -435,7 +435,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 182,
+  "totalPassed": 184,
   "loops": [
     {
       "id": "L01",
@@ -498,7 +498,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 103
+      "testsPassed": 105
     },
     {
       "id": "L04",

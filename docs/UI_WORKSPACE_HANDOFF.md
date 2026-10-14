@@ -169,3 +169,9 @@ Based on merged main `cec0a6ce40bac47b9c7f6f27a43e81b7e348d43b`. Added Node regr
 Reconciled CLI main `d44ce467ea47b857f94133d6e2403bd31a9e58c0`, including task sorting, hosted-service status checks, runtime/Netlify host files and their tests. Preserved PR #5's retained-source comparisons and source metadata. Sites remains a static publication; Netlify files are retained source, not a new deployment.
 
 Patient, owner, due-date and administrative-priority filters now update only the results region, preserving keyboard focus on their controls. Each has an explicit accessible name and allowed-value validation. Added a local regression and desktop/mobile keyboard-focus coverage for combined filters and empty-result recovery.
+
+## UI readiness loop: document and review filter focus
+
+Document status/patient/type and review kind/patient filters now update their results region without replacing the active controls. Segmented controls update their pressed state, selects have explicit accessible names, and Clear filters places focus in the relevant search field. Unsupported values are ignored. Filtering does not change the active patient or record a review; opening a specific review retains the existing patient-bound exact-source confirmation.
+
+Added local and desktop/mobile browser checks for combined filtering, keyboard focus, pressed states, empty-result recovery, preview patient isolation and opening the correct patient's review. This remains synthetic browser-local workflow verification.

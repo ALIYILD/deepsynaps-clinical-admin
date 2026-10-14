@@ -359,3 +359,29 @@ test('task filter controls retain keyboard focus while results update',async({pa
  await page.locator('#task-results').getByRole('button',{name:'Clear filters',exact:true}).click();
  await expect(page.locator('.coordination-task')).toHaveCount(3);
 });
+
+test('document and review filters retain focus and open the correct patient for review',async({page})=>{
+ await page.goto('/#N');await page.getByRole('button',{name:'Load example',exact:true}).click();
+ await switchPatient(page,'Alex Taylor');await page.getByRole('button',{name:'Load example',exact:true}).click();
+ await switchPatient(page,'Maya Collins');await page.goto('/#documents');
+ const patient=page.getByLabel('Filter documents by patient',{exact:true});
+ await patient.focus();await patient.selectOption('DEMO-002');await expect(patient).toBeFocused();
+ const type=page.getByLabel('Filter documents by type',{exact:true});
+ await type.focus();await type.selectOption('soap');await expect(type).toBeFocused();
+ const drafts=page.locator('#document-status-filters').getByRole('button',{name:'Drafts',exact:true});
+ await drafts.focus();await page.keyboard.press('Enter');await expect(drafts).toBeFocused();await expect(drafts).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('.document-queue-row')).toHaveCount(1);
+ await page.getByRole('button',{name:'Preview',exact:true}).click();await expect(page.getByRole('dialog')).toContainText('Alex Taylor');
+ await page.getByRole('button',{name:'Close',exact:true}).click();expect(await page.evaluate(()=>state.selectedPatientId)).toBe('DEMO-001');
+ await page.getByRole('button',{name:'Open review queue',exact:true}).click();
+ const reviewPatient=page.getByLabel('Filter review queue by patient',{exact:true});
+ await reviewPatient.focus();await reviewPatient.selectOption('DEMO-002');await expect(reviewPatient).toBeFocused();
+ const forms=page.locator('#review-kind-filters').getByRole('button',{name:'Forms',exact:true});
+ await forms.focus();await page.keyboard.press('Enter');await expect(forms).toBeFocused();await expect(forms).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('#review-queue-results')).toContainText('No items match');
+ await page.locator('#review-queue-results').getByRole('button',{name:'Clear filters',exact:true}).click();
+ await expect(page.getByLabel('Search review queue',{exact:true})).toBeFocused();
+ await reviewPatient.selectOption('DEMO-002');await page.locator('#review-queue-results').getByRole('button',{name:'Review',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('Alex Taylor');await expect(page.locator('#review-confirm')).not.toBeChecked();
+ await expect(page.getByRole('region',{name:'Active patient'})).toContainText('DEMO-002');
+});
