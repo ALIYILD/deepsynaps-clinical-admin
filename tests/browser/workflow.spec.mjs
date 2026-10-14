@@ -308,3 +308,54 @@ test('follow-up task compares retained source with an amended document without c
  await page.getByRole('button',{name:'Close',exact:true}).click();
  await page.reload();await expect(page.locator('#main')).toContainText('Source changed');
 });
+
+test('hosted service check separates site availability from clinical connectivity',async({page})=>{
+ await page.goto('/#settings');
+ await page.locator('details.advanced-settings summary').click();
+ await page.getByRole('button',{name:'Check hosted service'}).click();
+ await expect(page.locator('#hosting-status')).toContainText('Site responding. Synthetic demonstration only.');
+ await expect(page.locator('#hosting-status')).toContainText('Clinical OS is not connected.');
+ await page.route('**/healthz',route=>route.fulfill({status:200,contentType:'text/html',body:'<html>Fallback page</html>'}));
+ await page.getByRole('button',{name:'Check hosted service'}).click();
+ await expect(page.locator('#hosting-status')).toContainText('Could not verify');
+ await expect(page.getByRole('button',{name:'Check hosted service'})).toBeEnabled();
+});
+
+
+test('sorted task completion updates the intended task and keeps the sort control focused',async({page})=>{
+ await page.goto('/#T');
+ await page.evaluate(()=>{
+  state.tasks=[
+   {text:'Later fictional task',owner:'Care team',done:false,dueDate:'2026-10-20',priority:'routine'},
+   {text:'Earlier fictional task',owner:'Care team',done:false,dueDate:'2026-10-14',priority:'routine'},
+   {text:'Urgent fictional task',owner:'Care team',done:false,dueDate:'2026-10-21',priority:'time-sensitive',patientId:'DEMO-002'}
+  ];save();render();
+ });
+ const sort=page.getByLabel('Sort tasks',{exact:true});
+ await sort.focus();await sort.selectOption('due');
+ await expect(sort).toBeFocused();
+ await expect(page.locator('.task-title')).toHaveText(['Earlier fictional task','Later fictional task','Urgent fictional task']);
+ await sort.selectOption('priority');
+ await expect(page.locator('.task-title').first()).toHaveText('Urgent fictional task');
+ await page.getByRole('checkbox',{name:'Mark Urgent fictional task complete',exact:true}).click();
+ expect(await page.evaluate(()=>state.tasks.map(t=>t.done))).toEqual([false,false,true]);
+ await page.reload();
+ await page.getByRole('button',{name:'Completed',exact:true}).click();
+ await expect(page.locator('.task-title')).toHaveText(['Urgent fictional task']);
+ await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
+});
+
+test('task filter controls retain keyboard focus while results update',async({page})=>{
+ await page.goto('/#T');
+ for(const [name,value] of [['Assigned to','Admin team'],['Patient or team','team'],['Due date','none'],['Administrative priority','routine']]){
+  const control=page.getByLabel(name,{exact:true});await control.focus();await control.selectOption(value);
+  await expect(control).toBeFocused();await expect(control).toHaveValue(value);
+ }
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await expect(page.locator('.task-title')).toHaveText('Prepare Alex’s pre-appointment briefing');
+ await page.getByLabel('Patient or team',{exact:true}).selectOption('DEMO-003');
+ await expect(page.locator('#task-results')).toContainText('No tasks match');
+ await page.locator('#task-results').getByRole('button',{name:'Clear filters',exact:true}).click();
+ await expect(page.locator('.coordination-task')).toHaveCount(3);
+});

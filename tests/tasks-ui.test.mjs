@@ -111,3 +111,37 @@ test('same-text revision changes and missing patient records cannot appear curre
  const {run}=setup();sign(run);run('createFollowup();state.revision++');assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'changed');
  run("state.tasks[3].patientId='UNKNOWN'");assert.equal(run('taskSourceStatus(state.tasks[3]).status'),'unknown');
 });
+
+
+test('task sorting preserves source records and original indices across dates, priorities and completion',()=>{
+ const {run}=setup();
+ run(`state.tasks=[
+  {text:'Undated routine',owner:'Care team',done:false},
+  {text:'Later urgent',owner:'Care team',done:false,dueDate:'2026-10-20',priority:'time-sensitive',patientId:'DEMO-002',sourceNote:'Exact reviewed source'},
+  {text:'Earlier routine',owner:'Care team',done:false,dueDate:'2026-10-14'},
+  {text:'Completed earlier',owner:'Care team',done:true,dueDate:'2026-10-01',priority:'time-sensitive'},
+  {text:'Same date routine',owner:'Care team',done:false,dueDate:'2026-10-14'},
+  {text:'Invalid legacy date',owner:'Care team',done:false,dueDate:'2026-02-30'}
+ ];taskFilter='all';const originalTasks=JSON.stringify(state.tasks);updateTaskSort('due');`);
+ assert.equal(run('filteredTasks().map(t=>t.index).join()'),'2,4,1,0,5,3');
+ assert.equal(run('JSON.stringify(state.tasks)===originalTasks'),true);
+ run("updateTaskSort('priority')");
+ assert.equal(run('filteredTasks().map(t=>t.index).join()'),'1,2,4,0,5,3');
+ run('openTaskDetails(filteredTasks()[0].index)');
+ callWithForm(run,'saveTaskDetails',editor({description:'Updated urgent follow-up'}));
+ assert.equal(run('state.tasks[1].text'),'Updated urgent follow-up');
+ assert.equal(run('state.tasks[1].patientId'),'DEMO-002');
+ assert.equal(run('state.tasks[1].sourceNote'),'Exact reviewed source');
+ assert.equal(run('state.tasks[0].text'),'Undated routine');
+ run("updateTaskSort('added');updateTaskSort('unsupported')");
+ assert.equal(run('filteredTasks().map(t=>t.index).join()'),'0,1,2,3,4,5');
+});
+
+test('task filters update results without replacing controls and reject unsupported values',()=>{
+ const {run,el}=setup();run('nav("T")');const original=el('main').innerHTML;
+ run("updateTaskFilter('owner','Admin team')");assert.equal(run('filteredTasks().length'),1);
+ assert.equal(el('main').innerHTML,original);assert.match(el('task-results').innerHTML,/Prepare Alex/);
+ run("updateTaskFilter('owner','Unknown');updateTaskFilter('unexpected','all')");assert.equal(run('taskOwner'),'Admin team');
+ run("updateTaskFilter('patient','DEMO-003')");assert.equal(run('filteredTasks().length'),0);
+ run("updateTaskFilter('due','none');updateTaskFilter('priority','routine')");assert.equal(run('taskDueFilter'),'none');assert.equal(run('taskPriorityFilter'),'routine');
+});

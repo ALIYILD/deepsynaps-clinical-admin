@@ -67,3 +67,17 @@ test('HTTP host sanitises failures from trusted dependencies',async t=>{
  const response=await fetch(base+'/api/clinical-admin/workspace/profile');assert.equal(response.status,503);
  assert.deepEqual(await response.json(),{error:'integration_unavailable'});
 });
+
+test('Netlify entry points match local health and refuse unconfigured reads and writes',async()=>{
+ const {default:health}=await import('../netlify/functions/health.mjs');
+ const {default:gateway}=await import('../netlify/functions/clinical-admin.mjs');
+ const response=await health(new Request('https://example.invalid/healthz'));
+ assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store');
+ assert.deepEqual(await response.json(),{status:'ok',uiMode:'synthetic-demo',gatewayConfigured:false,connectedVerified:false,writesSupported:false});
+ assert.equal(await (await health(new Request('https://example.invalid/healthz',{method:'HEAD'}))).text(),'');
+ assert.equal((await health(new Request('https://example.invalid/healthz',{method:'POST'}))).status,405);
+ const read=await gateway(new Request('https://example.invalid/api/clinical-admin/workspace/capabilities'));
+ assert.equal(read.status,503);assert.deepEqual(await read.json(),{error:'session_integration_not_configured'});
+ assert.equal((await gateway(new Request('https://example.invalid/api/clinical-admin/workspace/capabilities',{method:'POST'}))).status,405);
+ assert.equal((await gateway(new Request('https://example.invalid/api/clinical-admin/missing'))).status,404);
+});

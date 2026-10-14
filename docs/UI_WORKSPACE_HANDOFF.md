@@ -163,3 +163,9 @@ Reconciled CLI main `262957faef349c6a88e3b0341add60a2b3ef85da`, retaining the op
 New document follow-up tasks retain explicit source version, revision and template alongside the existing immutable note copy. The task board and details distinguish current, changed and incompletely recorded legacy sources. A read-only comparison dialog displays retained source and current document side by side, with a route to the correct patient's current document. Viewing never updates the snapshot or changes completion. Older tasks lacking complete metadata remain available but do not claim an exact revision match. New follow-up creation resets stale filters and shows the patient's tasks.
 
 Based on merged main `cec0a6ce40bac47b9c7f6f27a43e81b7e348d43b`. Added Node regressions for exact metadata, stale filters, amendments, legacy sources and missing records, plus desktop/mobile comparison and reload coverage. No live service or submission is activated.
+
+## UI readiness loop: keyboard-stable task filters
+
+Reconciled CLI main `d44ce467ea47b857f94133d6e2403bd31a9e58c0`, including task sorting, hosted-service status checks, runtime/Netlify host files and their tests. Preserved PR #5's retained-source comparisons and source metadata. Sites remains a static publication; Netlify files are retained source, not a new deployment.
+
+Patient, owner, due-date and administrative-priority filters now update only the results region, preserving keyboard focus on their controls. Each has an explicit accessible name and allowed-value validation. Added a local regression and desktop/mobile keyboard-focus coverage for combined filters and empty-result recovery.
