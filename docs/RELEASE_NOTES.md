@@ -117,3 +117,7 @@ Task completion and reopening now confirm whether the change was saved in this b
 ## Preparation checklist feedback and focus
 
 Checking and clearing preparation items now retains keyboard focus and reports whether the change saved in this browser. The progress count is a status region. Failed writes remain explicitly tab-only and recover through the existing save controls. Clearing retains agenda notes; patient separation and invalidation after source changes remain intact. Coverage includes keyboard progression, clearing, patient switching, reload and storage recovery on desktop and mobile. Manual accessibility and clinical usability review remain outstanding.
+
+## Form review persistence and keyboard continuity
+
+Field reviews retain checkbox focus; attempts to review an empty required field focus its input. Final approval directs missing confirmation to the confirmation checkbox and saves the exact approval snapshot, version history and audit entry in one storage write. Approval and reopening report actual persistence results, retain recoverable tab-only changes after failed writes, and return focus to the result heading or first editable field. No delivery or EPR submission is implied. Regression coverage includes exact snapshot/history recovery without duplicates and desktop/mobile keyboard workflows.

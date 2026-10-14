@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-14T09:35:46.073Z",
-  "sourceFingerprint": "1c06a7453d5187d6f8a4f100eb9fdf6e90de647ac85bdb21d393e62272a4558f",
+  "generatedAt": "2026-10-14T15:57:53.539Z",
+  "sourceFingerprint": "0adb8ace367dc71945f223888f00fa074fbdce33603291ca3e7662201c7a0c3f",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -50,7 +50,7 @@
     },
     {
       "path": "dist/forms-ui.js",
-      "sha256": "0460750316100ba14dd35575f838b97d987619edc2755ef3bc1f69ae6d5379ec"
+      "sha256": "a6e204ad3b7f3caea262a8f3964213766aba4b0b8b6dbf11cbf6dcbe610ce0cd"
     },
     {
       "path": "dist/handoff-ui.css",
@@ -134,7 +134,7 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "c139db18817d70afbbf848e5f9fc77ec8dbc734456f1136c0f1dafd1c4ac97a7"
+      "sha256": "66365a190ee189eb4c4494f92f3028278263df37422a552762bcd95b3a6fc976"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
@@ -206,11 +206,11 @@
     },
     {
       "path": "tests/browser/storage.spec.mjs",
-      "sha256": "fc9d61e9dc92d95878e393fbac38e3f32aeb4f0f25615f4b62a948c940043b42"
+      "sha256": "1cb4ca48ed18ecb6611f521ea9dbdeb9b31a8da0ad97fd676a1eb0660cefb0da"
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "1ac127c51d8e9013fc165fb314c19c2c9c416a686cf07895ec72af4bdac05eac"
+      "sha256": "59fc6c7e0ad83eb010209e67767fb973d96b43102f5a5de2f99795c9b3df3cbc"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -222,7 +222,7 @@
     },
     {
       "path": "tests/forms-ui.test.mjs",
-      "sha256": "26356f5b82b5c07329db5ee0c1cedf24b803f9886965fd699ec7e726d36574bf"
+      "sha256": "de63710a8e7795543806452ab23373dfe3269d8ab015e2e42a4198530e5a7b11"
     },
     {
       "path": "tests/gateway.test.mjs",
@@ -435,7 +435,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 186,
+  "totalPassed": 188,
   "loops": [
     {
       "id": "L01",
@@ -498,7 +498,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 107
+      "testsPassed": 109
     },
     {
       "id": "L04",

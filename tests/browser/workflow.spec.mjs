@@ -432,3 +432,18 @@ test('preparation checklist supports keyboard progress, clearing and patient sep
  await expect(page.locator('#preparation-check-agenda')).toBeChecked();
  await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda stays after clearing');
 });
+
+test('form reviews keep keyboard focus and approval returns to a clear result',async({page})=>{
+ await page.goto('/#F');await page.getByRole('button',{name:'Fill from example sources',exact:true}).click();
+ await page.locator('#form-field-1').fill('');await page.locator('#field-review-1').click();
+ await expect(page.locator('#form-field-1')).toBeFocused();await expect(page.locator('#field-review-1')).not.toBeChecked();
+ await page.locator('#form-field-1').fill('Fictional updated preference');
+ for(let i=0;i<3;i++){await page.locator('#field-review-'+i).focus();await page.keyboard.press('Space');await expect(page.locator('#field-review-'+i)).toBeFocused();await expect(page.locator('#field-review-'+i)).toBeChecked();}
+ await page.locator('#form-final-review').click();await page.getByRole('button',{name:'Approve locally',exact:true}).click();
+ await expect(page.locator('#form-final-confirm')).toBeFocused();
+ await page.keyboard.press('Space');await page.getByRole('button',{name:'Approve locally',exact:true}).click();
+ await expect(page.locator('#form-approval-heading')).toBeFocused();await expect(page.locator('#toast')).toContainText('Saved in this browser. Nothing submitted.');
+ await page.getByRole('button',{name:'Reopen for editing',exact:true}).click();await page.getByRole('button',{name:'Open new version',exact:true}).click();
+ await expect(page.locator('#form-field-0')).toBeFocused();await expect(page.locator('#field-review-1')).not.toBeChecked();
+ await expect(page.locator('#form-field-1')).toHaveValue('Fictional updated preference');
+});

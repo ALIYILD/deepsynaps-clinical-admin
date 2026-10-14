@@ -192,3 +192,17 @@ test('preparation checklist failed save and clear recover without losing agenda'
  await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
  await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda to retain');
 });
+
+test('form approval and history recover together after failed storage',async({page})=>{
+ await page.goto('/#F');await page.getByRole('button',{name:'Fill from example sources',exact:true}).click();
+ for(let i=0;i<3;i++)await page.locator('#field-review-'+i).check();
+ await page.locator('#form-final-review').click();await page.locator('#form-final-confirm').check();await blockStorage(page);
+ await page.getByRole('button',{name:'Approve locally',exact:true}).click();
+ await expect(page.locator('#toast')).toContainText('in this tab only. Saving failed');
+ await expect(page.locator('#storage-status')).toBeVisible();
+ await page.evaluate(()=>{window.restoreDemoStorage();retrySave();});await page.reload();
+ await expect(page.locator('#form-approval-heading')).toHaveText('Approved · not submitted');
+ await page.getByRole('button',{name:'Version history',exact:true}).click();
+ await expect(page.locator('.form-history-item')).toHaveCount(1);
+ await expect(page.locator('.form-history-item summary')).toContainText('Version 1');
+});
