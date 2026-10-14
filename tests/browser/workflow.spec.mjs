@@ -408,3 +408,27 @@ test('task completion and reopening retain keyboard focus through filtering and 
  await expect(page.locator('#patient-task-check-0')).not.toBeChecked();
  await expect(page.locator('#patient-task-check-0')).toBeFocused();
 });
+
+test('preparation checklist supports keyboard progress, clearing and patient separation',async({page})=>{
+ await page.goto('/#record');
+ await page.locator('#preparation-note').fill('Fictional agenda stays after clearing');
+ await page.locator('#preparation-check-sources').focus();await page.keyboard.press('Space');
+ await expect(page.locator('#preparation-check-sources')).toBeFocused();
+ await expect(page.locator('#preparation-check-sources')).toBeChecked();
+ await expect(page.locator('#preparation-progress')).toHaveText('1 of 3');
+ await expect(page.locator('#toast')).toContainText('Saved in this browser');
+ await page.keyboard.press('Tab');await expect(page.locator('#preparation-check-gaps')).toBeFocused();
+ await page.keyboard.press('Space');
+ await expect(page.locator('#preparation-progress')).toHaveText('2 of 3');
+ await page.locator('#clear-preparation').click();
+ await expect(page.locator('#clear-preparation')).toBeFocused();
+ await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda stays after clearing');
+ await page.locator('#preparation-check-agenda').click();
+ await switchPatient(page,'Alex Taylor');
+ await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
+ await expect(page.locator('#preparation-note')).toHaveValue('');
+ await switchPatient(page,'Maya Collins');await page.reload();
+ await expect(page.locator('#preparation-check-agenda')).toBeChecked();
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda stays after clearing');
+});

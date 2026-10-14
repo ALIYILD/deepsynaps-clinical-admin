@@ -178,3 +178,17 @@ test('task completion reports a failed save and recovers the exact completion st
  await page.getByRole('button',{name:'Completed',exact:true}).click();
  await expect(page.locator('#task-check-0')).toBeChecked();
 });
+
+test('preparation checklist failed save and clear recover without losing agenda',async({page})=>{
+ await page.goto('/#record');await page.locator('#preparation-note').fill('Fictional agenda to retain');
+ await blockStorage(page);
+ await page.locator('#preparation-check-sources').click();
+ await expect(page.locator('#preparation-check-sources')).toBeChecked();
+ await expect(page.locator('#toast')).toContainText('in this tab only. Saving failed');
+ await page.locator('#clear-preparation').click();
+ await expect(page.locator('#toast')).toContainText('Agenda notes retained');
+ await expect(page.locator('#storage-status')).toBeVisible();
+ await page.evaluate(()=>{window.restoreDemoStorage();retrySave();});await page.reload();
+ await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda to retain');
+});

@@ -113,3 +113,7 @@ Regression coverage checks mixed dates/priorities/completion, stable ties, uncha
 ## Task completion feedback and keyboard continuity
 
 Task completion and reopening now confirm whether the change was saved in this browser. Failed writes explicitly remain tab-only and use the existing recovery options. Completion preserves patient and reviewed-source metadata. Keyboard focus remains on the same checkbox when visible, moves to the next or previous remaining task when filtered out, and falls back to the results region when no tasks remain. Patient-record checkboxes retain focus through both actions. Automated coverage includes filtered/sorted actions, patient views and save failure followed by recovery; this does not replace manual accessibility or clinical usability review.
+
+## Preparation checklist feedback and focus
+
+Checking and clearing preparation items now retains keyboard focus and reports whether the change saved in this browser. The progress count is a status region. Failed writes remain explicitly tab-only and recover through the existing save controls. Clearing retains agenda notes; patient separation and invalidation after source changes remain intact. Coverage includes keyboard progression, clearing, patient switching, reload and storage recovery on desktop and mobile. Manual accessibility and clinical usability review remain outstanding.

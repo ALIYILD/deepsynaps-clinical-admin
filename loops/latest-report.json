@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-14T09:21:14.191Z",
-  "sourceFingerprint": "c683a80b531169085ca80c8c94b43078ec8d734dec53d7aa9ce333a68742d07f",
+  "generatedAt": "2026-10-14T09:35:46.073Z",
+  "sourceFingerprint": "1c06a7453d5187d6f8a4f100eb9fdf6e90de647ac85bdb21d393e62272a4558f",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -74,7 +74,7 @@
     },
     {
       "path": "dist/patient-ui.js",
-      "sha256": "a1b6b6615c7a06232318cb06d04c6504534a4bb12dd9957025f5549052739e6a"
+      "sha256": "2312e11d7cd9d5bbf5621b4a0a32f4cb065bdac979e398a7ab80c7d816a2ca30"
     },
     {
       "path": "dist/product-data.js",
@@ -134,7 +134,7 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "f164370829f79fd91026496365dc45a123b65745b199c47d580c9008249cc74d"
+      "sha256": "c139db18817d70afbbf848e5f9fc77ec8dbc734456f1136c0f1dafd1c4ac97a7"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
@@ -206,11 +206,11 @@
     },
     {
       "path": "tests/browser/storage.spec.mjs",
-      "sha256": "0711da5cac31995d8bffc5b0eef18979a35699727ae9b11c29c4e09eacee139e"
+      "sha256": "fc9d61e9dc92d95878e393fbac38e3f32aeb4f0f25615f4b62a948c940043b42"
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "fccb0020ed164c2e5af808f8fa3a9fca1a2985dcb4ef6bdeda6a7eb3480598a6"
+      "sha256": "1ac127c51d8e9013fc165fb314c19c2c9c416a686cf07895ec72af4bdac05eac"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -238,7 +238,7 @@
     },
     {
       "path": "tests/patient-ui.test.mjs",
-      "sha256": "6da4f6f06aad265d517daffd31204e17f5e533ee2124024a19bd5b4dfcf10f1e"
+      "sha256": "670ac6bc23e296f38d055b4c3a7a28e8017d50b4962542dbd48a8b29036a9d53"
     },
     {
       "path": "tests/product-ui.test.mjs",
@@ -435,7 +435,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 185,
+  "totalPassed": 186,
   "loops": [
     {
       "id": "L01",
@@ -498,7 +498,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 106
+      "testsPassed": 107
     },
     {
       "id": "L04",
