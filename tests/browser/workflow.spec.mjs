@@ -167,18 +167,6 @@ test('EPR drafts retain reviewed source and stay unsent after an amendment',asyn
  await expect(page.locator('.epr-receipt-panel')).toContainText('None received');
 });
 
-test('hosted service check separates site availability from clinical connectivity',async({page})=>{
- await page.goto('/#settings');
- await page.locator('details.advanced-settings summary').click();
- await page.getByRole('button',{name:'Check hosted service'}).click();
- await expect(page.locator('#hosting-status')).toContainText('Site responding. Synthetic demonstration only.');
- await expect(page.locator('#hosting-status')).toContainText('Clinical OS is not connected.');
- await page.route('**/healthz',route=>route.fulfill({status:200,contentType:'text/html',body:'<html>Fallback page</html>'}));
- await page.getByRole('button',{name:'Check hosted service'}).click();
- await expect(page.locator('#hosting-status')).toContainText('Could not verify');
- await expect(page.getByRole('button',{name:'Check hosted service'})).toBeEnabled();
-});
-
 
 test('mobile navigation contains keyboard focus, dismisses and returns focus',async({page,isMobile})=>{
  test.skip(!isMobile,'Mobile drawer behaviour');
@@ -300,6 +288,40 @@ test('patient task board preserves explicit patient links and separates team tas
  await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
 });
 
+test('follow-up task compares retained source with an amended document without changing either',async({page})=>{
+ await page.goto('/#N');await page.getByRole('button',{name:'Load example',exact:true}).click();await sign(page);
+ const original=await page.locator('#note-text').inputValue();
+ await page.getByRole('button',{name:'Create follow-up task',exact:true}).click();
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await expect(page.locator('.coordination-task')).toContainText('Matches current reviewed source');
+ await page.getByRole('button',{name:'View source',exact:true}).click();
+ await page.getByRole('button',{name:'Open current document',exact:true}).click();
+ await page.getByRole('button',{name:'Create amendment',exact:true}).click();
+ await page.locator('#note-text').fill('Changed fictional source for the task');
+ await page.goBack();
+ await expect(page.locator('.coordination-task')).toContainText('Source changed');
+ await page.getByRole('button',{name:'View source',exact:true}).click();
+ const copies=page.getByRole('dialog').locator('.review-copy');
+ await expect(copies.nth(0)).toHaveText(original);
+ await expect(copies.nth(1)).toHaveText('Changed fictional source for the task');
+ expect(await page.locator('#dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+ await page.getByRole('button',{name:'Close',exact:true}).click();
+ await page.reload();await expect(page.locator('#main')).toContainText('Source changed');
+});
+
+test('hosted service check separates site availability from clinical connectivity',async({page})=>{
+ await page.goto('/#settings');
+ await page.locator('details.advanced-settings summary').click();
+ await page.getByRole('button',{name:'Check hosted service'}).click();
+ await expect(page.locator('#hosting-status')).toContainText('Site responding. Synthetic demonstration only.');
+ await expect(page.locator('#hosting-status')).toContainText('Clinical OS is not connected.');
+ await page.route('**/healthz',route=>route.fulfill({status:200,contentType:'text/html',body:'<html>Fallback page</html>'}));
+ await page.getByRole('button',{name:'Check hosted service'}).click();
+ await expect(page.locator('#hosting-status')).toContainText('Could not verify');
+ await expect(page.getByRole('button',{name:'Check hosted service'})).toBeEnabled();
+});
+
+
 test('sorted task completion updates the intended task and keeps the sort control focused',async({page})=>{
  await page.goto('/#T');
  await page.evaluate(()=>{
@@ -322,4 +344,106 @@ test('sorted task completion updates the intended task and keeps the sort contro
  await expect(page.locator('.task-title')).toHaveText(['Urgent fictional task']);
  await page.getByRole('button',{name:'Open patient record: DEMO-002',exact:true}).click();
  await expect(page.getByRole('region',{name:'Active patient'})).toContainText('Alex Taylor');
+});
+
+test('task filter controls retain keyboard focus while results update',async({page})=>{
+ await page.goto('/#T');
+ for(const [name,value] of [['Assigned to','Admin team'],['Patient or team','team'],['Due date','none'],['Administrative priority','routine']]){
+  const control=page.getByLabel(name,{exact:true});await control.focus();await control.selectOption(value);
+  await expect(control).toBeFocused();await expect(control).toHaveValue(value);
+ }
+ await expect(page.locator('.coordination-task')).toHaveCount(1);
+ await expect(page.locator('.task-title')).toHaveText('Prepare Alex’s pre-appointment briefing');
+ await page.getByLabel('Patient or team',{exact:true}).selectOption('DEMO-003');
+ await expect(page.locator('#task-results')).toContainText('No tasks match');
+ await page.locator('#task-results').getByRole('button',{name:'Clear filters',exact:true}).click();
+ await expect(page.locator('.coordination-task')).toHaveCount(3);
+});
+
+test('document and review filters retain focus and open the correct patient for review',async({page})=>{
+ await page.goto('/#N');await page.getByRole('button',{name:'Load example',exact:true}).click();
+ await switchPatient(page,'Alex Taylor');await page.getByRole('button',{name:'Load example',exact:true}).click();
+ await switchPatient(page,'Maya Collins');await page.goto('/#documents');
+ const patient=page.getByLabel('Filter documents by patient',{exact:true});
+ await patient.focus();await patient.selectOption('DEMO-002');await expect(patient).toBeFocused();
+ const type=page.getByLabel('Filter documents by type',{exact:true});
+ await type.focus();await type.selectOption('soap');await expect(type).toBeFocused();
+ const drafts=page.locator('#document-status-filters').getByRole('button',{name:'Drafts',exact:true});
+ await drafts.focus();await page.keyboard.press('Enter');await expect(drafts).toBeFocused();await expect(drafts).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('.document-queue-row')).toHaveCount(1);
+ await page.getByRole('button',{name:'Preview',exact:true}).click();await expect(page.getByRole('dialog')).toContainText('Alex Taylor');
+ await page.getByRole('button',{name:'Close',exact:true}).click();expect(await page.evaluate(()=>state.selectedPatientId)).toBe('DEMO-001');
+ await page.getByRole('button',{name:'Open review queue',exact:true}).click();
+ const reviewPatient=page.getByLabel('Filter review queue by patient',{exact:true});
+ await reviewPatient.focus();await reviewPatient.selectOption('DEMO-002');await expect(reviewPatient).toBeFocused();
+ const forms=page.locator('#review-kind-filters').getByRole('button',{name:'Forms',exact:true});
+ await forms.focus();await page.keyboard.press('Enter');await expect(forms).toBeFocused();await expect(forms).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('#review-queue-results')).toContainText('No items match');
+ await page.locator('#review-queue-results').getByRole('button',{name:'Clear filters',exact:true}).click();
+ await expect(page.getByLabel('Search review queue',{exact:true})).toBeFocused();
+ await reviewPatient.selectOption('DEMO-002');await page.locator('#review-queue-results').getByRole('button',{name:'Review',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('Alex Taylor');await expect(page.locator('#review-confirm')).not.toBeChecked();
+ await expect(page.getByRole('region',{name:'Active patient'})).toContainText('DEMO-002');
+});
+
+test('task completion and reopening retain keyboard focus through filtering and patient views',async({page})=>{
+ await page.goto('/#T');
+ await page.getByLabel('Sort tasks',{exact:true}).selectOption('due');
+ const checks=page.locator('#task-results input[type=checkbox]');
+ const first=await checks.first().getAttribute('id');
+ const next=await checks.nth(1).getAttribute('id');
+ await page.locator('#'+first).focus();await page.keyboard.press('Space');
+ await expect(page.locator('#'+first)).toHaveCount(0);
+ await expect(page.locator('#'+next)).toBeFocused();
+ await expect(page.locator('#toast')).toContainText('Saved in this browser');
+ await page.getByRole('button',{name:'Completed',exact:true}).click();
+ await page.locator('#'+first).focus();await page.keyboard.press('Space');
+ await expect(page.locator('#task-results')).toBeFocused();
+ await expect(page.locator('#toast')).toContainText('Task reopened');
+ await page.evaluate(()=>{state.tasks[0].patientId=state.selectedPatientId;save();nav('record');});
+ await page.locator('#patient-task-check-0').focus();await page.keyboard.press('Space');
+ await expect(page.locator('#patient-task-check-0')).toBeChecked();
+ await expect(page.locator('#patient-task-check-0')).toBeFocused();
+ await page.keyboard.press('Space');
+ await expect(page.locator('#patient-task-check-0')).not.toBeChecked();
+ await expect(page.locator('#patient-task-check-0')).toBeFocused();
+});
+
+test('preparation checklist supports keyboard progress, clearing and patient separation',async({page})=>{
+ await page.goto('/#record');
+ await page.locator('#preparation-note').fill('Fictional agenda stays after clearing');
+ await page.locator('#preparation-check-sources').focus();await page.keyboard.press('Space');
+ await expect(page.locator('#preparation-check-sources')).toBeFocused();
+ await expect(page.locator('#preparation-check-sources')).toBeChecked();
+ await expect(page.locator('#preparation-progress')).toHaveText('1 of 3');
+ await expect(page.locator('#toast')).toContainText('Saved in this browser');
+ await page.keyboard.press('Tab');await expect(page.locator('#preparation-check-gaps')).toBeFocused();
+ await page.keyboard.press('Space');
+ await expect(page.locator('#preparation-progress')).toHaveText('2 of 3');
+ await page.locator('#clear-preparation').click();
+ await expect(page.locator('#clear-preparation')).toBeFocused();
+ await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda stays after clearing');
+ await page.locator('#preparation-check-agenda').click();
+ await switchPatient(page,'Alex Taylor');
+ await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
+ await expect(page.locator('#preparation-note')).toHaveValue('');
+ await switchPatient(page,'Maya Collins');await page.reload();
+ await expect(page.locator('#preparation-check-agenda')).toBeChecked();
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda stays after clearing');
+});
+
+test('form reviews keep keyboard focus and approval returns to a clear result',async({page})=>{
+ await page.goto('/#F');await page.getByRole('button',{name:'Fill from example sources',exact:true}).click();
+ await page.locator('#form-field-1').fill('');await page.locator('#field-review-1').click();
+ await expect(page.locator('#form-field-1')).toBeFocused();await expect(page.locator('#field-review-1')).not.toBeChecked();
+ await page.locator('#form-field-1').fill('Fictional updated preference');
+ for(let i=0;i<3;i++){await page.locator('#field-review-'+i).focus();await page.keyboard.press('Space');await expect(page.locator('#field-review-'+i)).toBeFocused();await expect(page.locator('#field-review-'+i)).toBeChecked();}
+ await page.locator('#form-final-review').click();await page.getByRole('button',{name:'Approve locally',exact:true}).click();
+ await expect(page.locator('#form-final-confirm')).toBeFocused();
+ await page.keyboard.press('Space');await page.getByRole('button',{name:'Approve locally',exact:true}).click();
+ await expect(page.locator('#form-approval-heading')).toBeFocused();await expect(page.locator('#toast')).toContainText('Saved in this browser. Nothing submitted.');
+ await page.getByRole('button',{name:'Reopen for editing',exact:true}).click();await page.getByRole('button',{name:'Open new version',exact:true}).click();
+ await expect(page.locator('#form-field-0')).toBeFocused();await expect(page.locator('#field-review-1')).not.toBeChecked();
+ await expect(page.locator('#form-field-1')).toHaveValue('Fictional updated preference');
 });

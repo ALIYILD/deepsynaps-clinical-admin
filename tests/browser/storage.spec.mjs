@@ -166,3 +166,43 @@ test('invalid nested UI storage opens a recoverable preview without renderer err
  }
  expect(errors).toEqual([]);
 });
+
+test('task completion reports a failed save and recovers the exact completion state',async({page})=>{
+ await page.goto('/#T');await blockStorage(page);
+ await page.locator('#task-check-0').click();
+ await expect(page.locator('#task-check-0')).toHaveCount(0);
+ await expect(page.locator('#toast')).toContainText('in this tab only. Saving failed');
+ await expect(page.locator('#storage-status')).toBeVisible();
+ await page.evaluate(()=>{window.restoreDemoStorage();retrySave();});
+ await page.reload();
+ await page.getByRole('button',{name:'Completed',exact:true}).click();
+ await expect(page.locator('#task-check-0')).toBeChecked();
+});
+
+test('preparation checklist failed save and clear recover without losing agenda',async({page})=>{
+ await page.goto('/#record');await page.locator('#preparation-note').fill('Fictional agenda to retain');
+ await blockStorage(page);
+ await page.locator('#preparation-check-sources').click();
+ await expect(page.locator('#preparation-check-sources')).toBeChecked();
+ await expect(page.locator('#toast')).toContainText('in this tab only. Saving failed');
+ await page.locator('#clear-preparation').click();
+ await expect(page.locator('#toast')).toContainText('Agenda notes retained');
+ await expect(page.locator('#storage-status')).toBeVisible();
+ await page.evaluate(()=>{window.restoreDemoStorage();retrySave();});await page.reload();
+ await expect(page.locator('#preparation-progress')).toHaveText('0 of 3');
+ await expect(page.locator('#preparation-note')).toHaveValue('Fictional agenda to retain');
+});
+
+test('form approval and history recover together after failed storage',async({page})=>{
+ await page.goto('/#F');await page.getByRole('button',{name:'Fill from example sources',exact:true}).click();
+ for(let i=0;i<3;i++)await page.locator('#field-review-'+i).check();
+ await page.locator('#form-final-review').click();await page.locator('#form-final-confirm').check();await blockStorage(page);
+ await page.getByRole('button',{name:'Approve locally',exact:true}).click();
+ await expect(page.locator('#toast')).toContainText('in this tab only. Saving failed');
+ await expect(page.locator('#storage-status')).toBeVisible();
+ await page.evaluate(()=>{window.restoreDemoStorage();retrySave();});await page.reload();
+ await expect(page.locator('#form-approval-heading')).toHaveText('Approved · not submitted');
+ await page.getByRole('button',{name:'Version history',exact:true}).click();
+ await expect(page.locator('.form-history-item')).toHaveCount(1);
+ await expect(page.locator('.form-history-item summary')).toContainText('Version 1');
+});

@@ -21,3 +21,20 @@ test('stale replacement requests cannot overwrite edits, changed settings or rev
 test('cancel and patient switches keep draft text and cancel pending template replacement',()=>{const {run}=setup();run("state.note='Retain this';requestDocumentTemplate('mdt');cancelDocumentReplacement()");assert.equal(run('state.note'),'Retain this');assert.equal(run('state.noteTemplate'),'soap');assert.equal(run('pendingDocumentReplacement'),null);run("requestDocumentTemplate('summary');selectPatient('DEMO-002');confirmDocumentReplacement()");assert.equal(run("state.patientRecords['DEMO-001'].note"),'Retain this');assert.equal(run('state.note'),'');});
 test('editor and queues escape document content and emit valid handler syntax',()=>{const {run,el}=setup();const inspect=id=>{for(const m of el(id).innerHTML.matchAll(/\son(?:click|input|change|submit)="([^"]*)"/g))assert.doesNotThrow(()=>new Function('event',decode(m[1])),m[1]);};seed(run);run('render()');inspect('main');run("nav('review')");inspect('main');run("state.note='<script>Example</script>';previewWorkspaceDocument('DEMO-001')");inspect('dialog');assert(!el('dialog').innerHTML.includes('<script>Example'));run("openDocumentForReview('DEMO-001')");inspect('main');inspect('dialog');assert(!el('dialog').innerHTML.includes('<script>Example'));assert(el('main').innerHTML.includes('requestDocumentTemplate'));run("requestDocumentTemplate('summary')");inspect('dialog');});
 test('failed template replacement persistence reports tab-only changes and retry retains one history copy',()=>{const {run,el}=setup();run("localStorage.setItem=()=>{throw Error('quota')};state.note='Preserve my edited draft';requestDocumentTemplate('summary');confirmDocumentReplacement()");assert.equal(run('state.history.length'),1);assert.equal(run('state.history[0].text'),'Preserve my edited draft');assert(el('toast').textContent.includes('Saving failed'));assert(el('toast').textContent.includes('tab only'));run('localStorage.setItem=()=>{};retrySave()');assert.equal(run('storageSaveFailed'),false);assert.equal(run('state.history.length'),1);});
+
+test('document filter changes preserve controls and active patient while updating results',()=>{
+ const {run,el}=setup();seed(run);run("nav('documents')");const html=el('main').innerHTML;
+ run("updateDocumentFilter('patient','DEMO-002');updateDocumentFilter('status','signed');updateDocumentFilter('template','referral')");
+ assert.equal(run('filteredDocuments().length'),1);assert.equal(el('main').innerHTML,html);
+ assert.equal(run('state.selectedPatientId'),'DEMO-001');assert.match(el('document-queue-results').innerHTML,/Alex Taylor/);
+ run("updateDocumentFilter('patient','UNKNOWN');updateDocumentFilter('invalid','all')");assert.equal(run('documentPatient'),'DEMO-002');
+ run('resetDocumentFilters()');assert.equal(el('document-query').focused,true);
+});
+test('review filter updates preserve controls and clear filters returns focus to search',()=>{
+ const {run,el}=setup();seed(run);run("state.patientRecords['DEMO-002'].signed=false;nav('review')");const html=el('main').innerHTML;
+ run("updateReviewFilter('patient','DEMO-002');updateReviewFilter('kind','document')");
+ assert.equal(run('filteredReviewItems().length'),1);assert.equal(el('main').innerHTML,html);
+ assert.equal(run('state.selectedPatientId'),'DEMO-001');
+ run("updateReviewFilter('kind','unsupported')");assert.equal(run('reviewKind'),'document');
+ run('resetReviewFilters()');assert.equal(el('review-query').focused,true);assert.equal(run('filteredReviewItems().length'),2);
+});

@@ -157,3 +157,21 @@ Added five Node regressions and two desktop/mobile browser scenarios for correct
 Added a Patient or team task filter, including a separate team-administration option, and search by explicit patient ID. The patient overview now opens that patient's tasks with stale task filters cleared. Task rows link to their patient record; task details display patient name/ID and make the fixed association explicit. A new team task resets the patient filter so it remains visible after saving. Existing records are never linked by matching names in their text.
 
 Reconciled CLI main `262957faef349c6a88e3b0341add60a2b3ef85da`, retaining the optional Node host, socket tests and browser configuration. The published Sites app remains static and does not mount that host or activate the gateway. Added local and desktop/mobile browser regression coverage for patient/task navigation and filter combinations.
+
+## UI readiness loop: retained task source comparison
+
+New document follow-up tasks retain explicit source version, revision and template alongside the existing immutable note copy. The task board and details distinguish current, changed and incompletely recorded legacy sources. A read-only comparison dialog displays retained source and current document side by side, with a route to the correct patient's current document. Viewing never updates the snapshot or changes completion. Older tasks lacking complete metadata remain available but do not claim an exact revision match. New follow-up creation resets stale filters and shows the patient's tasks.
+
+Based on merged main `cec0a6ce40bac47b9c7f6f27a43e81b7e348d43b`. Added Node regressions for exact metadata, stale filters, amendments, legacy sources and missing records, plus desktop/mobile comparison and reload coverage. No live service or submission is activated.
+
+## UI readiness loop: keyboard-stable task filters
+
+Reconciled CLI main `d44ce467ea47b857f94133d6e2403bd31a9e58c0`, including task sorting, hosted-service status checks, runtime/Netlify host files and their tests. Preserved PR #5's retained-source comparisons and source metadata. Sites remains a static publication; Netlify files are retained source, not a new deployment.
+
+Patient, owner, due-date and administrative-priority filters now update only the results region, preserving keyboard focus on their controls. Each has an explicit accessible name and allowed-value validation. Added a local regression and desktop/mobile keyboard-focus coverage for combined filters and empty-result recovery.
+
+## UI readiness loop: document and review filter focus
+
+Document status/patient/type and review kind/patient filters now update their results region without replacing the active controls. Segmented controls update their pressed state, selects have explicit accessible names, and Clear filters places focus in the relevant search field. Unsupported values are ignored. Filtering does not change the active patient or record a review; opening a specific review retains the existing patient-bound exact-source confirmation.
+
+Added local and desktop/mobile browser checks for combined filtering, keyboard focus, pressed states, empty-result recovery, preview patient isolation and opening the correct patient's review. This remains synthetic browser-local workflow verification.

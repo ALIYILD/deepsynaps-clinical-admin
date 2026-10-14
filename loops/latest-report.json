@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T19:04:29.326Z",
-  "sourceFingerprint": "64e04213c72aaad801fdec2bd501845b770c53d049af02835bc0781d16f213f4",
+  "generatedAt": "2026-10-14T15:57:53.539Z",
+  "sourceFingerprint": "0adb8ace367dc71945f223888f00fa074fbdce33603291ca3e7662201c7a0c3f",
   "fingerprintAlgorithm": "sha256-manifest-v1",
   "sourceManifest": [
     {
@@ -42,7 +42,7 @@
     },
     {
       "path": "dist/documents-ui.js",
-      "sha256": "970dc03bbca3d8e1bb3d2afee9f3b8dbd0c4586e9c972aeb6a65caa94365af93"
+      "sha256": "b216fd29c5fd38d711931343b40a95a0535afbe0459d87d33a56ecbe4b0a5203"
     },
     {
       "path": "dist/forms-ui.css",
@@ -50,7 +50,7 @@
     },
     {
       "path": "dist/forms-ui.js",
-      "sha256": "0460750316100ba14dd35575f838b97d987619edc2755ef3bc1f69ae6d5379ec"
+      "sha256": "a6e204ad3b7f3caea262a8f3964213766aba4b0b8b6dbf11cbf6dcbe610ce0cd"
     },
     {
       "path": "dist/handoff-ui.css",
@@ -74,7 +74,7 @@
     },
     {
       "path": "dist/patient-ui.js",
-      "sha256": "2c420b4b184655da040c7dda46088ca8602c500ad472146b8964879966e43248"
+      "sha256": "2312e11d7cd9d5bbf5621b4a0a32f4cb065bdac979e398a7ab80c7d816a2ca30"
     },
     {
       "path": "dist/product-data.js",
@@ -106,11 +106,11 @@
     },
     {
       "path": "dist/tasks-ui.js",
-      "sha256": "4828aca76de7ce6d49e3abc5c63473bf16eb24926d87b0d82585471d3f8d0d98"
+      "sha256": "54571c5c0163e0b83cde0dd76271b4e66a5ae579510ba9f7045f0e5f3a63b3e0"
     },
     {
       "path": "dist/workflow.js",
-      "sha256": "7326927eaf436b553017a7674babdf2329413eb5c4a46baf8ef846f2a5e3110d"
+      "sha256": "b1165e14342b90c5119ee4b867108e3f12b114a934be503d7f6188890aebd2c5"
     },
     {
       "path": "docs/Clinical_Admin_Implementation_Loops.md",
@@ -134,7 +134,7 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "sha256": "ce4bbfddbbd8f09245c8c130584eac33097ec7cd2650efeab688eaa0ae1f41cd"
+      "sha256": "66365a190ee189eb4c4494f92f3028278263df37422a552762bcd95b3a6fc976"
     },
     {
       "path": "docs/STAGING_HANDOFF.md",
@@ -142,7 +142,7 @@
     },
     {
       "path": "docs/UI_WORKSPACE_HANDOFF.md",
-      "sha256": "05154f87236d30d2abb6d07f58db67f1e93590993f9cfc68c9220cfb7b86a6ce"
+      "sha256": "283671b17507d791854aa10063883417d07c03b696c8aba17a098fa2c3b8b929"
     },
     {
       "path": "integration/README.md",
@@ -206,11 +206,11 @@
     },
     {
       "path": "tests/browser/storage.spec.mjs",
-      "sha256": "deeaeeb6a6836d5837249add7367b2c16bc8d337af3047cb524e6073745a2779"
+      "sha256": "1cb4ca48ed18ecb6611f521ea9dbdeb9b31a8da0ad97fd676a1eb0660cefb0da"
     },
     {
       "path": "tests/browser/workflow.spec.mjs",
-      "sha256": "96bf119b1d7d52f1b3c8713db5589ef989dbb38e288d148787742b7b8604af18"
+      "sha256": "59fc6c7e0ad83eb010209e67767fb973d96b43102f5a5de2f99795c9b3df3cbc"
     },
     {
       "path": "tests/consultation-ui.test.mjs",
@@ -218,11 +218,11 @@
     },
     {
       "path": "tests/documents-ui.test.mjs",
-      "sha256": "7a095a4d56537cea16804daada8b3baf9f337adef9de69b1d7f34ffefd6416b6"
+      "sha256": "7db8c7b9b56155ee9a6b1effe9545ed0faa24dffbbeea243c03f295392b3ef4c"
     },
     {
       "path": "tests/forms-ui.test.mjs",
-      "sha256": "26356f5b82b5c07329db5ee0c1cedf24b803f9886965fd699ec7e726d36574bf"
+      "sha256": "de63710a8e7795543806452ab23373dfe3269d8ab015e2e42a4198530e5a7b11"
     },
     {
       "path": "tests/gateway.test.mjs",
@@ -238,7 +238,7 @@
     },
     {
       "path": "tests/patient-ui.test.mjs",
-      "sha256": "6da4f6f06aad265d517daffd31204e17f5e533ee2124024a19bd5b4dfcf10f1e"
+      "sha256": "670ac6bc23e296f38d055b4c3a7a28e8017d50b4962542dbd48a8b29036a9d53"
     },
     {
       "path": "tests/product-ui.test.mjs",
@@ -262,7 +262,7 @@
     },
     {
       "path": "tests/tasks-ui.test.mjs",
-      "sha256": "e117aac5dee3cebd161dbe40f0c7f4af7caf6da3378d50b1475a02e1325dcd07"
+      "sha256": "abc762f323c950da61dc9f9c67cdd85f349c64a31a1f5d2c7c098c68f46fe918"
     },
     {
       "path": "tests/workflow.test.mjs",
@@ -435,7 +435,7 @@
   ],
   "result": "passed",
   "verification": "Local Node tests and static syntax checks; browser tests are fingerprinted but run separately in CI; no live staging tests or manual accessibility audit",
-  "totalPassed": 177,
+  "totalPassed": 188,
   "loops": [
     {
       "id": "L01",
@@ -498,7 +498,7 @@
       "acceptance": "Three fictional records stay separate; stale reviews cannot sign; amended versions preserve history; form edits require new field review; follow-up tasks retain their signed source.",
       "limit": "Browser-local simulation. No server persistence, clinical signature, real files or live workflow writes.",
       "result": "passed",
-      "testsPassed": 98
+      "testsPassed": 109
     },
     {
       "id": "L04",

@@ -109,3 +109,15 @@ Workspace settings now offer a hosted-service check. It verifies the health resp
 The task board now offers added order, due soonest, and priority-then-due-date sorting. Due and priority sorts put open tasks before completed tasks, keep undated/invalid legacy dates after dated tasks within the relevant grouping, and preserve added order for ties. Sorting operates on display copies, preserving the stored task order and the original indices used for editing, completion, patient navigation and reviewed-source links. Changing the sort updates only the results, retaining keyboard focus on the control.
 
 Regression coverage checks mixed dates/priorities/completion, stable ties, unchanged underlying records, exact source retention when editing a sorted row, correct completion after sorting and persistence after reload. The full suite contains 177 Node checks and 45 browser checks, with one additional desktop case intentionally skipped because it tests the mobile drawer.
+
+## Task completion feedback and keyboard continuity
+
+Task completion and reopening now confirm whether the change was saved in this browser. Failed writes explicitly remain tab-only and use the existing recovery options. Completion preserves patient and reviewed-source metadata. Keyboard focus remains on the same checkbox when visible, moves to the next or previous remaining task when filtered out, and falls back to the results region when no tasks remain. Patient-record checkboxes retain focus through both actions. Automated coverage includes filtered/sorted actions, patient views and save failure followed by recovery; this does not replace manual accessibility or clinical usability review.
+
+## Preparation checklist feedback and focus
+
+Checking and clearing preparation items now retains keyboard focus and reports whether the change saved in this browser. The progress count is a status region. Failed writes remain explicitly tab-only and recover through the existing save controls. Clearing retains agenda notes; patient separation and invalidation after source changes remain intact. Coverage includes keyboard progression, clearing, patient switching, reload and storage recovery on desktop and mobile. Manual accessibility and clinical usability review remain outstanding.
+
+## Form review persistence and keyboard continuity
+
+Field reviews retain checkbox focus; attempts to review an empty required field focus its input. Final approval directs missing confirmation to the confirmation checkbox and saves the exact approval snapshot, version history and audit entry in one storage write. Approval and reopening report actual persistence results, retain recoverable tab-only changes after failed writes, and return focus to the result heading or first editable field. No delivery or EPR submission is implied. Regression coverage includes exact snapshot/history recovery without duplicates and desktop/mobile keyboard workflows.

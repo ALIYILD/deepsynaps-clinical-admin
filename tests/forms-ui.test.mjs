@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-function setup(){const nodes={};const el=id=>nodes[id]||(nodes[id]={innerHTML:'',textContent:'',value:'',checked:false,disabled:false,open:false,style:{},dataset:{},classList:{remove(){},toggle(){}},setAttribute(k,v){this[k]=v},focus(){this.focused=true},scrollIntoView(){},insertAdjacentHTML(_,s){this.innerHTML+=s},addEventListener(){},showModal(){this.open=true;el('form-final-confirm').checked=false},close(){this.open=false}});
- const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null,addEventListener(){}},localStorage:{getItem(){return null},setItem(){}},window:{scrollTo(){},addEventListener(){}},location:{hash:'#F'},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
+function setup(){let saved=null;const nodes={};const el=id=>nodes[id]||(nodes[id]={innerHTML:'',textContent:'',value:'',checked:false,disabled:false,open:false,style:{},dataset:{},classList:{remove(){},toggle(){}},setAttribute(k,v){this[k]=v},focus(){this.focused=true},scrollIntoView(){},insertAdjacentHTML(_,s){this.innerHTML+=s},addEventListener(){},showModal(){this.open=true;el('form-final-confirm').checked=false},close(){this.open=false}});
+ const ctx=vm.createContext({console,document:{getElementById:el,documentElement:{dataset:{},style:{}},querySelector:()=>null,addEventListener(){}},localStorage:{getItem(){return saved},setItem(k,v){saved=v}},window:{scrollTo(){},addEventListener(){}},location:{hash:'#F'},history:{replaceState(){}},setTimeout(){},clearTimeout(){},setInterval(){},clearInterval(){}});
  for(const file of ['data.js','registry-evidence.js','product-data.js','app.js','product.js','workflow.js','loop-report.js','loops.js','product-ui.js','consultation-ui.js','forms-ui.js'])vm.runInContext(fs.readFileSync(new URL('../dist/'+file,import.meta.url),'utf8'),ctx);
  const run=s=>vm.runInContext(s,ctx);return {run,el,prepare(){run('loadWorkspaceForm();reviewWorkspaceFormField(0,true);reviewWorkspaceFormField(1,true);reviewWorkspaceFormField(2,true)')},approve(){run('reviewWorkspaceForm()');el('form-final-confirm').checked=true;run('confirmWorkspaceFormApproval()')}};
 }
@@ -19,3 +19,24 @@ test('form version history stays isolated between patient records',()=>{const {r
 test('readable exports identify the patient, version, source and lack of submission',()=>{const {run,prepare,approve}=setup();run("openPatient('DEMO-002','F');let exported;download=(...args)=>exported=args");prepare();approve();run('exportWorkspaceFormText()');assert.equal(run('exported[0]'),'DEMO-002-followup-form-v1.txt');assert(run("exported[1].includes('Alex Taylor')"));assert(run("exported[1].includes('NOT SUBMITTED')"));assert(run("exported[1].includes('Original value: Wednesday afternoon')"));});
 test('source comparison is reachable by focus and safely renders edited text',()=>{const {run,el}=setup();run("loadWorkspaceForm();editWorkspaceFormField(1,'<script>example</script>');showFormSource(1,true)");assert.equal(el('form-source-panel').focused,true);assert(!el('form-source-panel').innerHTML.includes('<script>'));assert(el('form-source-panel').innerHTML.includes('&lt;script&gt;'));});
 test('forms, library, review and version dialogs emit valid UI handlers',()=>{const {run,prepare,approve,el}=setup();const inspect=id=>{for(const m of el(id).innerHTML.matchAll(/\son(?:click|input|change|focus)="([^"]*)"/g))assert.doesNotThrow(()=>new Function('event',decode(m[1])),m[1]);};inspect('main');prepare();inspect('main');run('reviewWorkspaceForm()');inspect('dialog');approve();inspect('main');run('showWorkspaceFormHistory()');inspect('dialog');run("formView='library';render()");inspect('main');assert.equal((el('main').innerHTML.match(/aria-label="Active patient"/g)||[]).length,1);});
+
+test('field review keeps focus, rejects invalid values and focuses empty required fields',()=>{
+ const {run,el}=setup();run('loadWorkspaceForm();reviewWorkspaceFormField(0,true)');
+ assert.equal(el('field-review-0').focused,true);assert.match(el('toast').textContent,/Saved in this browser/);
+ run("reviewWorkspaceFormField(0,'false');reviewWorkspaceFormField('0',false)");assert.equal(run('state.formData[0].reviewed'),true);
+ run("editWorkspaceFormField(1,'');reviewWorkspaceFormField(1,true)");assert.equal(el('form-field-1').focused,true);assert.equal(run('state.formData[1].reviewed'),false);
+});
+
+test('approval persists its exact snapshot and history together and recovers without duplicates',()=>{
+ const {run,el,prepare}=setup();prepare();run('reviewWorkspaceForm();confirmWorkspaceFormApproval()');assert.equal(el('form-final-confirm').focused,true);
+ el('form-final-confirm').checked=true;
+ run("let writes=0;let stored;const originalWrite=localStorage.setItem;localStorage.setItem=()=>{writes++;throw Error('quota')};confirmWorkspaceFormApproval()");
+ assert.equal(run('writes'),1);assert.equal(run('formUiState().history.length'),1);assert.equal(el('form-approval-heading').focused,true);
+ assert.match(el('toast').textContent,/in this tab only.*Saving failed.*Nothing submitted/);
+ run('localStorage.setItem=(k,v)=>{stored=v;originalWrite(k,v)};retrySave()');
+ assert.equal(run("JSON.parse(stored).patientRecords['DEMO-001'].formApproval.patientId"),'DEMO-001');
+ assert.equal(run("JSON.parse(stored).formUi['DEMO-001'].history.length"),1);
+ run('confirmWorkspaceFormApproval()');assert.equal(run('formUiState().history.length'),1);
+ run('requestWorkspaceFormReopen();confirmWorkspaceFormReopen()');assert.equal(el('form-field-0').focused,true);assert.equal(run('formUiState().version'),2);assert.equal(run('currentFormProgress().reviewed'),0);
+ assert.match(el('toast').textContent,/New form version opened. Saved/);
+});
